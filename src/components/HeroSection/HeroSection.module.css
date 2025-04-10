@@ -1,0 +1,92 @@
+.hero {
+  position: relative;
+  height: 100vh; /* Висота на весь екран */
+  background-image: url("/src/assets/bg.webp");
+  background-size: cover;
+  background-position: center;
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin: 0; /* Скидаємо всі відступи */
+  padding: 0; /* Скидаємо всі відступи */
+  width: 100vw; /* 100% ширини вікна */
+  max-width: none; /* Скидаємо обмеження ширини */
+  box-sizing: border-box; /* Переконаємося, що padding не впливає на розміри */
+}
+
+.heroContent {
+  text-align: center;
+  padding: 20px;
+  z-index: 1;
+  max-width: 1440px; /* Обмежуємо ширину вмісту */
+  width: 100%; /* Вміст займає доступну ширину */
+}
+
+.heroContent h1 {
+  font-size: 4.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-transform: uppercase;
+  animation: fadeInDown 1.5s ease-out;
+}
+
+.heroContent p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  animation: fadeInUp 1.5s ease-out 0.5s backwards;
+}
+
+.ctaButton {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #A16BFF;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  animation: bounceIn 1.5s ease-out 1s backwards;
+}
+
+.ctaButton:hover {
+  background: #9055e6;
+  transform: scale(1.05);
+}
+
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(50px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    height: 80vh;
+  }
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+  .heroContent p {
+    font-size: 1rem;
+  }
+  .ctaButton {
+    padding: 10px 20px;
+    font-size: 1rem;
+  }
+}

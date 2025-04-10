@@ -1,0 +1,94 @@
+.calc-wrap {
+    margin-top: 120px;
+    position: relative;
+  }
+  
+  .calculator-impuls {
+    margin-top: 60px;
+    margin-bottom: 60px;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .calculator-container {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .calculator-left {
+    flex: 2;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .admin-section {
+    margin-bottom: 20px;
+  }
+  
+  .admin-section h4 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+  
+  .admin-section input {
+    padding: 8px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .admin-section button {
+    padding: 8px 15px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .admin-section button:hover {
+    background: #0056b3;
+  }
+  
+  .admin-button {
+    width: 100%;
+    padding: 10px;
+    background: #A16BFF;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .admin-button:hover {
+    background: #9055f7;
+  }
+  
+  .cacl-title {
+    font-size: 2.875rem;
+    font-weight: bold;
+    font-family: "FuturaPT2", sans-serif;
+    color: #333;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .calculator-container {
+      flex-direction: column;
+    }
+  
+    .calculator-left {
+      flex: 1;
+      position: static;
+      box-shadow: none;
+    }
+  }

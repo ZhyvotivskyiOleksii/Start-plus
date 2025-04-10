@@ -1,0 +1,227 @@
+.loginContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 120px;
+  min-height: 100vh;
+  padding: 20px 20px 20px 20px;
+  box-sizing: border-box;
+  position: relative;
+  margin-top: 60px;
+}
+
+
+.loginBox {
+  padding: 25px;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  background: white;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+
+.illustration {
+  width: 100%;
+  max-width: 490px;
+  box-sizing: border-box;
+}
+
+
+.title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: start;
+}
+
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+
+.phoneInputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  position: relative;
+}
+
+.label {
+  font-size: 1rem;
+  color: #333;
+  font-weight: 600;
+  text-align: start;
+}
+
+input {
+  background: #edecec;;
+}
+.phoneInput {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  border-radius: 6px;
+  background: #edecec;
+}
+
+.countrySection {
+  display: flex;
+  align-items: center;
+  padding: 0 7px;
+}
+
+.countryCodeDisplay {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  color: #333;
+}
+
+.countryToggle {
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 8px;
+}
+
+.arrowDown {
+  color: #000000;
+}
+
+.verticalDivider {
+  width: 1px;
+  height: 100%;
+  background-color: #dadada;
+}
+
+.phoneNumber {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 0 12px;
+}
+
+
+.countryList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 5px;
+}
+
+.countryItem {
+  padding: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.countryItem:hover {
+  background: #f0f0f0;
+}
+
+.getCodeButton {
+  padding: 12px;
+  background: #A16BFF;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.getCodeButton:hover {
+  background: #0056b3;
+}
+
+
+.description {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 10px;
+  text-align: start;
+}
+
+.agree {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+
+.error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+
+@media (max-width: 768px) {
+  .loginContainer {
+    flex-direction: column;
+    gap: 40px;
+    min-height: auto;
+    margin-top: 80px;
+  }
+
+  .illustration {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .loginBox {
+    padding: 15px;
+    max-width: 90%;
+  }
+
+  .phoneInput {
+    height: 45px;
+  }
+
+  .getCodeButton {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .illustration {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+
+  .phoneInput {
+    height: 40px;
+  }
+
+  .getCodeButton {
+    padding: 8px;
+  }
+
+  .loginBox {
+    padding: 10px;
+  }
+
+  .countryList {
+    max-height: 150px;
+  }
+}

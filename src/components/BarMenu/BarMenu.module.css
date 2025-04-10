@@ -1,0 +1,192 @@
+.barMenu {
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 1;
+  margin-right: clamp(15px, 2.083vw, 30px); /* Адаптивний відступ праворуч */
+}
+
+.menu-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 clamp(15px, 2.083vw, 30px); /* Адаптивний внутрішній відступ */
+  width: 100%;
+  gap: clamp(5px, 0.694vw, 10px); /* Адаптивний інтервал */
+}
+
+.barMenu ul {
+  list-style: none;
+  display: flex;
+  gap: clamp(15px, 2.083vw, 25px); /* Адаптивний інтервал між пунктами */
+  padding: 0;
+  margin: 0;
+}
+
+.barMenu li {
+  position: relative;
+}
+
+.barMenu a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
+  transition: all 0.3s ease;
+  gap: clamp(8px, 1.111vw, 12px); /* Адаптивний інтервал */
+}
+
+.menuIcon {
+  width: clamp(40px, 5vw, 60px); /* Адаптивний розмір іконки */
+  height: clamp(40px, 5vw, 60px);
+  transition: transform 0.3s ease;
+}
+
+.barMenu a:hover .menuIcon {
+  transform: scale(1.1);
+}
+
+.barMenu a:hover {
+  transform: scale(1.1);
+  color: #A16BFF;
+}
+
+.broom {
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: clamp(15px, 1.667vw, 20px); /* Адаптивний розмір мітли */
+  height: clamp(15px, 1.667vw, 20px);
+  opacity: 0;
+  transform: translateY(-50%) scale(0.8);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.barMenu li:hover .broom {
+  opacity: 1;
+  transform: translateY(-50%) scale(1) rotate(-20deg);
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 0.694vw, 8px); /* Адаптивний інтервал */
+  padding: clamp(5px, 0.694vw, 8px) clamp(10px, 1.389vw, 16px); /* Адаптивний padding */
+  background-color: #A16BFF;
+  color: white;
+  border: none;
+  border-radius: clamp(5px, 0.694vw, 8px); /* Адаптивний радіус */
+  cursor: pointer;
+  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-left: clamp(10px, 1.389vw, 20px); /* Адаптивний відступ */
+}
+
+.login-button:hover {
+  background-color: #8b56e6;
+  transform: scale(1.05);
+}
+
+.login-icon {
+  width: clamp(25px, 2.778vw, 35px); /* Адаптивний розмір іконки */
+  height: clamp(25px, 2.778vw, 35px);
+  object-fit: contain;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 0.694vw, 10px); /* Адаптивний інтервал */
+  margin-left: clamp(10px, 1.389vw, 20px); /* Адаптивний відступ */
+}
+
+.user-phone {
+  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
+  color: #333;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: clamp(5px, 0.694vw, 8px); /* Адаптивний інтервал */
+  padding: clamp(5px, 0.694vw, 8px) clamp(10px, 1.389vw, 16px); /* Адаптивний padding */
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: clamp(5px, 0.694vw, 8px); /* Адаптивний радіус */
+  cursor: pointer;
+  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+.logout-icon {
+  width: clamp(25px, 2.778vw, 35px); /* Адаптивний розмір іконки */
+  height: clamp(25px, 2.778vw, 35px);
+  object-fit: contain;
+}
+
+@media (max-width: 927px) {
+  .barMenu {
+    justify-content: flex-start;
+  }
+
+  .menu-container {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: clamp(5px, 1.389vw, 10px) clamp(10px, 2.778vw, 20px); /* Адаптивний padding */
+  }
+
+  .barMenu ul {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(10px, 2.778vw, 20px); /* Адаптивний інтервал */
+    width: 100%;
+  }
+
+  .barMenu a {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(10px, 2.778vw, 20px); /* Адаптивний інтервал */
+    width: 100%;
+    font-size: clamp(12px, 1.875vw, 14px); /* Адаптивний розмір шрифту */
+    border-radius: clamp(5px, 1.111vw, 8px); /* Адаптивний радіус */
+  }
+
+  .broom {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: auto;
+    transform: translateY(-50%) scale(0.8);
+  }
+
+  .barMenu a:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .login-button,
+  .user-info {
+    margin-top: clamp(10px, 2.778vw, 20px); /* Адаптивний відступ */
+    margin-left: 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .logout-button {
+    width: 100%;
+  }
+
+  .login-icon,
+  .logout-icon {
+    width: clamp(15px, 2.5vw, 18px); /* Адаптивний розмір іконки */
+    height: clamp(15px, 2.5vw, 18px);
+  }
+}

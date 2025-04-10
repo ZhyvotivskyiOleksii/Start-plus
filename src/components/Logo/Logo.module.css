@@ -1,0 +1,21 @@
+.logoContainer {
+    display: flex;
+    align-items: center;
+ 
+    gap: 10px; 
+    text-decoration: none; 
+  }
+  
+  .logoText {
+    font-size: 28px;
+    font-weight: bold;
+    color: #A16BFF;
+    font-family: "Nunito", sans-serif;
+    transition: 0.5s;
+  }
+  .logoPlus{
+    color: #62A740;
+  }
+  .logoText:hover {
+    color: #A16BFF; 
+  }
