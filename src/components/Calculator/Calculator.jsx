@@ -391,7 +391,6 @@ export default function Calculator() {
       return;
     }
 
-    // Формуємо дані замовлення
     const orderData = {
       clientType,
       rooms,
@@ -433,7 +432,6 @@ export default function Calculator() {
     };
 
     try {
-      // Відправляємо замовлення на бекенд
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: {
@@ -570,30 +568,30 @@ export default function Calculator() {
               </div>
             </div>
 
-         <div className={css["vacuum-notice"]}>
-  <label className={css["checkbox-label"]}>
-    <div className={css["icon-checkbox-wrapper"]}>
-      <img
-        src="/icon/odku.png"
-        alt="Vacuum"
-        className={css["service-icon"]}
-      />
-      <input
-        type="checkbox"
-        checked={vacuumNeeded}
-        onChange={(e) => setVacuumNeeded(e.target.checked)}
-        className={css["custom-checkbox"]}
-      />
-    </div>
-    <div className={css["text-price-wrapper"]}>
-      <div>
-        <p>Na zamówieniu potrzebny jest odkurzacz</p>
-        <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
-      </div>
-      <button className={css["vacuum-price"]}>{vacuumCost.toFixed(2)} zł</button>
-    </div>
-  </label>
-</div>
+            <div className={css["vacuum-notice"]}>
+              <label className={css["checkbox-label"]}>
+                <div className={css["icon-checkbox-wrapper"]}>
+                  <img
+                    src="/icon/odku.png"
+                    alt="Vacuum"
+                    className={css["service-icon"]}
+                  />
+                  <input
+                    type="checkbox"
+                    checked={vacuumNeeded}
+                    onChange={(e) => setVacuumNeeded(e.target.checked)}
+                    className={css["custom-checkbox"]}
+                  />
+                </div>
+                <div className={css["text-price-wrapper"]}>
+                  <div>
+                    <p>Na zamówieniu potrzebny jest odkurzacz</p>
+                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
+                  </div>
+                  <button className={css["vacuum-price"]}>{vacuumCost.toFixed(2)} zł</button>
+                </div>
+              </label>
+            </div>
 
             <div className={css["calendar-section"]} ref={calendarRef}>
               <h4>WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA</h4>
@@ -998,72 +996,75 @@ export default function Calculator() {
               <p>Dodatkowy koszt dojazdu: +{cities[selectedCity].toFixed(2)} zł</p>
             </div>
 
-            {paidServices.map((service) =>
-              (service.type === "checkbox" && selectedServices[service.id]) ||
-              (service.type === "quantity" && selectedServices[service.id] > 0) ? (
-                <div key={service.id} className={css["selected-service-item"]} style={{ position: "relative" }}>
+            {/* Додаємо контейнер для вибраних послуг */}
+            <div className={css["selected-services-container"]}>
+              {paidServices.map((service) =>
+                (service.type === "checkbox" && selectedServices[service.id]) ||
+                (service.type === "quantity" && selectedServices[service.id] > 0) ? (
+                  <div key={service.id} className={css["selected-service-item"]} style={{ position: "relative" }}>
+                    <div className={css["service-info"]}>
+                      <img
+                        src={service.icon}
+                        alt={service.name}
+                        className={css["selected-service-icon"]}
+                      />
+                      <p>
+                        {service.name}
+                        {service.type === "quantity" &&
+                          ` (${selectedServices[service.id]}${
+                            service.id === 9 || service.id === 11 ? " god" : "x"
+                          })`}
+                      </p>
+                    </div>
+                    <div className={css["service-price"]}>
+                      <p>
+                        {(service.type === "checkbox"
+                          ? service.price
+                          : service.price * selectedServices[service.id]
+                        ).toFixed(2)}{" "}
+                        zł
+                      </p>
+                    </div>
+                    <button
+                      className={css["remove-btn"]}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        service.type === "checkbox"
+                          ? handleServiceToggle(service.id)
+                          : handleQuantityChange(service.id, -selectedServices[service.id]);
+                      }}
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : null
+              )}
+
+              {vacuumNeeded && (
+                <div key="vacuum" className={css["selected-service-item"]} style={{ position: "relative" }}>
                   <div className={css["service-info"]}>
                     <img
-                      src={service.icon}
-                      alt={service.name}
+                      src="/icon/odku.png"
+                      alt="Vacuum"
                       className={css["selected-service-icon"]}
                     />
-                    <p>
-                      {service.name}
-                      {service.type === "quantity" &&
-                        ` (${selectedServices[service.id]}${
-                          service.id === 9 || service.id === 11 ? " god" : "x"
-                        })`}
-                    </p>
+                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
                   </div>
                   <div className={css["service-price"]}>
-                    <p>
-                      {(service.type === "checkbox"
-                        ? service.price
-                        : service.price * selectedServices[service.id]
-                      ).toFixed(2)}{" "}
-                      zł
-                    </p>
+                    <p>{vacuumCost.toFixed(2)} zł</p>
                   </div>
                   <button
                     className={css["remove-btn"]}
                     onClick={(e) => {
                       e.stopPropagation();
-                      service.type === "checkbox"
-                        ? handleServiceToggle(service.id)
-                        : handleQuantityChange(service.id, -selectedServices[service.id]);
+                      setVacuumNeeded(false);
                     }}
                   >
                     ×
                   </button>
                 </div>
-              ) : null
-            )}
-
-            {vacuumNeeded && (
-              <div key="vacuum" className={css["selected-service-item"]} style={{ position: "relative" }}>
-                <div className={css["service-info"]}>
-                  <img
-                    src="/icon/odku.png"
-                    alt="Vacuum"
-                    className={css["selected-service-icon"]}
-                  />
-                  <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
-                </div>
-                <div className={css["service-price"]}>
-                  <p>{vacuumCost.toFixed(2)} zł</p>
-                </div>
-                <button
-                  className={css["remove-btn"]}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setVacuumNeeded(false);
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className={css["promo-code"]}>
               <div className={css["promo-container"]}>

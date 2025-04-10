@@ -1,19 +1,17 @@
-/* Основні кольори для всієї сторінки */
 :root {
-  --background-color: #1A1A1A; /* Темний фон зі скріншота 2 */
-  --text-color: #FFFFFF; /* Білий текст */
-  --text-secondary-color: #B0B0B0; /* Світло-сірий для другорядного тексту */
-  --accent-color: #A16BFF; /* Фіолетовий акцент */
-  --discount-color: #28a745; /* Зелений для знижок */
-  --button-bg-start: rgba(50, 50, 50, 0.8); /* Світліший темний */
-  --button-bg-end: rgba(20, 20, 20, 0.8); /* Темніший темний */
-  --button-text-color: #FFFFFF; /* Білий текст/іконки */
+  --background-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0B0B0;
+  --accent-color: #A16BFF;
+  --discount-color: #28a745;
+  --button-bg-start: rgba(50, 50, 50, 0.8);
+  --button-bg-end: rgba(20, 20, 20, 0.8);
+  --button-text-color: #FFFFFF;
   --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
-  --button-border-light: rgba(255, 255, 255, 0.2); /* Світлий бордер */
-  --button-border-dark: rgba(0, 0, 0, 0.5); /* Темний бордер */
-  /* Змінні для блоку додаткових послуг */
-  --service-bg: #2A2A2A; /* Темно-сірий фон для блоку */
+  --button-border-light: rgba(255, 255, 255, 0.2);
+  --button-border-dark: rgba(0, 0, 0, 0.5);
+  --service-bg: #2A2A2A;
   --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
@@ -56,13 +54,12 @@ body {
   position: sticky;
   top: 180px;
   height: fit-content;
-  background: #2A2A2A; /* Темний фон */
+  background: #2A2A2A;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Загальний стиль для всіх кнопок */
 button {
   padding: 10px 15px;
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
@@ -190,7 +187,6 @@ button:active {
   }
 }
 
-/* Лічильники */
 .quantity-selector {
   display: flex;
   justify-content: space-between;
@@ -206,7 +202,7 @@ button:active {
   justify-content: space-between;
   text-align: center;
   gap: 15px;
-  background: #2A2A2A; /* Темний фон */
+  background: #2A2A2A;
   padding: 12px 20px;
   border-radius: 16px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -302,7 +298,6 @@ button:active {
   margin-bottom: 20px;
 }
 
-/* Додаткові послуги */
 .additional-services {
   margin-top: 60px;
   margin-bottom: 60px;
@@ -328,7 +323,7 @@ button:active {
   align-items: center;
   padding: 15px 20px;
   border-radius: 10px;
-  background: var(--service-bg); /* Однотонний темний фон */
+  background: var(--service-bg);
   box-shadow: var(--service-shadow);
   transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
 }
@@ -448,7 +443,6 @@ button:active {
   width: fit-content;
 }
 
-/* Адаптивність для мобільної версії */
 @media (max-width: 480px) {
   .service-item {
     flex-direction: column;
@@ -456,41 +450,34 @@ button:active {
     text-align: center;
     padding: 12px 15px;
   }
-
   .checkbox-label {
     display: block;
     align-items: center;
     gap: 20px;
   }
-
   .icon-checkbox-wrapper {
     display: flex;
     justify-content: center;
     width: 100%;
     align-items: center;
   }
-
   .service-icon {
     width: 32px;
     height: 32px;
   }
-
   .custom-checkbox {
     width: 18px;
     height: 18px;
   }
-
   .text-price-wrapper {
     align-items: flex-start;
   }
-
   .vacuum-price {
     padding: 4px 8px;
     font-size: 0.85rem;
   }
 }
 
-/* Права частина */
 .calculator-right h2 {
   font-size: 1.1rem;
   font-weight: 700;
@@ -696,7 +683,139 @@ button:active {
   margin: 0;
 }
 
-/* Заголовок та підзаголовок */
+.selected-services-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.selected-service-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  flex: 1 1 calc(50% - 8px);
+  min-width: 150px;
+  max-width: calc(50% - 8px);
+  position: relative;
+  box-sizing: border-box;
+  transition: background 0.3s ease, border 0.3s ease;
+}
+
+.service-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.selected-service-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.service-info p {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-color);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.service-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+.service-price p {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.selected-service-item .remove-btn {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 99, 97, 0.8);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.selected-service-item .remove-btn:hover {
+  color: rgba(255, 120, 120, 1);
+}
+
+@media (max-width: 768px) {
+  .selected-service-item {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 140px;
+    max-width: calc(50% - 8px);
+  }
+  .service-info p {
+    font-size: 0.8rem;
+  }
+  .service-price p {
+    font-size: 0.8rem;
+  }
+  .selected-service-icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .selected-service-item {
+    flex: 1 1 calc(50% - 8px);
+    min-width: 120px;
+    max-width: calc(50% - 8px);
+    padding: 6px 10px;
+  }
+  .service-info p {
+    font-size: 0.75rem;
+  }
+  .service-price p {
+    font-size: 0.75rem;
+  }
+  .selected-service-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .selected-service-item .remove-btn {
+    right: 6px;
+    font-size: 0.9rem;
+    width: 14px;
+    height: 14px;
+  }
+}
+
 .cacl-title {
   font-size: 3rem;
   font-weight: 800;
@@ -710,7 +829,6 @@ button:active {
   margin-bottom: 10px;
 }
 
-/* Календар */
 .calendar-section {
   margin-top: 20px;
 }
@@ -995,7 +1113,6 @@ button:active {
   }
 }
 
-/* Частота прибирання */
 .frequency-section {
   margin-top: 20px;
   padding: 16px;
@@ -1109,7 +1226,6 @@ button:active {
   margin-left: 4px;
 }
 
-/* Додаткові платні послуги */
 .paid-services-section {
   margin-top: 30px;
 }
@@ -1286,80 +1402,6 @@ button:active {
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Вибрані послуги */
-.selected-service-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #4A4A4A;
-  position: relative;
-  min-height: 40px;
-}
-
-.service-info {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.selected-service-icon {
-  width: 44px;
-  height: 44px;
-}
-
-.service-info p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--text-color);
-}
-
-.service-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.service-price p {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-color);
-}
-
-.selected-service-item .remove-btn {
-  position: absolute;
-  top: 5px;
-  right: 1px;
-  background: linear-gradient(145deg, rgba(255, 99, 97, 0.8), rgba(200, 50, 50, 0.8));
-  color: #FFFFFF;
-  border: none;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.9rem;
-  cursor: pointer;
-  box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
-}
-
-.selected-service-item .remove-btn:hover {
-  background: linear-gradient(145deg, rgba(255, 120, 120, 0.8), rgba(220, 70, 70, 0.8));
-  box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.selected-service-item .remove-btn:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Випадаючий список міст */
 .city-select {
   margin-bottom: 20px;
   position: relative;
@@ -1463,7 +1505,6 @@ button:active {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Адаптивність для кнопок міст */
 @media (max-width: 1024px) {
   .city-option {
     flex: 0 0 calc(33.33% - 10px);
@@ -1489,7 +1530,6 @@ button:active {
   }
 }
 
-/* Адреса */
 .address-section {
   margin-top: 30px;
 }
@@ -1563,7 +1603,6 @@ button:active {
   resize: none;
 }
 
-/* Контактні дані */
 .contact-section {
   margin-top: 30px;
 }
@@ -1587,7 +1626,6 @@ button:active {
   gap: 15px;
 }
 
-/* Згода */
 .agreement-section {
   margin-top: 30px;
 }
@@ -1602,7 +1640,6 @@ button:active {
   cursor: pointer;
 }
 
-/* Медіа-запити */
 @media (max-width: 768px) {
   .calculator-container {
     flex-direction: column;
@@ -1615,16 +1652,14 @@ button:active {
     box-shadow: none;
     border-radius: 0;
     margin-top: 0;
-    padding: 15px;
+    padding: 0px;
   }
-
   .discount-label {
     position: absolute;
     top: 0;
     right: 0;
     font-size: 0.5rem;
   }
-
   .calculator-right {
     top: 0;
     margin-top: 10px;
