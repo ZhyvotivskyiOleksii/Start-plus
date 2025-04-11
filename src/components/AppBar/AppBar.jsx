@@ -1,15 +1,23 @@
-// AppBar.jsx
-import { useState } from "react"
-import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa"
-import css from "./AppBar.module.css"
-import Logo from "../Logo/Logo"
-import BarMenu from "../BarMenu/BarMenu"
+import { useState } from "react";
+import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa";
+import css from "./AppBar.module.css";
+import Logo from "../Logo/Logo";
+import BarMenu from "../BarMenu/BarMenu";
+import plFlag from "../../assets/flags/pl.png";
+import uaFlag from "../../assets/flags/ua.png";
+import ruFlag from "../../assets/flags/ru.png";
+import gbFlag from "../../assets/flags/gb.png";
 
-const languages = { pl: "PL", uk: "UA", ru: "RU", en: "EN" }
+const languages = { pl: "PL", uk: "UA", ru: "RU", en: "EN" };
+const flags = { pl: plFlag, uk: uaFlag, ru: ruFlag, en: gbFlag };
 
 export default function AppBar({ lang, setLang }) {
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const getFlagPath = (langKey) => {
+    return flags[langKey];
+  };
 
   return (
     <>
@@ -21,12 +29,14 @@ export default function AppBar({ lang, setLang }) {
         <div className={css.desktopLang}>
           <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
             <FaGlobe className={css.icon} />
+            <img src={getFlagPath(lang)} alt={`${lang} flag`} className={css.flagIcon} />
             <span>{languages[lang]}</span>
           </div>
           {dropdownOpen && (
             <ul className={css.dropdown}>
-              {Object.keys(languages).map(key => (
-                <li key={key} onClick={() => { setLang(key); setDropdownOpen(false) }}>
+              {Object.keys(languages).map((key) => (
+                <li key={key} onClick={() => { setLang(key); setDropdownOpen(false); }}>
+                  <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
                   {languages[key]}
                 </li>
               ))}
@@ -55,12 +65,13 @@ export default function AppBar({ lang, setLang }) {
             <span>Language</span>
           </div>
           <div className={css.langRow}>
-            {Object.keys(languages).map(key => (
+            {Object.keys(languages).map((key) => (
               <span
                 key={key}
                 onClick={() => setLang(key)}
                 className={lang === key ? css.active : ""}
               >
+                <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
                 {languages[key]}
               </span>
             ))}
@@ -68,5 +79,5 @@ export default function AppBar({ lang, setLang }) {
         </div>
       </div>
     </>
-  )
+  );
 }

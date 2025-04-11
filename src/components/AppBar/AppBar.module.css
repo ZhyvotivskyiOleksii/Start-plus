@@ -1,17 +1,33 @@
-/* AppBar.module.css */
+:root {
+  --background-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0B0B0;
+  --accent-color: #A16BFF;
+  --discount-color: #28a745;
+  --button-bg-start: rgba(50, 50, 50, 0.8);
+  --button-bg-end: rgba(20, 20, 20, 0.8);
+  --button-text-color: #FFFFFF;
+  --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --button-border-light: rgba(255, 255, 255, 0.2);
+  --button-border-dark: rgba(0, 0, 0, 0.5);
+  --service-bg: #2A2A2A;
+  --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  color: #000;
-  padding: 10px 40px;
+  background: var(--background-color);
+  padding: clamp(10px, 2vw, 20px);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--service-shadow);
 }
 
 .socials {
@@ -26,12 +42,13 @@
 }
 
 .socials a {
-  color: #000;
-  transition: color 0.2s ease;
+  color: var(--accent-color);
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .socials a:hover {
-  color: #A16BFF;
+  color: var(--discount-color);
+  transform: translateY(-2px);
 }
 
 .desktopMenu {
@@ -52,60 +69,89 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  padding: 8px 12px;
-  background: #000;
-  color: #fff;
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  color: var(--button-text-color);
+  border-radius: 10px;
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
+  font-weight: 500;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
 }
 
 .langBox:hover {
-  background: #A16BFF;
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.langBox:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .icon {
   font-size: 18px;
-  color: #fff;
+  color: var(--button-text-color);
 }
 
 .dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  background: #fff;
-  color: #000;
+  background: var(--service-bg);
+  color: var(--text-color);
   list-style: none;
   padding: 8px 0;
   margin: 0;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  border-radius: 10px;
+  box-shadow: var(--service-shadow);
   min-width: 60px;
 }
 
 .dropdown li {
+  display: flex;
+  align-items: center;
   padding: 8px 16px;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease;
+  transition: background 0.3s ease;
 }
 
 .dropdown li:hover {
-  background: #f0f0f0;
+  background: var(--background-color);
 }
 
 .burger {
   display: none;
-  background: none;
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   border: none;
   font-size: 24px;
-  color: #000;
+  color: var(--button-text-color);
   cursor: pointer;
-  padding: 8px;
-  border-radius: 4px;
+  padding: clamp(8px, 1vw, 10px);
+  border-radius: 10px;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
 }
 
 .burger:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.burger:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .mobileMenu {
@@ -114,15 +160,15 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background: #ffffff;
-  color: #000;
+  background: var(--background-color);
+  color: var(--text-color);
   transition: top 0.4s ease;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   z-index: 1100;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: var(--service-shadow);
 }
 
 .show {
@@ -133,17 +179,30 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background: none;
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   border: none;
   font-size: 28px;
-  color: #151515;
+  color: var(--button-text-color);
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
 }
 
 .close:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.close:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .mobileMenuContent {
@@ -157,11 +216,11 @@
 .mobileLang {
   margin-top: auto;
   padding: 15px;
-  background: rgba(26, 26, 26, 0.965);
-  color: #fff;
+  background: var(--service-bg);
   border-radius: 10px;
   width: 100%;
   margin-bottom: 20px;
+  box-shadow: var(--service-shadow);
 }
 
 .langHeader {
@@ -171,21 +230,48 @@
   margin-bottom: 10px;
   font-size: 16px;
   font-weight: 500;
-  color: #fff;
+  color: var(--text-color);
 }
 
 .langRow {
   display: flex;
-  gap: 20px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
+.langRow span {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  color: var(--button-text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
+}
+
+.langRow span:hover {
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.langRow span:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
 .active {
-  color: #A16BFF;
+  background: linear-gradient(145deg, var(--accent-color), var(--accent-color));
+  color: var(--button-text-color);
   font-weight: 600;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: rgba(161, 107, 255, 0.2);
 }
 
 @media (max-width: 927px) {
@@ -193,7 +279,7 @@
     display: none;
   }
   .header {
-    background-color: #fff;
+    background-color: var(--background-color);
   }
   .desktopLang {
     display: none;
@@ -201,4 +287,10 @@
   .burger {
     display: block;
   }
+}
+
+.flagIcon {
+  width: 1.2em;
+  height: 1.2em;
+  margin-right: 6px;
 }
