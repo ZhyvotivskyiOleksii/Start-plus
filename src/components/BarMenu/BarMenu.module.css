@@ -1,8 +1,26 @@
+:root {
+  --background-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0B0B0;
+  --accent-color: #A16BFF;
+  --discount-color: #28a745;
+  --button-bg-start: rgba(50, 50, 50, 0.8);
+  --button-bg-end: rgba(20, 20, 20, 0.8);
+  --button-text-color: #FFFFFF;
+  --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --button-border-light: rgba(255, 255, 255, 0.2);
+  --button-border-dark: rgba(0, 0, 0, 0.5);
+  --service-bg: #2A2A2A;
+  --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
 .barMenu {
   display: flex;
   justify-content: flex-end;
   flex-grow: 1;
-  margin-right: clamp(15px, 2.083vw, 30px); /* Адаптивний відступ праворуч */
+  margin-right: clamp(15px, 2.083vw, 30px);
 }
 
 .menu-container {
@@ -11,15 +29,15 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 0 clamp(15px, 2.083vw, 30px); /* Адаптивний внутрішній відступ */
+  padding: 0 clamp(15px, 2.083vw, 30px);
   width: 100%;
-  gap: clamp(5px, 0.694vw, 10px); /* Адаптивний інтервал */
+  gap: clamp(5px, 0.694vw, 10px);
 }
 
 .barMenu ul {
   list-style: none;
   display: flex;
-  gap: clamp(15px, 2.083vw, 25px); /* Адаптивний інтервал між пунктами */
+  gap: clamp(10px, 1.5vw, 15px);
   padding: 0;
   margin: 0;
 }
@@ -33,65 +51,87 @@
   flex-direction: column;
   align-items: center;
   text-decoration: none;
-  color: rgb(0, 0, 0);
-  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
-  transition: all 0.3s ease;
-  gap: clamp(8px, 1.111vw, 12px); /* Адаптивний інтервал */
+  color: var(--text-color);
+  font-size: clamp(10px, 1vw, 12px);
+  padding: clamp(6px, 0.8vw, 8px) clamp(8px, 1vw, 10px);
+  background: var(--service-bg);
+  border-radius: 8px;
+  box-shadow: var(--service-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  gap: clamp(6px, 0.8vw, 8px);
+  position: relative;
 }
 
-.menuIcon {
-  width: clamp(40px, 5vw, 60px); /* Адаптивний розмір іконки */
-  height: clamp(40px, 5vw, 60px);
-  transition: transform 0.3s ease;
+.barMenu a:hover {
+  background: var(--background-color);
+  box-shadow: var(--service-shadow-hover);
+  transform: translateY(-2px);
 }
 
 .barMenu a:hover .menuIcon {
   transform: scale(1.1);
 }
 
-.barMenu a:hover {
-  transform: scale(1.1);
-  color: #A16BFF;
+.barMenu a:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.menuIcon {
+  width: clamp(30px, 4vw, 40px);
+  height: clamp(30px, 4vw, 40px);
+  transition: transform 0.3s ease;
 }
 
 .broom {
   position: absolute;
-  top: 50%;
-  left: 100%;
-  width: clamp(15px, 1.667vw, 20px); /* Адаптивний розмір мітли */
-  height: clamp(15px, 1.667vw, 20px);
+  top: 6px;
+  right: 6px;
+  width: clamp(12px, 1.2vw, 15px);
+  height: clamp(12px, 1.2vw, 15px);
   opacity: 0;
-  transform: translateY(-50%) scale(0.8);
+  transform: scale(0.8);
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .barMenu li:hover .broom {
   opacity: 1;
-  transform: translateY(-50%) scale(1) rotate(-20deg);
+  transform: scale(1) rotate(-20deg);
 }
 
 .login-button {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 0.694vw, 8px); /* Адаптивний інтервал */
-  padding: clamp(5px, 0.694vw, 8px) clamp(10px, 1.389vw, 16px); /* Адаптивний padding */
-  background-color: #A16BFF;
-  color: white;
+  gap: clamp(5px, 0.694vw, 8px);
+  padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  color: var(--button-text-color);
   border: none;
-  border-radius: clamp(5px, 0.694vw, 8px); /* Адаптивний радіус */
+  border-radius: 10px;
   cursor: pointer;
-  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  margin-left: clamp(10px, 1.389vw, 20px); /* Адаптивний відступ */
+  font-size: clamp(12px, 1.25vw, 14px);
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
+  margin-left: clamp(10px, 1.389vw, 20px);
 }
 
 .login-button:hover {
-  background-color: #8b56e6;
-  transform: scale(1.05);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.login-button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .login-icon {
-  width: clamp(25px, 2.778vw, 35px); /* Адаптивний розмір іконки */
+  width: clamp(25px, 2.778vw, 35px);
   height: clamp(25px, 2.778vw, 35px);
   object-fit: contain;
 }
@@ -99,36 +139,47 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 0.694vw, 10px); /* Адаптивний інтервал */
-  margin-left: clamp(10px, 1.389vw, 20px); /* Адаптивний відступ */
+  gap: clamp(5px, 0.694vw, 10px);
+  margin-left: clamp(10px, 1.389vw, 20px);
 }
 
 .user-phone {
-  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
-  color: #333;
+  font-size: clamp(12px, 1.25vw, 14px);
+  color: var(--text-color);
 }
 
 .logout-button {
   display: flex;
   align-items: center;
-  gap: clamp(5px, 0.694vw, 8px); /* Адаптивний інтервал */
-  padding: clamp(5px, 0.694vw, 8px) clamp(10px, 1.389vw, 16px); /* Адаптивний padding */
-  background-color: #dc3545;
-  color: white;
+  gap: clamp(5px, 0.694vw, 8px);
+  padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
+  background: linear-gradient(145deg, var(--accent-color), var(--accent-color));
+  color: var(--button-text-color);
   border: none;
-  border-radius: clamp(5px, 0.694vw, 8px); /* Адаптивний радіус */
+  border-radius: 10px;
   cursor: pointer;
-  font-size: clamp(12px, 1.25vw, 14px); /* Адаптивний розмір шрифту */
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  font-size: clamp(12px, 1.25vw, 14px);
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
 }
 
 .logout-button:hover {
-  background-color: #c82333;
-  transform: scale(1.05);
+  background: linear-gradient(145deg, var(--accent-color), var(--accent-color));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
+}
+
+.logout-button:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .logout-icon {
-  width: clamp(25px, 2.778vw, 35px); /* Адаптивний розмір іконки */
+  width: clamp(25px, 2.778vw, 35px);
   height: clamp(25px, 2.778vw, 35px);
   object-fit: contain;
 }
@@ -141,40 +192,33 @@
   .menu-container {
     flex-direction: column;
     align-items: flex-start;
-    padding: clamp(5px, 1.389vw, 10px) clamp(10px, 2.778vw, 20px); /* Адаптивний padding */
+    padding: clamp(5px, 1.389vw, 10px) clamp(10px, 2.778vw, 20px);
   }
 
   .barMenu ul {
     flex-direction: column;
     align-items: flex-start;
-    gap: clamp(10px, 2.778vw, 20px); /* Адаптивний інтервал */
+    gap: clamp(10px, 2.778vw, 20px);
     width: 100%;
   }
 
   .barMenu a {
     flex-direction: row;
     align-items: center;
-    gap: clamp(10px, 2.778vw, 20px); /* Адаптивний інтервал */
+    gap: clamp(10px, 2.778vw, 20px);
     width: 100%;
-    font-size: clamp(12px, 1.875vw, 14px); /* Адаптивний розмір шрифту */
-    border-radius: clamp(5px, 1.111vw, 8px); /* Адаптивний радіус */
+    font-size: clamp(12px, 1.875vw, 14px);
+    border-radius: 10px;
   }
 
   .broom {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    left: auto;
-    transform: translateY(-50%) scale(0.8);
-  }
-
-  .barMenu a:hover {
-    background: rgba(255, 255, 255, 0.1);
+    top: 10px;
+    right: 10px;
   }
 
   .login-button,
   .user-info {
-    margin-top: clamp(10px, 2.778vw, 20px); /* Адаптивний відступ */
+    margin-top: clamp(10px, 2.778vw, 20px);
     margin-left: 0;
     width: 100%;
     justify-content: center;
@@ -186,7 +230,7 @@
 
   .login-icon,
   .logout-icon {
-    width: clamp(15px, 2.5vw, 18px); /* Адаптивний розмір іконки */
+    width: clamp(15px, 2.5vw, 18px);
     height: clamp(15px, 2.5vw, 18px);
   }
 }

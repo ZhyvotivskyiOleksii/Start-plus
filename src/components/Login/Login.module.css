@@ -1,3 +1,18 @@
+:root {
+  --background-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0B0B0;
+  --accent-color: #A16BFF;
+  --button-bg-start: rgba(50, 50, 50, 0.8);
+  --button-bg-end: rgba(20, 20, 20, 0.8);
+  --button-text-color: #FFFFFF;
+  --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --button-border-light: rgba(255, 255, 255, 0.2);
+  --button-border-dark: rgba(0, 0, 0, 0.5);
+  --service-bg: #2A2A2A;
+}
+
 .loginContainer {
   display: flex;
   align-items: center;
@@ -8,20 +23,20 @@
   box-sizing: border-box;
   position: relative;
   margin-top: 60px;
+  background-color: var(--background-color);
 }
-
 
 .loginBox {
   padding: 25px;
   border-radius: 10px;
   border: 1px solid #f0f0f0;
-  background: white;
+  background: var(--service-bg);
   width: 100%;
   max-width: 500px;
   text-align: center;
   box-sizing: border-box;
+  box-shadow: var(--button-shadow);
 }
-
 
 .illustration {
   width: 100%;
@@ -29,20 +44,18 @@
   box-sizing: border-box;
 }
 
-
 .title {
   font-size: 1.5rem;
   margin-bottom: 20px;
   text-align: start;
+  color: var(--text-color);
 }
-
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
-
 
 .phoneInputWrapper {
   display: flex;
@@ -53,14 +66,15 @@
 
 .label {
   font-size: 1rem;
-  color: #333;
+  color: var(--text-secondary-color);
   font-weight: 600;
   text-align: start;
 }
 
 input {
-  background: #edecec;;
+  background: #edecec;
 }
+
 .phoneInput {
   display: flex;
   align-items: center;
@@ -79,7 +93,7 @@ input {
   display: flex;
   align-items: center;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-secondary-color);
 }
 
 .countryToggle {
@@ -93,10 +107,11 @@ input {
   width: 24px;
   height: 24px;
   margin-left: 8px;
+  background: var(--button-bg-start);
 }
 
 .arrowDown {
-  color: #000000;
+  color: var(--text-color);
 }
 
 .verticalDivider {
@@ -111,15 +126,16 @@ input {
   outline: none;
   font-size: 1rem;
   padding: 0 12px;
+  background: #edecec;
+  color: var(--text-color);
 }
-
 
 .countryList {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
-  background: #fff;
+  background: var(--service-bg);
   border: 1px solid #ccc;
   border-radius: 6px;
   max-height: 200px;
@@ -134,30 +150,38 @@ input {
   cursor: pointer;
   display: flex;
   align-items: center;
+  color: var(--text-color);
 }
 
 .countryItem:hover {
-  background: #f0f0f0;
+  background: var(--button-bg-start);
 }
 
 .getCodeButton {
   padding: 12px;
-  background: #A16BFF;
-  color: #fff;
+  background: var(--accent-color);
+  color: var(--button-text-color);
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
 }
 
 .getCodeButton:hover {
-  background: #0056b3;
+  background: var(--button-bg-start);
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px);
 }
-
 
 .description {
   font-size: 0.9rem;
-  color: #666;
+  color: var(--text-secondary-color);
   margin-top: 10px;
   text-align: start;
 }
@@ -167,6 +191,7 @@ input {
   align-items: center;
   gap: 5px;
   font-size: 0.9rem;
+  color: var(--text-color);
 }
 
 .error {
@@ -174,7 +199,6 @@ input {
   font-size: 0.9rem;
   margin-top: 5px;
 }
-
 
 @media (max-width: 768px) {
   .loginContainer {
