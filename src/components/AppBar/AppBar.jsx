@@ -19,12 +19,16 @@ export default function AppBar({ lang, setLang }) {
     return flags[langKey];
   };
 
+  const toggleMobileMenu = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
   return (
     <>
       <header className={css.header}>
         <Logo />
         <div className={css.desktopMenu}>
-          <BarMenu lang={lang} />
+          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} />
         </div>
         <div className={css.desktopLang}>
           <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
@@ -43,16 +47,21 @@ export default function AppBar({ lang, setLang }) {
             </ul>
           )}
         </div>
-        <button className={css.burger} onClick={() => setMobileOpen(true)}>
-          <FaBars />
-        </button>
+        {!mobileOpen && (
+          <button className={css.burger} onClick={toggleMobileMenu}>
+            <FaBars />
+          </button>
+        )}
       </header>
       <div className={`${css.mobileMenu} ${mobileOpen ? css.show : ""}`}>
-        <button className={css.close} onClick={() => setMobileOpen(false)}>
-          <FaTimes />
-        </button>
+        {mobileOpen && (
+          <button className={css.burger} onClick={toggleMobileMenu}>
+            <FaTimes />
+          </button>
+        )}
+        <Logo />
         <div className={css.mobileMenuContent}>
-          <BarMenu lang={lang} />
+          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} />
         </div>
         <div className={css.socials}>
           <a href="#" target="_blank"><FaTelegram /></a>
@@ -68,7 +77,7 @@ export default function AppBar({ lang, setLang }) {
             {Object.keys(languages).map((key) => (
               <span
                 key={key}
-                onClick={() => setLang(key)}
+                onClick={() => { setLang(key); toggleMobileMenu(); }}
                 className={lang === key ? css.active : ""}
               >
                 <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />

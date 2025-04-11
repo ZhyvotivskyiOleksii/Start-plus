@@ -2,10 +2,9 @@ import { useNavigate } from "react-router-dom";
 import css from "./BarMenu.module.css";
 import { useState, useEffect } from "react";
 
-export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogout }) {
+export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogout, closeMobileMenu }) {
   const navigate = useNavigate();
   const [userPhone, setUserPhone] = useState("");
-
 
   useEffect(() => {
     const storedPhone = localStorage.getItem("phone");
@@ -15,7 +14,6 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
       setUserPhone("");
     }
   }, [isAuthenticated]);
-
 
   const menuItems = {
     en: [
@@ -59,6 +57,7 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     };
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
+      closeMobileMenu();
     }
   };
 
@@ -68,11 +67,13 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     } else {
       navigate("/dashboard");
     }
+    closeMobileMenu();
   };
 
   const handleLogoutClick = () => {
     handleLogout();
     navigate("/");
+    closeMobileMenu();
   };
 
   return (
