@@ -22,7 +22,6 @@ const translations = {
     button: "Order Now",
   },
 };
-
 export default function HeroSection({ lang = "pl" }) {
   const { heading, subheading, button } = translations[lang] || translations.pl;
 
