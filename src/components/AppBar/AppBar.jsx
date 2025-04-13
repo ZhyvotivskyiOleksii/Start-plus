@@ -11,31 +11,35 @@ import gbFlag from "../../assets/flags/gb.png";
 const languages = { pl: "PL", uk: "UA", ru: "RU", en: "EN" };
 const flags = { pl: plFlag, uk: uaFlag, ru: ruFlag, en: gbFlag };
 
-export default function AppBar({ lang, setLang }) {
+export default function AppBar({ lang, setLang, ...props }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
+      const isMobileView = window.innerWidth <= 768;
+      setIsMobile(isMobileView);
+      if (!isMobileView) {
         setMobileOpen(false);
       }
     };
-    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const getFlagPath = (langKey) => flags[langKey];
 
-  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
+  const toggleMobileMenu = () => {
+    setMobileOpen(!mobileOpen);
+  };
 
   return (
     <>
       <header className={css.header}>
         <Logo />
         <div className={css.desktopMenu}>
-          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} />
+          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={true} />
         </div>
         <div className={css.desktopLang}>
           <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
@@ -60,40 +64,50 @@ export default function AppBar({ lang, setLang }) {
           </button>
         )}
       </header>
-      <div className={`${css.mobileMenu} ${mobileOpen ? css.show : ""}`}>
-        {mobileOpen && (
+
+      {isMobile && (
+        <div className={`${css.mobileMenu} ${mobileOpen ? css.show : ""}`}>
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaTimes />
           </button>
-        )}
-        <Logo />
-        <div className={css.mobileMenuContent}>
-          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} />
-        </div>
-        <div className={css.socials}>
-          <a href="#" target="_blank"><FaTelegram /></a>
-          <a href="#" target="_blank"><FaViber /></a>
-          <a href="#" target="_blank"><FaFacebookMessenger /></a>
-        </div>
-        <div className={css.mobileLang}>
-          <div className={css.langHeader}>
-            <FaGlobe className={css.icon} />
-            <span>Language</span>
+          <Logo />
+          <div className={css.mobileMenuContent}>
+            <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={mobileOpen} />
           </div>
-          <div className={css.langRow}>
-            {Object.keys(languages).map((key) => (
-              <span
-                key={key}
-                onClick={() => { setLang(key); toggleMobileMenu(); }}
-                className={lang === key ? css.active : ""}
-              >
-                <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
-                {languages[key]}
-              </span>
-            ))}
+          <div className={css.socials}>
+            <a href="#" target="_blank" rel="noreferrer">
+              <FaTelegram />
+            </a>
+            <a href="#" target="_blank" rel="noreferrer">
+              <FaViber />
+            </a>
+            <a href="#" target="_blank" rel="noreferrer">
+              <FaFacebookMessenger />
+            </a>
+          </div>
+          <div className={css.mobileLang}>
+            <div className={css.langHeader}>
+              <FaGlobe className={css.icon} />
+              <span>Language</span>
+            </div>
+            <div className={css.langRow}>
+              {Object.keys(languages).map((key) => (
+                <span
+                  key={key}
+                  onClick={() => {
+                    setLang(key);
+                    toggleMobileMenu();
+                  }}
+                  className={lang === key ? css.active : ""}
+                >
+                  <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
+                  {languages[key]}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

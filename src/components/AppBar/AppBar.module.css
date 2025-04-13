@@ -1,7 +1,6 @@
 :root {
   --background-color: #1A1A1A;
   --text-color: #FFFFFF;
-  --text-secondary-color: #B0B0B0;
   --accent-color: #A16BFF;
   --discount-color: #28a745;
   --button-bg-start: rgba(50, 50, 50, 0.8);
@@ -28,27 +27,6 @@
   width: 100%;
   z-index: 1000;
   box-shadow: var(--service-shadow);
-}
-
-.socials {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 34px;
-  width: 100%;
-  margin: 30px auto 20px auto;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding-bottom: 15px;
-}
-
-.socials a {
-  color: var(--accent-color);
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-.socials a:hover {
-  color: var(--discount-color);
-  transform: translateY(-2px);
 }
 
 .desktopMenu {
@@ -91,7 +69,7 @@
 
 .langBox:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .icon {
@@ -133,7 +111,7 @@
   font-size: 24px;
   color: var(--button-text-color);
   cursor: pointer;
-  padding: clamp(8px, 1vw, 10px);
+  padding: clamp(8px,1vw,10px);
   border-radius: 10px;
   box-shadow: var(--button-shadow);
   transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
@@ -156,16 +134,20 @@
 
 .burger:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .mobileMenu {
   position: fixed;
-  top: -100%;
+  top: 0;
   left: 0;
   width: 100%;
   height: 100vh;
-  background: var(--background-color);
+  background: #1A1A1A;
+  background-image: url(/public/hero/hero-bg1.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom;
   color: var(--text-color);
   padding: 20px;
   display: flex;
@@ -173,13 +155,16 @@
   align-items: flex-start;
   z-index: 1100;
   box-shadow: var(--service-shadow);
+  transform: translateY(-100%);
   opacity: 0;
-  transition: top 0.6s ease-in-out, opacity 0.6s ease-in-out;
-  transition-delay: 0s, 0.1s;
+  transition: transform 0.6s ease, opacity 0.6s ease;
 }
 
+
+
+
 .mobileMenu.show {
-  top: 0;
+  transform: translateY(0);
   opacity: 1;
 }
 
@@ -189,6 +174,27 @@
   flex-direction: column;
   gap: 15px;
   width: 100%;
+}
+
+.socials {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 34px;
+  width: 100%;
+  margin: 30px auto 20px auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 15px;
+}
+
+.socials a {
+  color: var(--accent-color);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.socials a:hover {
+  color: var(--discount-color);
+  transform: translateY(-2px);
 }
 
 .mobileLang {
@@ -243,7 +249,7 @@
 
 .langRow span:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .active {
@@ -256,14 +262,18 @@
   .desktopMenu {
     display: none;
   }
-  .header {
-    background-color: var(--background-color);
-  }
   .desktopLang {
     display: none;
   }
   .burger {
     display: block;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobileMenu,
+  .mobileMenu.show {
+    display: none !important;
   }
 }
 

@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
-import css from "./BarMenu.module.css";
 import { useState, useEffect } from "react";
+import css from "./BarMenu.module.css";
 
-export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogout, closeMobileMenu }) {
+export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogout, closeMobileMenu, isOpen }) {
   const navigate = useNavigate();
   const [userPhone, setUserPhone] = useState("");
 
@@ -46,22 +46,11 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     ],
   };
 
-  const items = menuItems[lang] || menuItems["pl"];
+  const items = menuItems[lang] || menuItems.pl;
 
   const handleMenuClick = (itemName) => {
-    const standardNames = {
-      en: "Standard",
-      pl: "Zwykłe",
-      uk: "Звичайне",
-      ru: "Обычное",
-    };
-    const renovationNames = {
-      en: "Renovation",
-      pl: "Remont",
-      uk: "Ремонт",
-      ru: "Ремонт",
-    };
-
+    const standardNames = { en: "Standard", pl: "Zwykłe", uk: "Звичайне", ru: "Обычное" };
+    const renovationNames = { en: "Renovation", pl: "Remont", uk: "Ремонт", ru: "Ремонт" };
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
       closeMobileMenu();
@@ -88,10 +77,10 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
 
   return (
     <nav className={css.barMenu}>
-      <div className={css["menu-container"]}>
+      <div className={`${css["menu-container"]} ${isOpen ? css.open : css.close}`}>
         <ul>
           {items.map((item, index) => (
-            <li key={index}>
+            <li key={index} style={{ transitionDelay: `${0.05 * index}s` }}>
               <a
                 href="#"
                 onClick={(e) => {

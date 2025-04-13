@@ -1,92 +1,208 @@
+:where(:root) {
+  --background-color: #1A1A1A;
+  --text-color: #FFFFFF;
+  --text-secondary-color: #B0B0B0;
+  --accent-color: #A16BFF;
+  --discount-color: #28a745;
+  --button-bg-start: rgba(50, 50, 50, 0.8);
+  --button-bg-end: rgba(20, 20, 20, 0.8);
+  --button-text-color: #FFFFFF;
+  --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --button-border-light: rgba(255, 255, 255, 0.2);
+  --button-border-dark: rgba(0, 0, 0, 0.5);
+  --service-bg: #2A2A2A;
+  --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
 .hero {
   position: relative;
-  height: 100vh; /* Висота на весь екран */
-  background-image: url("/src/assets/bg.webp");
+  min-height: 100vh;
+  width: 100%;
   background-size: cover;
   background-position: center;
-  color: #000;
+  background-repeat: no-repeat;
+  background-image: url("/src/assets/bg.webp");
+  color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  margin: 0; /* Скидаємо всі відступи */
-  padding: 0; /* Скидаємо всі відступи */
-  width: 100vw; /* 100% ширини вікна */
-  max-width: none; /* Скидаємо обмеження ширини */
-  box-sizing: border-box; /* Переконаємося, що padding не впливає на розміри */
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 0;
 }
 
 .heroContent {
-  text-align: center;
-  padding: 20px;
+  position: relative;
   z-index: 1;
-  max-width: 1440px; /* Обмежуємо ширину вмісту */
-  width: 100%; /* Вміст займає доступну ширину */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1440px;
+  width: 100%;
+  padding: 0 clamp(20px, 4vw, 30px);
 }
 
-.heroContent h1 {
-  font-size: 4.5rem;
-  font-weight: 700;
+.textBlock {
+  flex: 1;
+  text-align: left;
+  padding-right: clamp(20px, 4vw, 40px);
+}
+
+.textBlock h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 800;
   margin-bottom: 1rem;
   line-height: 1.2;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
-  animation: fadeInDown 1.5s ease-out;
 }
 
-.heroContent p {
-  font-size: 1.25rem;
+.textBlock p {
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
   margin-bottom: 2rem;
-  opacity: 0.9;
-  animation: fadeInUp 1.5s ease-out 0.5s backwards;
+  color: var(--text-secondary-color);
 }
 
 .ctaButton {
-  padding: 12px 30px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #fff;
-  background: #A16BFF;
-  border: none;
-  border-radius: 25px;
+  padding: clamp(12px, 1.5vw, 15px) clamp(25px, 3vw, 35px);
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 700;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #A16BFF 0%, #6E4BDC 100%);
+  border: 1px solid rgba(161, 107, 255, 0.3);
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  animation: bounceIn 1.5s ease-out 1s backwards;
+  box-shadow: 0 4px 15px rgba(161, 107, 255, 0.3);
+  transition: all 0.4s ease-in-out;
+  position: relative;
+  overflow: hidden;
 }
 
 .ctaButton:hover {
-  background: #9055e6;
-  transform: scale(1.05);
+  background: linear-gradient(135deg, #B47EFF 0%, #7F55D6 100%);
+  box-shadow: 0 6px 20px rgba(161, 107, 255, 0.5);
+  transform: scale(1.03) translateY(-2px);
+  border-color: rgba(161, 107, 255, 0.5);
 }
 
-@keyframes fadeInDown {
-  0% { opacity: 0; transform: translateY(-50px); }
-  100% { opacity: 1; transform: translateY(0); }
+.ctaButton:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 10px rgba(161, 107, 255, 0.2);
 }
 
-@keyframes fadeInUp {
-  0% { opacity: 0; transform: translateY(50px); }
-  100% { opacity: 1; transform: translateY(0); }
+.ctaButton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: 0.5s;
 }
 
-@keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.5); }
-  50% { transform: scale(1.1); }
-  100% { opacity: 1; transform: scale(1); }
+.ctaButton:hover::after {
+  left: 100%;
+}
+
+.imageBlock {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.heroImage {
+  max-width: 800px;
+  height: auto;
+  object-fit: contain;
+}
+
+@media (max-width: 1024px) {
+  .heroContent {
+    flex-direction: column;
+    text-align: center;
+    padding: 0 clamp(15px, 3vw, 20px);
+  }
+  .textBlock {
+    padding-right: 0;
+    padding-left: 0;
+    margin-bottom: 2rem;
+  }
+  .imageBlock {
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
   .hero {
-    height: 80vh;
+    min-height: 80vh;
   }
-  .heroContent h1 {
-    font-size: 2rem;
+  .textBlock h1 {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    line-height: 1.1;
   }
-  .heroContent p {
-    font-size: 1rem;
+  .textBlock p {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    margin-bottom: 1.5rem;
   }
   .ctaButton {
-    padding: 10px 20px;
-    font-size: 1rem;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 30px);
+    font-size: clamp(0.9rem, 2vw, 1rem);
+  }
+  .heroImage {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    min-height: 100vh;
+  }
+  .heroContent {
+    flex-direction: column;
+    text-align: center;
+    padding: 0 clamp(10px, 3vw, 15px);
+  }
+  .imageBlock {
+    margin-bottom: 1.5rem;
+  }
+  .textBlock {
+    margin-bottom: 0;
+  }
+  .textBlock h1 {
+    padding-top: 90px;
+    text-align: center;
+    font-size: clamp(2.5rem, 5vw, 2.2rem);
+    line-height: 1.1;
+  }
+  .textBlock p {
+    text-align: center;
+
+    font-size: clamp(1rem, 2.5vw, 0.95rem);
+    margin-bottom: 1.2rem;
+  }
+  .ctaButton {
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+    padding: clamp(8px, 2vw, 10px) clamp(15px, 4vw, 25px);
+    font-size: clamp(0.85rem, 2vw, 0.95rem);
+  }
+  .heroImage {
+    max-width: 500px;
+
   }
 }
