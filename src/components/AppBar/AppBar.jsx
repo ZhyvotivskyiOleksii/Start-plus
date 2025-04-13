@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa";
 import css from "./AppBar.module.css";
 import Logo from "../Logo/Logo";
@@ -15,13 +15,20 @@ export default function AppBar({ lang, setLang }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const getFlagPath = (langKey) => {
-    return flags[langKey];
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768) {
+        setMobileOpen(false);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const toggleMobileMenu = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const getFlagPath = (langKey) => flags[langKey];
+
+  const toggleMobileMenu = () => setMobileOpen(!mobileOpen);
 
   return (
     <>

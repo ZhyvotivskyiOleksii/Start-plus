@@ -278,7 +278,7 @@ button:active {
 
 @media (max-width: 760px) {
   .quantity-selector {
-    flex-direction: column;
+   
     gap: 12px;
   }
   .counter {

@@ -55,8 +55,18 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
       uk: "Звичайне",
       ru: "Обычное",
     };
+    const renovationNames = {
+      en: "Renovation",
+      pl: "Remont",
+      uk: "Ремонт",
+      ru: "Ремонт",
+    };
+
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
+      closeMobileMenu();
+    } else if (itemName === renovationNames[lang]) {
+      navigate("/renovation");
       closeMobileMenu();
     }
   };
