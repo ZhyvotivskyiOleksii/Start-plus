@@ -258,7 +258,6 @@
     gap: clamp(10px, 2.778vw, 20px);
     width: 100%;
     font-size: clamp(14px, 2vw, 16px);
-    padding: clamp(15px, 2vw, 20px);
     background: linear-gradient(145deg, rgba(40,40,40,0.9), rgba(20,20,20,0.9));
     border-radius: 16px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.1);

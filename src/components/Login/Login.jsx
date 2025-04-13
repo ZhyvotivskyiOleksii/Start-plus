@@ -99,7 +99,7 @@ export default function Login({ lang, handleLogin }) {
   return (
     <div className={css.loginContainer}>
       <div className={css.illustration}>
-        <img src="/public/icon/login-passcode.svg" alt="Login illustration" />
+        <img src="/icon/login-passcode.svg" alt="Login illustration" />
       </div>
 
       <div className={css.loginBox}>

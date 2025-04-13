@@ -39,7 +39,7 @@ export default function HeroSection({ lang = "pl" }) {
           <button className={css.ctaButton}>{button}</button>
         </div>
         <div className={css.imageBlock}>
-          <img src="/public/hero/hero-bg1.png" alt="Hero" className={css.heroImage} />
+          <img src="/hero/hero-bg1.png" alt="Hero" className={css.heroImage} />
         </div>
 
       </div>
