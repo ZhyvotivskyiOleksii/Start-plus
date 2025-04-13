@@ -1,7 +1,7 @@
 :where(:root) {
   --background-color: #1A1A1A;
   --text-color: #FFFFFF;
-  --text-secondary-color: #B0B0B0;
+  --text-secondary-color: #ececec;
   --accent-color: #A16BFF;
   --discount-color: #28a745;
   --button-bg-start: rgba(50, 50, 50, 0.8);
