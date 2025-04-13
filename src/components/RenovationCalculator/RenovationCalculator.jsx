@@ -95,7 +95,7 @@ export default function RenovationCalculator({ lang }) {
 
   const pricePerSquareMeter = 7.0;
   const pricePerWindow = 40.0;
-  const companyMultiplier = clientType === "company" ? 1.23 : 1.0; // Добавляем множитель для "Firma"
+  const companyMultiplier = clientType === "company" ? 1.23 : 1.0;
 
   const months = [
     "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
@@ -108,198 +108,56 @@ export default function RenovationCalculator({ lang }) {
     "19:00", "20:00",
   ];
 
+  // Оставляем только польский текст
   const texts = {
-    pl: {
-      title: "Mieszkanie po remoncie",
-      areaLabel: "Powierzchnia m²",
-      windowsLabel: "Okien",
-      areaPrice: "7.00 zł/m²",
-      windowsPrice: "40.00 zł/szt",
-      subtitle: "Wybierz poniższe parametry, aby obliczyć koszt.",
-      calendarTitle: "WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA",
-      timeLabel: "Godzina",
-      calendarFooter: "Można zacząć w dowolnym momencie",
-      addressTitle: "WPROWADŹ SWÓJ ADRES",
-      cityLabel: "Wybierz miasto",
-      streetLabel: "Ulica",
-      postalCodeLabel: "Kod pocztowy",
-      houseNumberLabel: "Numer domu",
-      apartmentNumberLabel: "Numer mieszkania",
-      buildingLabel: "Budynek",
-      floorLabel: "Piętro",
-      intercomCodeLabel: "Kod od domofonu",
-      citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
-      contactTitle: "DANE KONTAKTOWE",
-      clientTypeLabel: "Typ klienta",
-      privateLabel: "Osoba prywatna",
-      companyLabel: "Firma",
-      nameLabel: "Imię",
-      companyNameLabel: "Nazwa firmy",
-      nipLabel: "NIP",
-      phoneLabel: "Telefon kontaktowy",
-      emailLabel: "Adres e-mail",
-      additionalInfoLabel: "Dodatkowa informacja do zamówienia",
-      agreement1: "Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.",
-      agreement2: "Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora",
-      locationLabel: "Lokalizacja",
-      specialistInfo: "Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.",
-      workTimeLabel: "Przybliżony czas pracy",
-      cleanersLabel: "Kilka sprzątaczy",
-      datePlaceholder: "Wybierz termin i godzinę",
-      locationCostLabel: "Dodatkowy koszt dojazdu",
-      promoPlaceholder: "Promokod",
-      applyPromo: "Zastosuj",
-      totalLabel: "Do zapłaty",
-      orderButton: "Zamawiam za",
-      todayLabel: "dziś",
-      tomorrowLabel: "jutro",
-      unavailableLabel: "niedostępny",
-      metersLabel: "Metów",
-    },
-    en: {
-      title: "Post-renovation cleaning",
-      areaLabel: "Area m²",
-      windowsLabel: "Windows",
-      areaPrice: "7.00 zł/m²",
-      windowsPrice: "40.00 zł/unit",
-      subtitle: "Select the parameters below to calculate the cost.",
-      calendarTitle: "CHOOSE A CONVENIENT CLEANING DATE AND TIME",
-      timeLabel: "Time",
-      calendarFooter: "You can start at any time",
-      addressTitle: "ENTER YOUR ADDRESS",
-      cityLabel: "Select city",
-      streetLabel: "Street",
-      postalCodeLabel: "Postal code",
-      houseNumberLabel: "House number",
-      apartmentNumberLabel: "Apartment number",
-      buildingLabel: "Building",
-      floorLabel: "Floor",
-      intercomCodeLabel: "Intercom code",
-      citySearchPlaceholder: "Enter the name of the city...",
-      contactTitle: "CONTACT INFORMATION",
-      clientTypeLabel: "Client type",
-      privateLabel: "Private person",
-      companyLabel: "Company",
-      nameLabel: "Name",
-      companyNameLabel: "Company name",
-      nipLabel: "NIP",
-      phoneLabel: "Contact phone",
-      emailLabel: "Email address",
-      additionalInfoLabel: "Additional information for the order",
-      agreement1: "By placing an order, I agree to the Terms and Privacy Policy.",
-      agreement2: "I consent to the processing of my personal data by the administrator.",
-      locationLabel: "Location",
-      specialistInfo: "Our cleaners have all the necessary cleaning supplies and equipment.",
-      workTimeLabel: "Estimated work time",
-      cleanersLabel: "Multiple cleaners",
-      datePlaceholder: "Select date and time",
-      locationCostLabel: "Additional travel cost",
-      promoPlaceholder: "Promo code",
-      applyPromo: "Apply",
-      totalLabel: "Total to pay",
-      orderButton: "Order for",
-      todayLabel: "today",
-      tomorrowLabel: "tomorrow",
-      unavailableLabel: "unavailable",
-      metersLabel: "Meters",
-    },
-    uk: {
-      title: "Прибирання після ремонту",
-      areaLabel: "Площа м²",
-      windowsLabel: "Вікон",
-      areaPrice: "7.00 zł/м²",
-      windowsPrice: "40.00 zł/шт",
-      subtitle: "Виберіть параметри нижче, щоб розрахувати вартість.",
-      calendarTitle: "ОБЕРІТЬ ЗРУЧНУ ДАТУ ТА ЧАС ПРИБИРАННЯ",
-      timeLabel: "Час",
-      calendarFooter: "Можна почати в будь-який момент",
-      addressTitle: "ВВЕДІТЬ ВАШУ АДРЕСУ",
-      cityLabel: "Виберіть місто",
-      streetLabel: "Вулиця",
-      postalCodeLabel: "Поштовий індекс",
-      houseNumberLabel: "Номер будинку",
-      apartmentNumberLabel: "Номер квартири",
-      buildingLabel: "Будівля",
-      floorLabel: "Поверх",
-      intercomCodeLabel: "Код домофона",
-      citySearchPlaceholder: "Введіть назву міста...",
-      contactTitle: "КОНТАКТНА ІНФОРМАЦІЯ",
-      clientTypeLabel: "Тип клієнта",
-      privateLabel: "Приватна особа",
-      companyLabel: "Компанія",
-      nameLabel: "Ім'я",
-      companyNameLabel: "Назва компанії",
-      nipLabel: "NIP",
-      phoneLabel: "Контактний телефон",
-      emailLabel: "Адреса електронної пошти",
-      additionalInfoLabel: "Додаткова інформація до замовлення",
-      agreement1: "Оформляючи замовлення, я погоджуюсь з Умовами та Політикою конфіденційності.",
-      agreement2: "Я даю згоду на обробку моїх персональних даних адміністратором.",
-      locationLabel: "Місцезнаходження",
-      specialistInfo: "Наші прибиральники мають усі необхідні засоби для прибирання та обладнання.",
-      workTimeLabel: "Орієнтовний час роботи",
-      cleanersLabel: "Кілька прибиральників",
-      datePlaceholder: "Виберіть дату та час",
-      locationCostLabel: "Додаткова вартість доставки",
-      promoPlaceholder: "Промокод",
-      applyPromo: "Застосувати",
-      totalLabel: "До сплати",
-      orderButton: "Замовляю за",
-      todayLabel: "сьогодні",
-      tomorrowLabel: "завтра",
-      unavailableLabel: "недоступно",
-      metersLabel: "Метрів",
-    },
-    ru: {
-      title: "Уборка после ремонта",
-      areaLabel: "Площадь м²",
-      windowsLabel: "Окон",
-      areaPrice: "7.00 zł/м²",
-      windowsPrice: "40.00 zł/шт",
-      subtitle: "Выберите параметры ниже, чтобы рассчитать стоимость.",
-      calendarTitle: "ВЫБЕРИТЕ УДОБНУЮ ДАТУ И ВРЕМЯ УБОРКИ",
-      timeLabel: "Время",
-      calendarFooter: "Можно начать в любое время",
-      addressTitle: "ВВЕДИТЕ ВАШ АДРЕС",
-      cityLabel: "Выберите город",
-      streetLabel: "Улица",
-      postalCodeLabel: "Почтовый индекс",
-      houseNumberLabel: "Номер дома",
-      apartmentNumberLabel: "Номер квартиры",
-      buildingLabel: "Здание",
-      floorLabel: "Этаж",
-      intercomCodeLabel: "Код домофона",
-      citySearchPlaceholder: "Введите название города...",
-      contactTitle: "КОНТАКТНАЯ ИНФОРМАЦИЯ",
-      clientTypeLabel: "Тип клиента",
-      privateLabel: "Частное лицо",
-      companyLabel: "Компания",
-      nameLabel: "Имя",
-      companyNameLabel: "Название компании",
-      nipLabel: "NIP",
-      phoneLabel: "Контактный телефон",
-      emailLabel: "Адрес электронной почты",
-      additionalInfoLabel: "Дополнительная информация к заказу",
-      agreement1: "Оформляя заказ, я соглашаюсь с Условиями и Политикой конфиденциальности.",
-      agreement2: "Я даю согласие на обработку моих персональных данных администратором.",
-      locationLabel: "Местоположение",
-      specialistInfo: "Наши уборщики имеют все необходимые средства для уборки и оборудование.",
-      workTimeLabel: "Примерное время работы",
-      cleanersLabel: "Несколько уборщиков",
-      datePlaceholder: "Выберите дату и время",
-      locationCostLabel: "Дополнительная стоимость доставки",
-      promoPlaceholder: "Промокод",
-      applyPromo: "Применить",
-      totalLabel: "К оплате",
-      orderButton: "Заказываю за",
-      todayLabel: "сегодня",
-      tomorrowLabel: "завтра",
-      unavailableLabel: "недоступно",
-      metersLabel: "Метров",
-    },
+    title: "Mieszkanie po remoncie",
+    areaLabel: "Powierzchnia m²",
+    windowsLabel: "Okien",
+    areaPrice: "7.00 zł/m²",
+    windowsPrice: "40.00 zł/szt",
+    subtitle: "Wybierz poniższe parametry, aby obliczyć koszt.",
+    calendarTitle: "WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA",
+    timeLabel: "Godzina",
+    calendarFooter: "Można zacząć w dowolnym momencie",
+    addressTitle: "WPROWADŹ SWÓJ ADRES",
+    cityLabel: "Wybierz miasto",
+    streetLabel: "Ulica",
+    postalCodeLabel: "Kod pocztowy",
+    houseNumberLabel: "Numer domu",
+    apartmentNumberLabel: "Numer mieszkania",
+    buildingLabel: "Budynek",
+    floorLabel: "Piętro",
+    intercomCodeLabel: "Kod od domofonu",
+    citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
+    contactTitle: "DANE KONTAKTOWE",
+    clientTypeLabel: "Typ klienta",
+    privateLabel: "Osoba prywatna",
+    companyLabel: "Firma",
+    nameLabel: "Imię",
+    companyNameLabel: "Nazwa firmy",
+    nipLabel: "NIP",
+    phoneLabel: "Telefon kontaktowy",
+    emailLabel: "Adres e-mail",
+    additionalInfoLabel: "Dodatkowa informacja do zamówienia",
+    agreement1: "Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.",
+    agreement2: "Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora",
+    locationLabel: "Lokalizacja",
+    specialistInfo: "Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.",
+    workTimeLabel: "Przybliżony czas pracy",
+    cleanersLabel: "Kilka sprzątaczy",
+    datePlaceholder: "Wybierz termin i godzinę",
+    locationCostLabel: "Dodatkowy koszt dojazdu",
+    promoPlaceholder: "Promokod",
+    applyPromo: "Zastosuj",
+    totalLabel: "Do zapłaty",
+    orderButton: "Zamawiam za",
+    todayLabel: "dziś",
+    tomorrowLabel: "jutro",
+    unavailableLabel: "niedostępny",
+    metersLabel: "Metów",
   };
 
-  const t = texts[lang] || texts["pl"];
+  const t = texts; // Теперь просто используем texts напрямую, так как у нас только один язык
 
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
@@ -444,7 +302,7 @@ export default function RenovationCalculator({ lang }) {
   const calculateBasePrice = () => {
     let total = area * pricePerSquareMeter + windows * pricePerWindow;
     total += cities[selectedCity] || 0;
-    total *= companyMultiplier; // Применяем множитель для "Firma"
+    total *= companyMultiplier;
     return total.toFixed(2);
   };
 
@@ -605,13 +463,6 @@ export default function RenovationCalculator({ lang }) {
                   }}
                   min="0"
                 />
-                <style jsx>{`
-                  input::-webkit-outer-spin-button,
-                  input::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
-                  }
-                `}</style>
                 <span className={css["counter-label"]}>{t.areaLabel}</span>
                 <button
                   className={css["counter-button"]}
@@ -643,13 +494,6 @@ export default function RenovationCalculator({ lang }) {
                   }}
                   min="0"
                 />
-                <style jsx>{`
-                  input::-webkit-outer-spin-button,
-                  input::-webkit-inner-spin-button {
-                    -webkit-appearance: none;
-                    margin: 0;
-                  }
-                `}</style>
                 <span className={css["counter-label"]}>{t.windowsLabel}</span>
                 <button
                   className={css["counter-button"]}
