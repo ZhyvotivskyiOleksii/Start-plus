@@ -6,7 +6,7 @@ import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
 import AdminPanel from "./components/AdminPanel";
 import Login from "./components/Login/Login";
-import Dashboard from "./components/Dashboard/Dashboard";
+import Dashboard from "./components/dashboard/Dashboard";
 
 export default function App() {
   const [lang, setLang] = useState(localStorage.getItem("lang") || "pl");
@@ -41,35 +41,16 @@ export default function App() {
         lang={lang}
         setLang={setLang}
         isAuthenticated={isAuthenticated}
+        handleLogin={handleLogin}
         handleLogout={handleLogout}
       />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <HeroSection
-              lang={lang}
-              isAuthenticated={isAuthenticated}
-              handleLogin={handleLogin}
-              handleLogout={handleLogout}
-            />
-          }
-        />
+        <Route path="/" element={<HeroSection lang={lang} />} />
         <Route path="/calculator" element={<Calculator lang={lang} />} />
-        <Route
-          path="/renovation" 
-          element={
-            <RenovationCalculator
-              lang={lang}
-              isAuthenticated={isAuthenticated}
-              handleLogin={handleLogin}
-              handleLogout={handleLogout}
-            />
-          }
-        />
+        <Route path="/renovation" element={<RenovationCalculator lang={lang} />} />
         <Route
           path="/admin"
-          element={isAuthenticated ? <AdminPanel /> : <Navigate to="/" />}
+          element={isAuthenticated ? <AdminPanel lang={lang} /> : <Navigate to="/" />}
         />
         <Route
           path="/login"
@@ -77,14 +58,18 @@ export default function App() {
             !isAuthenticated ? (
               <Login lang={lang} handleLogin={handleLogin} />
             ) : (
-              <Navigate to="/dashboard" />
+              <Navigate to="/" /> 
             )
           }
         />
         <Route
           path="/dashboard"
           element={
-            isAuthenticated ? <Dashboard lang={lang} /> : <Navigate to="/login" />
+            isAuthenticated ? (
+              <Dashboard lang={lang} handleLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )
           }
         />
         <Route path="*" element={<Navigate to="/" />} />

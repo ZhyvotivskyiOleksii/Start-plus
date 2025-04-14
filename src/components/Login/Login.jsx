@@ -90,7 +90,6 @@ export default function Login({ lang, handleLogin }) {
     { code: "+46", name: "Sweden", flag: "🇸🇪" },
     { code: "+41", name: "Switzerland", flag: "🇨🇭" },
     { code: "+44", name: "United Kingdom", flag: "🇬🇧" },
-    { code: "+1", name: "United States", flag: "🇺🇸" },
   ];
 
   const handleSubmit = async (e) => {
@@ -150,14 +149,13 @@ export default function Login({ lang, handleLogin }) {
         throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
-      console.log("Тест: Верифікація успішна, перенаправлення на дашборд");
+      console.log("Тест: Верифікація успішна, викликаємо handleLogin");
       handleLogin(data.token, fullPhone);
       setPhone("");
       setSmsCode("");
       setShowVerification(false);
       setError("");
       setVerifyError("");
-      navigate("/dashboard");
     } catch (error) {
       console.log("Тест: Помилка перевірки:", error);
       setVerifyError("Помилка перевірки: " + error.message);
@@ -176,77 +174,75 @@ export default function Login({ lang, handleLogin }) {
 
       <div className={css.loginBox}>
         <h2 className={css.title}>{t.title}</h2>
-        {!showVerification ? (
-          <form onSubmit={handleSubmit} className={css.form}>
-            <div className={css.phoneInputWrapper}>
-              <label className={css.label}>{t.phonePlaceholder}</label>
-              <div className={css.phoneInput}>
-                <div className={css.countrySection}>
-                  <span className={css.countryCodeDisplay}>
-                    {selectedCountry?.flag} {countryCode}
-                  </span>
-                  <button
-                    type="button"
-                    className={css.countryToggle}
-                    onClick={() => setIsCountryListOpen(!isCountryListOpen)}
-                  >
-                    <span className={css.arrowDown}>▼</span>
-                  </button>
-                </div>
-                <div className={css.verticalDivider}></div>
-                <input
-                  type="tel"
-                  placeholder=""
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className={css.phoneNumber}
-                />
+        <form onSubmit={showVerification ? handleVerifyCode : handleSubmit} className={css.form}>
+          <div className={css.phoneInputWrapper}>
+            <label className={css.label}>{t.phonePlaceholder}</label>
+            <div className={css.phoneInput}>
+              <div className={css.countrySection}>
+                <span className={css.countryCodeDisplay}>
+                  {selectedCountry?.flag} {countryCode}
+                </span>
+                <button
+                  type="button"
+                  className={css.countryToggle}
+                  onClick={() => setIsCountryListOpen(!isCountryListOpen)}
+                >
+                  <span className={css.arrowDown}>▼</span>
+                </button>
               </div>
-              {isCountryListOpen && (
-                <div className={css.countryList}>
-                  {countryCodes.map((country) => (
-                    <div
-                      key={country.code}
-                      className={css.countryItem}
-                      onClick={() => {
-                        setCountryCode(country.code);
-                        setIsCountryListOpen(false);
-                      }}
-                    >
-                      {country.flag} {country.name} ({country.code})
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className={css.verticalDivider}></div>
+              <input
+                type="tel"
+                placeholder=""
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className={css.phoneNumber}
+              />
             </div>
+            {isCountryListOpen && (
+              <div className={css.countryList}>
+                {countryCodes.map((country) => (
+                  <div
+                    key={country.code}
+                    className={css.countryItem}
+                    onClick={() => {
+                      setCountryCode(country.code);
+                      setIsCountryListOpen(false);
+                    }}
+                  >
+                    {country.flag} {country.name} ({country.code})
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-            {error && <p className={css.error}>{error}</p>}
+          {error && <p className={css.error}>{error}</p>}
 
-            <button type="submit" className={css.getCodeButton}>
-              {t.getCodeButton}
-            </button>
+          {showVerification && (
+            <div className={css.verifyInputWrapper}>
+              <label className={css.label}>{t.verifyPlaceholder}</label>
+              <input
+                type="text"
+                placeholder=""
+                value={smsCode}
+                onChange={(e) => setSmsCode(e.target.value)}
+                className={css.smsCodeInput}
+              />
+              {verifyError && <p className={css.error}>{verifyError}</p>}
+            </div>
+          )}
 
-            <p className={css.description}>{t.description}</p>
-            <label className={css.agree}>
-              <input type="checkbox" required />
-              {t.agree}
-            </label>
-          </form>
-        ) : (
-          <form onSubmit={handleVerifyCode} className={css.form}>
-            <input
-              type="text"
-              placeholder={t.verifyPlaceholder}
-              value={smsCode}
-              onChange={(e) => setSmsCode(e.target.value)}
-              className={css.smsCodeInput}
-            />
-            <button type="submit" className={css.verifyButton}>
-              {t.verifyButton}
-            </button>
-            {verifyError && <p className={css.error}>{verifyError}</p>}
-          </form>
-        )}
+          <button type="submit" className={css.actionButton}>
+            {showVerification ? t.verifyButton : t.getCodeButton}
+          </button>
+
+          <p className={css.description}>{t.description}</p>
+          <label className={css.agree}>
+            <input type="checkbox" required />
+            <span>{t.agree}</span>
+          </label>
+        </form>
       </div>
     </div>
   );

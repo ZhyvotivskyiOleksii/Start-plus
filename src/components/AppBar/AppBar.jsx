@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa";
 import css from "./AppBar.module.css";
 import Logo from "../Logo/Logo";
@@ -12,11 +12,13 @@ import gbFlag from "../../assets/flags/gb.png";
 const languages = { pl: "PL", uk: "UA", ru: "RU", en: "EN" };
 const flags = { pl: plFlag, uk: uaFlag, ru: ruFlag, en: gbFlag };
 
-export default function AppBar({ lang, setLang, ...props }) {
+export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, handleLogout }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [userPhone, setUserPhone] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -48,6 +50,15 @@ export default function AppBar({ lang, setLang, ...props }) {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const storedPhone = localStorage.getItem("phone");
+    if (isAuthenticated && storedPhone) {
+      setUserPhone(storedPhone);
+    } else {
+      setUserPhone("");
+    }
+  }, [isAuthenticated]);
+
   const getFlagPath = (langKey) => flags[langKey];
 
   const toggleMobileMenu = () => {
@@ -64,12 +75,39 @@ export default function AppBar({ lang, setLang, ...props }) {
     toggleMobileMenu();
   };
 
+  const handleUserClick = () => {
+    if (location.pathname === "/dashboard") {
+      document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
+      setTimeout(() => {
+        navigate("/");
+      }, 300);
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
+  const welcomeText = {
+    en: "Welcome",
+    pl: "Witaj",
+    uk: "Вітаємо",
+    ru: "Добро пожаловать",
+  };
+
+  const welcome = welcomeText[lang] || welcomeText.pl;
+
   return (
     <>
       <header className={css.header}>
         <Logo />
         <div className={css.desktopMenu}>
-          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={true} {...props} />
+          <BarMenu
+            lang={lang}
+            isAuthenticated={isAuthenticated}
+            handleLogin={handleLogin}
+            handleLogout={handleLogout}
+            closeMobileMenu={toggleMobileMenu}
+            isOpen={true}
+          />
         </div>
         <div className={css.desktopLang}>
           <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
@@ -88,21 +126,37 @@ export default function AppBar({ lang, setLang, ...props }) {
             </ul>
           )}
         </div>
-        {!mobileOpen && (
+        {isMobile && isAuthenticated && (
+          <div className={css["user-info"]} onClick={handleUserClick}>
+            <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
+            <div className={css["user-info-text"]}>
+              <span className={css["welcome-text"]}>{welcome}</span>
+              <span className={css["user-phone"]}>{userPhone}</span>
+            </div>
+          </div>
+        )}
+        {isMobile && !isAuthenticated && !mobileOpen && (
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaBars />
           </button>
         )}
       </header>
 
-      {isMobile && (
+      {isMobile && !isAuthenticated && (
         <div className={`${css.mobileMenu} ${mobileOpen ? css.show : ""}`}>
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaTimes />
           </button>
           <Logo />
           <div className={css.mobileMenuContent}>
-            <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={mobileOpen} {...props} />
+            <BarMenu
+              lang={lang}
+              isAuthenticated={isAuthenticated}
+              handleLogin={handleLogin}
+              handleLogout={handleLogout}
+              closeMobileMenu={toggleMobileMenu}
+              isOpen={mobileOpen}
+            />
           </div>
           <div className={css.socials}>
             <a href="#" target="_blank" rel="noreferrer">

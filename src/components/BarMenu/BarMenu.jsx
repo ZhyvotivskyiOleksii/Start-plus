@@ -1,10 +1,27 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import css from "./BarMenu.module.css";
 
-export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogout, closeMobileMenu, isOpen }) {
+export default function BarMenu({
+  lang,
+  isAuthenticated,
+  handleLogin,
+  handleLogout,
+  closeMobileMenu,
+  isOpen,
+}) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userPhone, setUserPhone] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     const storedPhone = localStorage.getItem("phone");
@@ -46,11 +63,29 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     ],
   };
 
+  const welcomeText = {
+    en: "Welcome",
+    pl: "Witaj",
+    uk: "Вітаємо",
+    ru: "Добро пожаловать",
+  };
+
   const items = menuItems[lang] || menuItems.pl;
+  const welcome = welcomeText[lang] || welcomeText.pl;
 
   const handleMenuClick = (itemName) => {
-    const standardNames = { en: "Standard", pl: "Zwykłe", uk: "Звичайне", ru: "Обычное" };
-    const renovationNames = { en: "Renovation", pl: "Remont", uk: "Ремонт", ru: "Ремонт" };
+    const standardNames = {
+      en: "Standard",
+      pl: "Zwykłe",
+      uk: "Звичайне",
+      ru: "Обычное",
+    };
+    const renovationNames = {
+      en: "Renovation",
+      pl: "Remont",
+      uk: "Ремонт",
+      ru: "Ремонт",
+    };
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
       if (closeMobileMenu && !isOpen) closeMobileMenu();
@@ -60,18 +95,19 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     }
   };
 
-  const handleLoginClick = () => {
+  const handleUserClick = () => {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      navigate("/dashboard");
+      if (location.pathname === "/dashboard") {
+        document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
+        setTimeout(() => {
+          navigate("/");
+        }, 300);
+      } else {
+        navigate("/dashboard");
+      }
     }
-    if (closeMobileMenu && !isOpen) closeMobileMenu();
-  };
-
-  const handleLogoutClick = () => {
-    handleLogout();
-    navigate("/");
     if (closeMobileMenu && !isOpen) closeMobileMenu();
   };
 
@@ -95,32 +131,25 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
             </li>
           ))}
         </ul>
-        {isAuthenticated ? (
-          <div className={css["user-info"]}>
-            <span className={css["user-phone"]}>
-              {lang === "en" && "Welcome, "}
-              {lang === "pl" && "Witaj, "}
-              {lang === "uk" && "Вітаємо, "}
-              {lang === "ru" && "Добро пожаловать, "}
-              {userPhone}
-            </span>
-            <button onClick={handleLogoutClick} className={css["logout-button"]}>
-              <img src="/icon/logout.svg" alt="Logout" className={css["logout-icon"]} />
-              {lang === "en" && "Logout"}
-              {lang === "pl" && "Wyloguj"}
-              {lang === "uk" && "Вийти"}
-              {lang === "ru" && "Выйти"}
+        <div className={css["user-action"]} onClick={handleUserClick}>
+          {isAuthenticated && !isMobile ? (
+            <div className={css["user-info"]}>
+              <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
+              <div className={css["user-info-text"]}>
+                <span className={css["welcome-text"]}>{welcome}</span>
+                <span className={css["user-phone"]}>{userPhone}</span>
+              </div>
+            </div>
+          ) : (
+            <button className={css["login-button"]}>
+              <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
+              {lang === "en" && "Login"}
+              {lang === "pl" && "Zaloguj się"}
+              {lang === "uk" && "Увійти"}
+              {lang === "ru" && "Войти"}
             </button>
-          </div>
-        ) : (
-          <button onClick={handleLoginClick} className={css["login-button"]}>
-            <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
-            {lang === "en" && "Login"}
-            {lang === "pl" && "Zaloguj się"}
-            {lang === "uk" && "Увійти"}
-            {lang === "ru" && "Войти"}
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </nav>
   );

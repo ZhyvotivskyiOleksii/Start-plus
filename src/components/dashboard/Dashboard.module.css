@@ -1,37 +1,313 @@
-.dashboard-container {
+:root {
+    --background-color: #1A1A1A;
+    --text-color: #FFFFFF;
+    --accent-color: #A16BFF;
+    --discount-color: #28a745;
+    --button-bg-start: rgba(50, 50, 50, 0.8);
+    --button-bg-end: rgba(20, 20, 20, 0.8);
+    --button-text-color: #FFFFFF;
+    --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
+    --button-border-light: rgba(255, 255, 255, 0.2);
+    --button-border-dark: rgba(0, 0, 0, 0.5);
+    --service-bg: #2A2A2A;
+    --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --service-shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.5);
+  }
+  
+  .dashboard {
+    background: var(--background-color);
+    color: var(--text-color);
+    padding: 150px 20px 20px 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    animation: slideDown 0.3s ease forwards;
+  }
+  
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .dashboard-exit {
+    animation: slideUp 0.3s ease forwards;
+  }
+  
+  @keyframes slideUp {
+    0% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .navButtons {
+    display: flex;
+    gap: clamp(8px, 1vw, 12px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .navButton {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .dashboard-container h2 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-container p {
-    font-size: 16px;
-    margin-bottom: 30px;
-  }
-  
-  .back-button {
-    padding: 10px 20px;
-    background-color: #333333;
-    color: #ffffff;
+    gap: clamp(4px, 0.5vw, 6px);
+    padding: clamp(10px, 1.2vw, 12px);
+    background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+    color: var(--button-text-color);
     border: none;
-    border-radius: 5px;
-    font-size: 16px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    font-size: clamp(12px, 1.2vw, 14px);
+    box-shadow: var(--button-shadow);
+    transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+    border-top: 1px solid var(--button-border-light);
+    border-left: 1px solid var(--button-border-light);
+    border-bottom: 1px solid var(--button-border-dark);
+    border-right: 1px solid var(--button-border-dark);
   }
   
-  .back-button:hover {
-    background-color: #555555;
+  .navButton:hover {
+    background: linear-gradient(145deg, rgba(100, 100, 100, 0.8), rgba(70, 70, 70, 0.8));
+    box-shadow: var(--button-shadow-hover);
+    transform: translateY(-2px) scale(1.02);
+  }
+  
+  .navButton:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  .navIcon {
+    width: clamp(18px, 2vw, 20px);
+    height: clamp(18px, 2vw, 20px);
+    transition: transform 0.5s ease;
+  }
+  
+  .navButton:hover .navIcon {
+    transform: scale(1.1);
+  }
+  
+  .servicesSection {
+    width: 100%;
+    margin-top: 40px;
+  }
+  
+  .cardsContainer {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    touch-action: pan-y;
+  }
+  
+  .cardsWrapper {
+    display: flex;
+    width: 100%;
+    transition: transform 0.6s ease-in-out;
+  }
+  
+  .card {
+    flex: 0 0 100%;
+    padding: 15px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+  }
+  
+  .menuItem {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    background: linear-gradient(145deg, rgba(40, 40, 40, 0.95), rgba(20, 20, 20, 0.95));
+    border-radius: 20px;
+    box-shadow: var(--service-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    backdrop-filter: blur(12px);
+  }
+  
+  .menuItem:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--service-shadow-hover);
+  }
+  
+  .menuIcon {
+    width: 50%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    right: 0;
+    top: 0;
+    opacity: 0.25;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    filter: drop-shadow(0 0 10px rgba(161, 107, 255, 0.3));
+  }
+  
+  .menuItem:hover .menuIcon {
+    opacity: 0.35;
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 15px rgba(161, 107, 255, 0.5));
+  }
+  
+  .broom {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: clamp(12px, 1.5vw, 14px);
+    height: clamp(12px, 1.5vw, 14px);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+  
+  .menuItem:hover .broom {
+    opacity: 1;
+    transform: scale(1) rotate(-20deg);
+  }
+  
+  .serviceTitle {
+    width: 50%;
+    padding: 20px;
+    font-size: clamp(18px, 2.2vw, 22px);
+    font-weight: 700;
+    font-family: "Arial", sans-serif;
+    color: var(--accent-color);
+    text-shadow: 0 0 8px rgba(161, 107, 255, 0.6);
+    letter-spacing: 0.5px;
+  }
+  
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+  
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: 50%;
+    transition: background 0.4s ease, transform 0.4s ease;
+  }
+  
+  .activeDot {
+    background: var(--accent-color);
+    transform: scale(1.2);
+  }
+  
+  @media (max-width: 768px) {
+    .header {
+      justify-content: flex-end;
+    }
+  
+    .navButtons {
+      margin-top: 10px;
+      justify-content: flex-end;
+    }
+  
+    .navButton {
+      padding: clamp(8px, 0.8vw, 10px);
+      font-size: clamp(10px, 1vw, 12px);
+    }
+  
+    .navIcon {
+      width: clamp(16px, 1.8vw, 18px);
+      height: clamp(16px, 1.8vw, 18px);
+    }
+  
+    .card {
+      height: 180px;
+    }
+  
+    .menuIcon {
+      width: 50%;
+      height: 100%;
+    }
+  
+    .serviceTitle {
+      font-size: clamp(16px, 2vw, 20px);
+      padding: 15px;
+    }
+  
+    .broom {
+      top: 10px;
+      right: 10px;
+      width: clamp(10px, 1.2vw, 12px);
+      height: clamp(10px, 1.2vw, 12px);
+    }
+  
+    .dot {
+      width: 8px;
+      height: 8px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dashboard {
+      padding: 80px 15px 15px 15px;
+    }
+  
+    .navButton {
+      padding: clamp(6px, 0.6vw, 8px);
+      font-size: clamp(8px, 0.8vw, 10px);
+    }
+  
+    .navIcon {
+      width: clamp(14px, 1.5vw, 16px);
+      height: clamp(14px, 1.5vw, 16px);
+    }
+  
+    .card {
+      height: 160px;
+    }
+  
+    .menuIcon {
+      width: 50%;
+      height: 100%;
+    }
+  
+    .serviceTitle {
+      font-size: clamp(14px, 1.8vw, 18px);
+      padding: 12px;
+    }
+  
+    .broom {
+      top: 8px;
+      right: 8px;
+      width: clamp(8px, 1vw, 10px);
+      height: clamp(8px, 1vw, 10px);
+    }
+  
+    .dot {
+      width: 6px;
+      height: 6px;
+    }
   }

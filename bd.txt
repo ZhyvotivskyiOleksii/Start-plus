@@ -11,3 +11,5 @@ ssh -o ServerAliveInterval=60 startplu@uashared37.twinservers.net -L 3306:localh
 Nowy token
  qJtdRRdD3Rh6WeSBuDkr6P7bkUZTJrzufYBMTRle
 
+cd server
+node server.js

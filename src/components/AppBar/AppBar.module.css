@@ -137,6 +137,67 @@
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1vw, 12px);
+  padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: var(--button-shadow);
+  transition: transform 0.4s, box-shadow 0.5s ease, background 0.5s ease;
+  border-top: 1px solid var(--button-border-light);
+  border-left: 1px solid var(--button-border-light);
+  border-bottom: 1px solid var(--button-border-dark);
+  border-right: 1px solid var(--button-border-dark);
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.user-info:hover {
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  box-shadow: var(--button-shadow-hover);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.user-info:hover .login-icon {
+  transform: scale(1.1);
+}
+
+.user-info:active {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.user-info-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.welcome-text {
+  font-size: clamp(12px, 2vw, 14px);
+  color: var(--text-color);
+  font-weight: 500;
+  display: block;
+}
+
+.user-phone {
+  font-size: clamp(10px, 1.5vw, 12px);
+  color: var(--text-color);
+  display: block;
+  margin-top: 2px;
+}
+
+.login-icon {
+  width: clamp(18px, 2vw, 20px);
+  height: clamp(18px, 2vw, 20px);
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
 .mobileMenu {
   position: fixed;
   top: 0;
@@ -170,37 +231,8 @@
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px; /* Reduced from 15px to make items closer */
+  gap: 12px;
   width: 100%;
-}
-
-.mobileMenuContent a { /* Assuming BarMenu renders <a> tags for menu items */
-  display: flex;
-  align-items: center;
-  padding: 8px 14px; /* Reduced from typical 10px 16px */
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-  color: var(--button-text-color);
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 14px; /* Reduced from typical 16px */
-  font-weight: 500;
-  box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
-}
-
-.mobileMenuContent a:hover {
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-  box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
-}
-
-.mobileMenuContent a:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .socials {
