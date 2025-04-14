@@ -78,6 +78,20 @@ export default function Dashboard({ lang, handleLogout }) {
         { name: "Уборка офисов", icon: "/icon/office.png" },
       ],
     },
+    badge: {
+      popular: {
+        en: "Popular",
+        pl: "Popularne",
+        uk: "Популярне",
+        ru: "Популярное",
+      },
+      new: {
+        en: "New",
+        pl: "Nowe",
+        uk: "Нове",
+        ru: "Новое",
+      },
+    },
   };
 
   const t = {
@@ -87,6 +101,10 @@ export default function Dashboard({ lang, handleLogout }) {
     editAccount: translations.editAccount[lang] || translations.editAccount.pl,
     logout: translations.logout[lang] || translations.logout.pl,
     services: translations.services[lang] || translations.services.pl,
+    badge: {
+      popular: translations.badge.popular[lang] || translations.badge.popular.pl,
+      new: translations.badge.new[lang] || translations.badge.new.pl,
+    },
   };
 
   const handleLogoutClick = () => {
@@ -125,6 +143,14 @@ export default function Dashboard({ lang, handleLogout }) {
     } else if (itemName === renovationNames[lang]) {
       navigate("/renovation");
     }
+  };
+
+  const getBadgeType = (serviceName) => {
+    const popularServices = ["Zwykłe", "Mycie okien", "Standard", "Window Cleaning", "Звичайне", "Миття вікон", "Обычное", "Мойка окон"];
+    const newServices = ["Remont", "Renovation", "Ремонт"];
+    if (popularServices.includes(serviceName)) return "popular";
+    if (newServices.includes(serviceName)) return "new";
+    return null;
   };
 
   return (
@@ -180,22 +206,30 @@ export default function Dashboard({ lang, handleLogout }) {
             ref={cardsWrapperRef}
             style={{ transform: `translateX(-${currentIndex * 100}%)` }}
           >
-            {t.services.map((item, index) => (
-              <div key={index} className={css.card}>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleMenuClick(item.name);
-                  }}
-                  className={css.menuItem}
-                >
-                  <span className={css.serviceTitle}>{item.name}</span>
-                  <img src={item.icon} alt={item.name} className={css.menuIcon} />
-                  <img src="/icon/broom.png" className={css.broom} alt="broom" />
-                </a>
-              </div>
-            ))}
+            {t.services.map((item, index) => {
+              const badgeType = getBadgeType(item.name);
+              return (
+                <div key={index} className={css.card}>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleMenuClick(item.name);
+                    }}
+                    className={css.menuItem}
+                  >
+                    {badgeType && (
+                      <span className={`${css.badge} ${badgeType === "new" ? css.newBadge : css.popularBadge}`}>
+                        {t.badge[badgeType]}
+                      </span>
+                    )}
+                    <span className={css.serviceTitle}>{item.name}</span>
+                    <img src={item.icon} alt={item.name} className={css.menuIcon} />
+                    <img src="/icon/broom.png" className={css.broom} alt="broom" />
+                  </a>
+                </div>
+              );
+            })}
           </div>
           <div className={css.dots}>
             {t.services.map((_, idx) => (
