@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa";
 import css from "./AppBar.module.css";
 import Logo from "../Logo/Logo";
@@ -15,6 +16,7 @@ export default function AppBar({ lang, setLang, ...props }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -22,6 +24,7 @@ export default function AppBar({ lang, setLang, ...props }) {
       setIsMobile(isMobileView);
       if (!isMobileView) {
         setMobileOpen(false);
+        document.body.style.overflow = "";
       }
     };
     window.addEventListener("resize", handleResize);
@@ -39,10 +42,26 @@ export default function AppBar({ lang, setLang, ...props }) {
     };
   }, [mobileOpen]);
 
+  useEffect(() => {
+    setMobileOpen(false);
+    document.body.style.overflow = "";
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const getFlagPath = (langKey) => flags[langKey];
 
   const toggleMobileMenu = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleLanguageChange = (key) => {
+    setLang(key);
+    setDropdownOpen(false);
+  };
+
+  const handleMobileLanguageChange = (key) => {
+    setLang(key);
+    toggleMobileMenu();
   };
 
   return (
@@ -50,7 +69,7 @@ export default function AppBar({ lang, setLang, ...props }) {
       <header className={css.header}>
         <Logo />
         <div className={css.desktopMenu}>
-          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={true} />
+          <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={true} {...props} />
         </div>
         <div className={css.desktopLang}>
           <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
@@ -61,7 +80,7 @@ export default function AppBar({ lang, setLang, ...props }) {
           {dropdownOpen && (
             <ul className={css.dropdown}>
               {Object.keys(languages).map((key) => (
-                <li key={key} onClick={() => { setLang(key); setDropdownOpen(false); }}>
+                <li key={key} onClick={() => handleLanguageChange(key)}>
                   <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
                   {languages[key]}
                 </li>
@@ -83,7 +102,7 @@ export default function AppBar({ lang, setLang, ...props }) {
           </button>
           <Logo />
           <div className={css.mobileMenuContent}>
-            <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={mobileOpen} />
+            <BarMenu lang={lang} closeMobileMenu={toggleMobileMenu} isOpen={mobileOpen} {...props} />
           </div>
           <div className={css.socials}>
             <a href="#" target="_blank" rel="noreferrer">
@@ -105,10 +124,7 @@ export default function AppBar({ lang, setLang, ...props }) {
               {Object.keys(languages).map((key) => (
                 <span
                   key={key}
-                  onClick={() => {
-                    setLang(key);
-                    toggleMobileMenu();
-                  }}
+                  onClick={() => handleMobileLanguageChange(key)}
                   className={lang === key ? css.active : ""}
                 >
                   <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />

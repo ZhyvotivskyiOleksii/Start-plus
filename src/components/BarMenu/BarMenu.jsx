@@ -53,10 +53,10 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     const renovationNames = { en: "Renovation", pl: "Remont", uk: "Ремонт", ru: "Ремонт" };
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
-      closeMobileMenu();
+      if (closeMobileMenu && !isOpen) closeMobileMenu();
     } else if (itemName === renovationNames[lang]) {
       navigate("/renovation");
-      closeMobileMenu();
+      if (closeMobileMenu && !isOpen) closeMobileMenu();
     }
   };
 
@@ -66,13 +66,13 @@ export default function BarMenu({ lang, isAuthenticated, handleLogin, handleLogo
     } else {
       navigate("/dashboard");
     }
-    closeMobileMenu();
+    if (closeMobileMenu && !isOpen) closeMobileMenu();
   };
 
   const handleLogoutClick = () => {
     handleLogout();
     navigate("/");
-    closeMobileMenu();
+    if (closeMobileMenu && !isOpen) closeMobileMenu();
   };
 
   return (
