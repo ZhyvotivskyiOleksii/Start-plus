@@ -57,7 +57,7 @@ export default function App() {
         />
         <Route path="/calculator" element={<Calculator lang={lang} />} />
         <Route
-          path="/renovation" // Изменили маршрут с /renovation-calculator на /renovation
+          path="/renovation" 
           element={
             <RenovationCalculator
               lang={lang}

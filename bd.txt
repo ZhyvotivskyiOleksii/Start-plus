@@ -1,0 +1,13 @@
+ssh -o ServerAliveInterval=60 startplu@uashared37.twinservers.net -L 3306:localhost:3306 -p 21098
+ 
+
+
+ 57g3tE5iaG
+
+
+
+
+
+Nowy token
+ qJtdRRdD3Rh6WeSBuDkr6P7bkUZTJrzufYBMTRle
+

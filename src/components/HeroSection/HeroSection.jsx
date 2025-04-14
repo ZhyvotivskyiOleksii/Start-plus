@@ -1,5 +1,4 @@
 import css from "./HeroSection.module.css";
-import Button from "../UIcomponents/Button";
 const translations = {
   pl: {
     heading: "Odkryj perfekcyjną czystość, którą pokochasz!",

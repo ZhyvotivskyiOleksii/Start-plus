@@ -127,7 +127,7 @@ input {
   font-size: 1rem;
   padding: 0 12px;
   background: #edecec;
-  color: var(--text-color);
+ color: #000;
 }
 
 .countryList {
