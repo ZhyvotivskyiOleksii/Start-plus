@@ -1,20 +1,30 @@
 .logoContainer {
-    display: flex;
-    align-items: center;
- 
-    gap: 10px; 
-    text-decoration: none; 
-  }
-  
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+  text-decoration: none; 
+}
+
+.logoText {
+  font-size: 20px;
+  font-weight: bold;
+  color: #A16BFF;
+  transition: 0.5s;
+}
+
+.logoPlus {
+  color: #62A740;
+}
+
+.logoText:hover {
+  color: #A16BFF; 
+}
+
+/* @media (max-width: 320px) {
   .logoText {
-    font-size: 28px;
-    font-weight: bold;
-    color: #A16BFF;
-    transition: 0.5s;
+      font-size: 10px;
   }
-  .logoPlus{
-    color: #62A740;
+  .logoContainer > img {
+    width: 20px;
   }
-  .logoText:hover {
-    color: #A16BFF; 
-  }
+} */

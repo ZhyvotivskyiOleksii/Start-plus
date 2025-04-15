@@ -32,7 +32,7 @@ export default function Dashboard({ lang, handleLogout }) {
     },
     loyaltyProgram: {
       en: "Loyalty Program",
-      pl: "Program lojalnościowy",
+      pl: "Program Polecen",
       uk: "Програма лояльності",
       ru: "Программа лояльности",
     },
@@ -50,32 +50,32 @@ export default function Dashboard({ lang, handleLogout }) {
     },
     services: {
       en: [
-        { name: "Standard", icon: "/icon/cleaning.png" },
-        { name: "Renovation", icon: "/icon/paint.png" },
-        { name: "Window Cleaning", icon: "/icon/window.png" },
-        { name: "Private House", icon: "/icon/house.png" },
-        { name: "Office Cleaning", icon: "/icon/office.png" },
+        { name: "Standard", icon: "/public/serwices/1.svg" },
+        { name: "Renovation", icon: "/public/serwices/2.svg" },
+        { name: "Window Cleaning", icon: "/public/serwices/3.svg" },
+        { name: "Private House", icon: "/public/serwices/4.svg" },
+        { name: "Office Cleaning", icon: "/public/serwices/5.svg" },
       ],
       pl: [
-        { name: "Zwykłe", icon: "/icon/cleaning.png" },
-        { name: "Remont", icon: "/icon/paint.png" },
-        { name: "Mycie okien", icon: "/icon/window.png" },
-        { name: "Dom prywatny", icon: "/icon/house.png" },
-        { name: "Sprzątanie biur", icon: "/icon/office.png" },
+        { name: "Zwykłe Sprzątanie", icon: "/public/serwices/1.svg" },
+        { name: "Po Remontowe Sprzątanie", icon: "/public/serwices/2.svg" },
+        { name: "Mycie Okien", icon: "/public/serwices/3.svg" },
+        { name: "Budynek Prywatny", icon: "/public/serwices/4.svg" },
+        { name: "Sprzątanie Biur", icon: "/public/serwices/5.svg" },
       ],
       uk: [
-        { name: "Звичайне", icon: "/icon/cleaning.png" },
-        { name: "Ремонт", icon: "/icon/paint.png" },
-        { name: "Миття вікон", icon: "/icon/window.png" },
-        { name: "Приватний будинок", icon: "/icon/house.png" },
-        { name: "Прибирання офісів", icon: "/icon/office.png" },
+        { name: "Звичайне", icon: "/public/serwices/1.svg" },
+        { name: "Ремонт", icon: "/public/serwices/2.svg" },
+        { name: "Миття вікон", icon: "/public/serwices/3.svg" },
+        { name: "Приватний будинок", icon: "/public/serwices/4.svg" },
+        { name: "Прибирання офісів", icon: "/public/serwices/5.svg" },
       ],
       ru: [
-        { name: "Обычное", icon: "/icon/cleaning.png" },
-        { name: "Ремонт", icon: "/icon/paint.png" },
-        { name: "Мойка окон", icon: "/icon/window.png" },
-        { name: "Частный дом", icon: "/icon/house.png" },
-        { name: "Уборка офисов", icon: "/icon/office.png" },
+        { name: "Обычное", icon: "/public/serwices/1.svg" },
+        { name: "Ремонт", icon: "/public/serwices/2.svg" },
+        { name: "Мойка окон", icon: "/public/serwices/3.svg" },
+        { name: "Частный дом", icon: "/public/serwices/4.svg" },
+        { name: "Уборка офисов", icon: "/public/serwices/5.svg" },
       ],
     },
     badge: {
@@ -116,10 +116,14 @@ export default function Dashboard({ lang, handleLogout }) {
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      setCurrentIndex((prev) => (prev + 1) % t.services.length);
+      if (window.innerWidth <= 768) {
+        setCurrentIndex((prev) => (prev + 1) % t.services.length);
+      }
     },
     onSwipedRight: () => {
-      setCurrentIndex((prev) => (prev - 1 + t.services.length) % t.services.length);
+      if (window.innerWidth <= 768) {
+        setCurrentIndex((prev) => (prev - 1 + t.services.length) % t.services.length);
+      }
     },
     trackMouse: true,
     preventDefaultTouchmoveEvent: true,
@@ -128,13 +132,13 @@ export default function Dashboard({ lang, handleLogout }) {
   const handleMenuClick = (itemName) => {
     const standardNames = {
       en: "Standard",
-      pl: "Zwykłe",
+      pl: "Zwykłe Sprzątanie",
       uk: "Звичайне",
       ru: "Обычное",
     };
     const renovationNames = {
       en: "Renovation",
-      pl: "Remont",
+      pl: "Po Remontowe Sprzątanie",
       uk: "Ремонт",
       ru: "Ремонт",
     };
@@ -146,8 +150,8 @@ export default function Dashboard({ lang, handleLogout }) {
   };
 
   const getBadgeType = (serviceName) => {
-    const popularServices = ["Zwykłe", "Mycie okien", "Standard", "Window Cleaning", "Звичайне", "Миття вікон", "Обычное", "Мойка окон"];
-    const newServices = ["Remont", "Renovation", "Ремонт"];
+    const popularServices = ["Zwykłe Sprzątanie", "Mycie Okien", "Standard", "Window Cleaning", "Звичайне", "Миття вікон", "Обычное", "Мойка окон", "Sprzątanie Biur", "Уборка офисов", "Прибирання офісів", "Office Cleaning"];
+    const newServices = ["Po Remontowe Sprzątanie", "Renovation", "Ремонт"];
     if (popularServices.includes(serviceName)) return "popular";
     if (newServices.includes(serviceName)) return "new";
     return null;
@@ -204,10 +208,11 @@ export default function Dashboard({ lang, handleLogout }) {
           <div
             className={css.cardsWrapper}
             ref={cardsWrapperRef}
-            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            style={{ transform: window.innerWidth <= 768 ? `translateX(-${currentIndex * 90}%)` : "none" }}
           >
             {t.services.map((item, index) => {
               const badgeType = getBadgeType(item.name);
+              const formattedTitle = item.name.split(" ").join("\n");
               return (
                 <div key={index} className={css.card}>
                   <a
@@ -223,24 +228,27 @@ export default function Dashboard({ lang, handleLogout }) {
                         {t.badge[badgeType]}
                       </span>
                     )}
-                    <span className={css.serviceTitle}>{item.name}</span>
-                    <img src={item.icon} alt={item.name} className={css.menuIcon} />
-                    <img src="/icon/broom.png" className={css.broom} alt="broom" />
+                    <span className={css.serviceTitle} data-text={formattedTitle}></span>
+                    <div className={css.menuIconWrapper}>
+                      <img src={item.icon} alt={item.name} className={css.menuIcon} />
+                    </div>
                   </a>
                 </div>
               );
             })}
           </div>
-          <div className={css.dots}>
-            {t.services.map((_, idx) => (
-              <span
-                key={idx}
-                className={`${css.dot} ${currentIndex === idx ? css.activeDot : ""}`}
-              />
-            ))}
-          </div>
+          {window.innerWidth <= 768 && (
+            <div className={css.dots}>
+              {t.services.map((_, idx) => (
+                <span
+                  key={idx}
+                  className={`${css.dot} ${currentIndex === idx ? css.activeDot : ""}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
-  );
+  ); 
 }
