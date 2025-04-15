@@ -760,9 +760,11 @@ export default function RenovationCalculator({ lang }) {
           </div>
 
           <div className={css["calculator-right"]} ref={rightBlockRef}>
-            <h2>
-              {t.metersLabel}: {area} m², {t.windowsLabel}: {windows}, {calculateBasePrice()} zł
-            </h2>
+          <h2>
+  {t.metersLabel}: {area} m², {t.windowsLabel}: {windows},
+  <br />
+  {calculateBasePrice()} zł
+</h2>
 
             <div className={css["location-info"]}>
               <h4>{t.locationLabel}</h4>

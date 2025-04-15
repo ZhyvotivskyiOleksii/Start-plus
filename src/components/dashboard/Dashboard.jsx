@@ -195,7 +195,7 @@ export default function Dashboard({ lang, handleLogout }) {
           </button>
           <button
             onClick={handleLogoutClick}
-            className={css.navButton}
+            className={`${css.navButton} ${css.logoutButton}`}
             title={t.logout}
           >
             <FaSignOutAlt className={css.navIcon} />

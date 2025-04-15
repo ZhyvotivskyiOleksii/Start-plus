@@ -928,18 +928,19 @@ export default function Calculator() {
           </div>
 
           <div className={css["calculator-right"]} ref={rightBlockRef}>
-            <h2>
-              Sprzątanie mieszkania z {rooms}{" "}
-              {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}{" "}
-              i {bathrooms}{" "}
-              {bathrooms === 1
-                ? "łazienka"
-                : bathrooms >= 2 && bathrooms <= 4
-                ? "łazienki"
-                : "łazienek"}
-              {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""}, przedpokój{" "}
-              {calculateBasePrice()} zł
-            </h2>
+          <h2>
+  Sprzątanie mieszkania z {rooms}{" "}
+  {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}{" "}
+  i {bathrooms}{" "}
+  {bathrooms === 1
+    ? "łazienka"
+    : bathrooms >= 2 && bathrooms <= 4
+    ? "łazienki"
+    : "łazienek"}
+  {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""}, przedpokój
+  <br />
+  {calculateBasePrice()} zł
+</h2>
 
             <div className={css["location-info"]}>
               <h4>Lokalizacja</h4>

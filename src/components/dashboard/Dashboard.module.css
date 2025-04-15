@@ -1,21 +1,48 @@
-:root {
-    --background-color: #1A1A1A;
-    --text-color: #FFFFFF;
-    --text-secondary-color: #B0B0B0;
-    --accent-color: #A16BFF;
-    --discount-color: #28a745;
-    --button-bg-start: rgba(50, 50, 50, 0.8);
-    --button-bg-end: rgba(20, 20, 20, 0.8);
-    --button-text-color: #FFFFFF;
-    --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
-    --button-border-light: rgba(255, 255, 255, 0.2);
-    --button-border-dark: rgba(0, 0, 0, 0.5);
-    --service-bg: #2A2A2A;
-    --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
-}
-
+/* :root {
+    --background-color: #E6F0FA;
+    --text-color: #2D3748;
+    --text-secondary-color: #718096;
+    --accent-color: #4299E1;
+    --discount-color: #38A169;
+    --button-bg-start: rgba(255, 255, 255, 0.9);
+    --button-bg-end: rgba(230, 240, 255, 0.9);
+    --button-text-color: #2D3748;
+    --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.15);
+    --button-border-light: rgba(0, 0, 0, 0.1);
+    --button-border-dark: rgba(0, 0, 0, 0.2);
+    --service-bg: #FFFFFF;
+    --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.1);
+    --secondary-bg: #EDF2F7;
+    --tertiary-bg: #F7FAFC;
+    --disabled-bg: rgba(160, 174, 192, 0.5);
+    --button-bg-hover-start: rgba(200, 220, 255, 0.9);
+    --button-bg-hover-end: rgba(180, 200, 240, 0.9);
+    --button-bg-selected-start: rgba(220, 230, 255, 0.9);
+    --button-bg-selected-end: rgba(200, 210, 240, 0.9);
+    --discount-bg-start: rgba(80, 180, 120, 0.9);
+    --discount-bg-end: rgba(50, 150, 90, 0.9);
+    --discount-bg-hover-start: rgba(100, 200, 140, 0.9);
+    --discount-bg-hover-end: rgba(70, 170, 110, 0.9);
+    --today-bg-start: rgba(200, 210, 240, 0.9);
+    --today-bg-end: rgba(180, 190, 220, 0.9);
+    --disabled-text-color: #A0AEC0;
+    --disabled-text-color-light: rgba(160, 174, 192, 0.5);
+    --remove-bg-start: rgba(255, 120, 120, 0.9);
+    --remove-bg-end: rgba(220, 80, 80, 0.9);
+    --remove-bg-hover-start: rgba(255, 140, 140, 1);
+    --remove-bg-hover-end: rgba(240, 100, 100, 0.9);
+    --highlight-color: #F6E05E;
+    --highlight-contrast-color: #2D3748;
+    --light-overlay: rgba(0, 0, 0, 0.05);
+    --light-border: rgba(0, 0, 0, 0.1);
+    --error-color: #F56565;
+    --error-shadow: rgba(229, 62, 62, 0.3);
+    --dot-bg: rgba(0, 0, 0, 0.2);
+    --popular-shadow: rgba(66, 153, 225, 0.4);
+    --new-shadow: rgba(56, 161, 105, 0.4);
+  } */
 .dashboard {
     background: var(--background-color);
     color: var(--text-color);
@@ -99,7 +126,7 @@
 }
 
 .navButton:hover {
-    background: linear-gradient(145deg, rgba(100, 100, 100, 0.8), rgba(70, 70, 70, 0.8));
+    background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
     box-shadow: var(--button-shadow-hover);
     transform: translateY(-2px) scale(1.02);
 }
@@ -117,6 +144,10 @@
 
 .navButton:hover .navIcon {
     transform: scale(1.1);
+}
+
+.logoutButton {
+    /* По умолчанию ничего не меняем, стили унаследуются от .navButton */
 }
 
 .servicesSection {
@@ -156,14 +187,9 @@
     align-items: center;
     justify-content: space-between;
     text-decoration: none;
-    background: linear-gradient(
-        135deg,
-        rgba(26, 26, 26, 0.95) 0%,
-        rgba(40, 40, 40, 0.95) 100%
-    );
+    background: var(--service-bg);
     border-radius: 20px;
     box-shadow: var(--service-shadow);
-    backdrop-filter: blur(12px);
     z-index: 1;
 }
 
@@ -181,12 +207,12 @@
 
 .popularBadge {
     background: var(--accent-color);
-    box-shadow: 0 0 6px rgba(161, 107, 255, 0.5);
+    box-shadow: 0 0 6px var(--popular-shadow);
 }
 
 .newBadge {
     background: var(--discount-color);
-    box-shadow: 0 0 6px rgba(40, 167, 69, 0.5);
+    box-shadow: 0 0 6px var(--new-shadow);
 }
 
 .menuIconWrapper {
@@ -233,7 +259,7 @@
 .dot {
     width: 10px;
     height: 10px;
-    background: rgba(255, สมัครสมาชิก255, 255, 0.4);
+    background: var(--dot-bg);
     border-radius: 50%;
     transition: background 0.4s ease, transform 0.4s ease;
 }
@@ -244,6 +270,17 @@
 }
 
 @media (min-width: 965px) {
+    .navButtons {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        max-width: 524px; /* 5 buttons * (100px + 6px gap) */
+        margin: 0;
+    }
+
+    .navButton {
+        width: clamp(100px, 12vw, 110px);
+    }
+
     .servicesSection {
         display: none;
     }
@@ -268,6 +305,14 @@
     .navIcon {
         width: clamp(18px, 2vw, 20px);
         height: clamp(18px, 2vw, 20px);
+    }
+
+    .logoutButton {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
     }
 
     .cardsContainer {
@@ -313,7 +358,7 @@
 
     .navButton {
         padding: clamp(6px, 0.8vw, 8px);
-        width: clamp(60px, 8vw, 70px);
+        width: clamp(70px, 8vw, 70px);
     }
 
     .navButton span {
@@ -323,6 +368,14 @@
     .navIcon {
         width: clamp(16px, 1.8vw, 18px);
         height: clamp(16px, 1.8vw, 18px);
+    }
+
+    .logoutButton {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
     }
 
     .cardsContainer {
