@@ -146,9 +146,6 @@
     transform: scale(1.1);
 }
 
-.logoutButton {
-    /* По умолчанию ничего не меняем, стили унаследуются от .navButton */
-}
 
 .servicesSection {
     width: 100%;
