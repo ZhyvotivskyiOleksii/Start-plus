@@ -197,7 +197,7 @@
   margin-top: 4px;
 }
 
-@media (max-width: 927px) {
+@media (max-width: 768px) {
   .barMenu {
     justify-content: flex-start;
   }

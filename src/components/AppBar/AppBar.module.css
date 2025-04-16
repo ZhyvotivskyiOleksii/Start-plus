@@ -334,6 +334,15 @@
   .mobileMenu.show {
     display: none !important;
   }
+  .burger {
+    display: none !important;
+  }
+  .desktopMenu {
+    display: flex;
+  }
+  .desktopLang {
+    display: flex;
+  }
 }
 
 .flagIcon {

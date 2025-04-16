@@ -13,8 +13,11 @@ export default function Calculator() {
   const [discount, setDiscount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date("2025-03-11").getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date("2025-03-11").getFullYear());
+  
+  // Ініціалізація поточного місяця і року з актуальної дати
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+
   const [bookedDates] = useState(new Set(["2025-03-15"]));
   const [discounts] = useState({
     "2025-03-10": 18,
@@ -298,7 +301,7 @@ export default function Calculator() {
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const days = [];
 
-    const today = new Date("2025-03-11");
+    const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
@@ -672,7 +675,7 @@ export default function Calculator() {
                         <p className={css["frequency-discount"]}>-{freqDiscount}%</p>
                         <p className={css["frequency-price"]}>{freqPrice} zł</p>
                         {freq === "Jednorazowe sprzątanie" && (
-                          <span className={css["emoji"]}>😞</span>
+                          <span className={css["emoji"]}></span>
                         )}
                       </div>
                     </div>
@@ -928,19 +931,19 @@ export default function Calculator() {
           </div>
 
           <div className={css["calculator-right"]} ref={rightBlockRef}>
-          <h2>
-  Sprzątanie mieszkania z {rooms}{" "}
-  {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}{" "}
-  i {bathrooms}{" "}
-  {bathrooms === 1
-    ? "łazienka"
-    : bathrooms >= 2 && bathrooms <= 4
-    ? "łazienki"
-    : "łazienek"}
-  {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""}, przedpokój
-  <br />
-  {calculateBasePrice()} zł
-</h2>
+            <h2>
+              Sprzątanie mieszkania z {rooms}{" "}
+              {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}{" "}
+              i {bathrooms}{" "}
+              {bathrooms === 1
+                ? "łazienka"
+                : bathrooms >= 2 && bathrooms <= 4
+                ? "łazienki"
+                : "łazienek"}
+              {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""}, przedpokój
+              <br />
+              {calculateBasePrice()} zł
+            </h2>
 
             <div className={css["location-info"]}>
               <h4>Lokalizacja</h4>
@@ -997,7 +1000,6 @@ export default function Calculator() {
               <p>Dodatkowy koszt dojazdu: +{cities[selectedCity].toFixed(2)} zł</p>
             </div>
 
-            {/* Додаємо контейнер для вибраних послуг */}
             <div className={css["selected-services-container"]}>
               {paidServices.map((service) =>
                 (service.type === "checkbox" && selectedServices[service.id]) ||

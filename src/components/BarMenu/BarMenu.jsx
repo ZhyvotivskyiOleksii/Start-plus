@@ -86,13 +86,22 @@ export default function BarMenu({
       uk: "Ремонт",
       ru: "Ремонт",
     };
+    const windowCleaningNames = {
+      en: "Window Cleaning",
+      pl: "Mycie okien",
+      uk: "Миття вікон",
+      ru: "Мойка окон",
+    };
+
     if (itemName === standardNames[lang]) {
       navigate("/calculator");
-      if (closeMobileMenu && !isOpen) closeMobileMenu();
     } else if (itemName === renovationNames[lang]) {
       navigate("/renovation");
-      if (closeMobileMenu && !isOpen) closeMobileMenu();
+    } else if (itemName === windowCleaningNames[lang]) {
+      navigate("/window-cleaning");
     }
+    // Закрываем мобильное меню, если оно открыто
+    if (closeMobileMenu && isMobile) closeMobileMenu();
   };
 
   const handleUserClick = () => {
@@ -108,7 +117,7 @@ export default function BarMenu({
         navigate("/dashboard");
       }
     }
-    if (closeMobileMenu && !isOpen) closeMobileMenu();
+    if (closeMobileMenu && isMobile) closeMobileMenu();
   };
 
   return (

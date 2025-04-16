@@ -4,6 +4,7 @@ import AppBar from "./components/AppBar/AppBar";
 import HeroSection from "./components/HeroSection/HeroSection";
 import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
+import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator"; // Импорт
 import AdminPanel from "./components/AdminPanel";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -49,6 +50,10 @@ export default function App() {
         <Route path="/calculator" element={<Calculator lang={lang} />} />
         <Route path="/renovation" element={<RenovationCalculator lang={lang} />} />
         <Route
+          path="/window-cleaning"
+          element={<WindowCleaningCalculator lang={lang} />}
+        /> {/* Новый маршрут */}
+        <Route
           path="/admin"
           element={isAuthenticated ? <AdminPanel lang={lang} /> : <Navigate to="/" />}
         />
@@ -58,7 +63,7 @@ export default function App() {
             !isAuthenticated ? (
               <Login lang={lang} handleLogin={handleLogin} />
             ) : (
-              <Navigate to="/" /> 
+              <Navigate to="/" />
             )
           }
         />

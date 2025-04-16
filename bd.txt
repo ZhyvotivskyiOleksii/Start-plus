@@ -1,4 +1,8 @@
 ssh -o ServerAliveInterval=60 startplu@uashared37.twinservers.net -L 3306:localhost:3306 -p 21098
+
+
+ssh -o ServerAliveInterval=60 wisebets@uashared37.twinservers.net -L 3306:localhost:3306 -p 21098
+
  
 
 
@@ -13,3 +17,12 @@ Nowy token
 
 cd server
 node server.js
+
+
+
+
+
+
+DB name: wisebets_applogin
+DB user: wisebets_applogin
+DB pass: k&vJXlewIe

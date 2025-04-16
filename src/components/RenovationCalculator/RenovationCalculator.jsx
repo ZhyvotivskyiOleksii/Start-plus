@@ -7,8 +7,11 @@ export default function RenovationCalculator({ lang }) {
   const [windows, setWindows] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [currentMonth, setCurrentMonth] = useState(new Date("2025-04-12").getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date("2025-04-12").getFullYear());
+  
+  // Ініціалізація поточного місяця і року з актуальної дати
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  
   const [bookedDates] = useState(new Set(["2025-04-15"]));
   const [discounts] = useState({
     "2025-04-10": 18,
@@ -242,7 +245,7 @@ export default function RenovationCalculator({ lang }) {
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const days = [];
 
-    const today = new Date("2025-04-12");
+    const today = new Date(); // Використовуємо актуальну дату
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
@@ -760,11 +763,11 @@ export default function RenovationCalculator({ lang }) {
           </div>
 
           <div className={css["calculator-right"]} ref={rightBlockRef}>
-          <h2>
-  {t.metersLabel}: {area} m², {t.windowsLabel}: {windows},
-  <br />
-  {calculateBasePrice()} zł
-</h2>
+            <h2>
+              {t.metersLabel}: {area} m², {t.windowsLabel}: {windows},
+              <br />
+              {calculateBasePrice()} zł
+            </h2>
 
             <div className={css["location-info"]}>
               <h4>{t.locationLabel}</h4>
