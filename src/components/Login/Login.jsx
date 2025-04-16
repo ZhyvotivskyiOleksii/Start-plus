@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import css from "./Login.module.css";
 
 export default function Login({ lang, handleLogin }) {
-  const navigate = useNavigate();
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [countryCode, setCountryCode] = useState("+48");
@@ -107,15 +105,19 @@ export default function Login({ lang, handleLogin }) {
           },
           body: JSON.stringify({ phone: fullPhone }),
         });
+        console.log("Тест: Отримана відповідь від сервера (SMS):", response.status, response.statusText);
         if (!response.ok) {
+          const errorData = await response.json();
+          console.log("Тест: Деталі помилки сервера (SMS):", errorData);
           throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
+        console.log("Тест: Дані від сервера (SMS):", data);
         console.log("Тест: SMS надіслано, показуємо поле для коду");
         setShowVerification(true);
         setError("");
       } catch (error) {
-        console.log("Тест: Помилка підключення:", error);
+        console.log("Тест: Помилка підключення:", error.message);
         setError("Помилка підключення: " + error.message);
         setShowVerification(false);
       }
@@ -145,10 +147,14 @@ export default function Login({ lang, handleLogin }) {
         },
         body: JSON.stringify({ phone: fullPhone, code: smsCode }),
       });
+      console.log("Тест: Отримана відповідь від сервера (Verify):", response.status, response.statusText);
       if (!response.ok) {
+        const errorData = await response.json();
+        console.log("Тест: Деталі помилки сервера (Verify):", errorData);
         throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`);
       }
       const data = await response.json();
+      console.log("Тест: Дані від сервера (Verify):", data);
       console.log("Тест: Верифікація успішна, викликаємо handleLogin");
       handleLogin(data.token, fullPhone);
       setPhone("");
@@ -157,7 +163,7 @@ export default function Login({ lang, handleLogin }) {
       setError("");
       setVerifyError("");
     } catch (error) {
-      console.log("Тест: Помилка перевірки:", error);
+      console.log("Тест: Помилка перевірки:", error.message);
       setVerifyError("Помилка перевірки: " + error.message);
     }
   };

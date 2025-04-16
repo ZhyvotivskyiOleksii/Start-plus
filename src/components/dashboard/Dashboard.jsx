@@ -50,32 +50,32 @@ export default function Dashboard({ lang, handleLogout }) {
     },
     services: {
       en: [
-        { name: "Standard", icon: "/public/serwices/1.svg" },
-        { name: "Renovation", icon: "/public/serwices/2.svg" },
-        { name: "Window Cleaning", icon: "/public/serwices/3.svg" },
-        { name: "Private House", icon: "/public/serwices/4.svg" },
-        { name: "Office Cleaning", icon: "/public/serwices/5.svg" },
+        { name: "Standard", icon: "/serwices/1.svg" },
+        { name: "Renovation", icon: "/serwices/2.svg" },
+        { name: "Window Cleaning", icon: "/serwices/3.svg" },
+        { name: "Private House", icon: "/serwices/4.svg" },
+        { name: "Office Cleaning", icon: "/serwices/5.svg" },
       ],
       pl: [
-        { name: "Zwykłe Sprzątanie", icon: "/public/serwices/1.svg" },
-        { name: "Po Remontowe Sprzątanie", icon: "/public/serwices/2.svg" },
-        { name: "Mycie Okien", icon: "/public/serwices/3.svg" },
-        { name: "Budynek Prywatny", icon: "/public/serwices/4.svg" },
-        { name: "Sprzątanie Biur", icon: "/public/serwices/5.svg" },
+        { name: "Zwykłe Sprzątanie", icon: "/serwices/1.svg" },
+        { name: "Po Remontowe Sprzątanie", icon: "/serwices/2.svg" },
+        { name: "Mycie Okien", icon: "/serwices/3.svg" },
+        { name: "Budynek Prywatny", icon: "/serwices/4.svg" },
+        { name: "Sprzątanie Biur", icon: "/serwices/5.svg" },
       ],
       uk: [
-        { name: "Звичайне", icon: "/public/serwices/1.svg" },
-        { name: "Ремонт", icon: "/public/serwices/2.svg" },
-        { name: "Миття вікон", icon: "/public/serwices/3.svg" },
-        { name: "Приватний будинок", icon: "/public/serwices/4.svg" },
-        { name: "Прибирання офісів", icon: "/public/serwices/5.svg" },
+        { name: "Звичайне", icon: "/serwices/1.svg" },
+        { name: "Ремонт", icon: "/serwices/2.svg" },
+        { name: "Миття вікон", icon: "/serwices/3.svg" },
+        { name: "Приватний будинок", icon: "/serwices/4.svg" },
+        { name: "Прибирання офісів", icon: "/serwices/5.svg" },
       ],
       ru: [
-        { name: "Обычное", icon: "/public/serwices/1.svg" },
-        { name: "Ремонт", icon: "/public/serwices/2.svg" },
-        { name: "Мойка окон", icon: "/public/serwices/3.svg" },
-        { name: "Частный дом", icon: "/public/serwices/4.svg" },
-        { name: "Уборка офисов", icon: "/public/serwices/5.svg" },
+        { name: "Обычное", icon: "/serwices/1.svg" },
+        { name: "Ремонт", icon: "/serwices/2.svg" },
+        { name: "Мойка окон", icon: "/serwices/3.svg" },
+        { name: "Частный дом", icon: "/serwices/4.svg" },
+        { name: "Уборка офисов", icon: "/serwices/5.svg" },
       ],
     },
     badge: {
@@ -161,43 +161,23 @@ export default function Dashboard({ lang, handleLogout }) {
     <div className={`${css.dashboard} ${isExiting ? css["dashboard-exit"] : ""}`}>
       <div className={css.header}>
         <div className={css.navButtons}>
-          <button
-            onClick={() => navigate("/dashboard")}
-            className={css.navButton}
-            title={t.myAccount}
-          >
+          <button onClick={() => navigate("/dashboard")} className={css.navButton} title={t.myAccount}>
             <FaUser className={css.navIcon} />
             <span>{t.myAccount}</span>
           </button>
-          <button
-            onClick={() => navigate("/orders")}
-            className={css.navButton}
-            title={t.myOrders}
-          >
+          <button onClick={() => navigate("/orders")} className={css.navButton} title={t.myOrders}>
             <FaList className={css.navIcon} />
             <span>{t.myOrders}</span>
           </button>
-          <button
-            onClick={() => navigate("/loyalty")}
-            className={css.navButton}
-            title={t.loyaltyProgram}
-          >
+          <button onClick={() => navigate("/loyalty")} className={css.navButton} title={t.loyaltyProgram}>
             <FaGift className={css.navIcon} />
             <span>{t.loyaltyProgram}</span>
           </button>
-          <button
-            onClick={() => navigate("/edit-account")}
-            className={css.navButton}
-            title={t.editAccount}
-          >
+          <button onClick={() => navigate("/edit-account")} className={css.navButton} title={t.editAccount}>
             <FaEdit className={css.navIcon} />
             <span>{t.editAccount}</span>
           </button>
-          <button
-            onClick={handleLogoutClick}
-            className={`${css.navButton} ${css.logoutButton}`}
-            title={t.logout}
-          >
+          <button onClick={handleLogoutClick} className={`${css.navButton} ${css.logoutButton}`} title={t.logout}>
             <FaSignOutAlt className={css.navIcon} />
             <span>{t.logout}</span>
           </button>
@@ -205,24 +185,13 @@ export default function Dashboard({ lang, handleLogout }) {
       </div>
       <div className={css.servicesSection}>
         <div className={css.cardsContainer} {...swipeHandlers}>
-          <div
-            className={css.cardsWrapper}
-            ref={cardsWrapperRef}
-            style={{ transform: window.innerWidth <= 768 ? `translateX(-${currentIndex * 90}%)` : "none" }}
-          >
+          <div className={css.cardsWrapper} ref={cardsWrapperRef} style={{ transform: window.innerWidth <= 768 ? `translateX(-${currentIndex * 90}%)` : "none" }}>
             {t.services.map((item, index) => {
               const badgeType = getBadgeType(item.name);
               const formattedTitle = item.name.split(" ").join("\n");
               return (
                 <div key={index} className={css.card}>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleMenuClick(item.name);
-                    }}
-                    className={css.menuItem}
-                  >
+                  <a href="#" onClick={(e) => { e.preventDefault(); handleMenuClick(item.name); }} className={css.menuItem}>
                     {badgeType && (
                       <span className={`${css.badge} ${badgeType === "new" ? css.newBadge : css.popularBadge}`}>
                         {t.badge[badgeType]}
@@ -240,15 +209,12 @@ export default function Dashboard({ lang, handleLogout }) {
           {window.innerWidth <= 768 && (
             <div className={css.dots}>
               {t.services.map((_, idx) => (
-                <span
-                  key={idx}
-                  className={`${css.dot} ${currentIndex === idx ? css.activeDot : ""}`}
-                />
+                <span key={idx} className={`${css.dot} ${currentIndex === idx ? css.activeDot : ""}`} />
               ))}
             </div>
           )}
         </div>
       </div>
     </div>
-  ); 
+  );
 }
