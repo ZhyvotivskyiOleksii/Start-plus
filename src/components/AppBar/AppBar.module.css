@@ -1,16 +1,16 @@
 :root {
-  --background-color: #1A1A1A;
-  --text-color: #FFFFFF;
-  --accent-color: #A16BFF;
+  --background-color: #1a1a1a;
+  --text-color: #ffffff;
+  --accent-color: #a16bff;
   --discount-color: #28a745;
   --button-bg-start: rgba(50, 50, 50, 0.8);
   --button-bg-end: rgba(20, 20, 20, 0.8);
-  --button-text-color: #FFFFFF;
+  --button-text-color: #ffffff;
   --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
   --button-border-light: rgba(255, 255, 255, 0.2);
   --button-border-dark: rgba(0, 0, 0, 0.5);
-  --service-bg: #2A2A2A;
+  --service-bg: #2a2a2a;
   --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
@@ -19,14 +19,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--background-color);
+  background: transparent;
   padding: clamp(10px, 2vw, 20px);
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
-  box-shadow: var(--service-shadow);
 }
 
 .desktopMenu {
@@ -48,7 +47,11 @@
   gap: 6px;
   cursor: pointer;
   padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   color: var(--button-text-color);
   border-radius: 10px;
   font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
@@ -62,7 +65,11 @@
 }
 
 .langBox:hover {
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
 }
@@ -106,7 +113,11 @@
 
 .burger {
   display: none;
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   border: none;
   font-size: 24px;
   color: var(--button-text-color);
@@ -127,7 +138,11 @@
 }
 
 .burger:hover {
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
 }
@@ -142,7 +157,11 @@
   align-items: center;
   gap: clamp(8px, 1vw, 12px);
   padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   border-radius: 10px;
   cursor: pointer;
   box-shadow: var(--button-shadow);
@@ -157,7 +176,11 @@
 }
 
 .user-info:hover {
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px) scale(1.02);
 }
@@ -204,7 +227,7 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background: #1A1A1A;
+  background: #1a1a1a;
   background-image: url(/public/hero/hero-bg1.png);
   background-size: contain;
   background-repeat: no-repeat;
@@ -286,7 +309,11 @@
   display: flex;
   align-items: center;
   padding: 6px 12px;
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   color: var(--button-text-color);
   border-radius: 8px;
   cursor: pointer;
@@ -301,7 +328,11 @@
 }
 
 .langRow span:hover {
-  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
+  background: linear-gradient(
+    145deg,
+    var(--button-bg-start),
+    var(--button-bg-end)
+  );
   box-shadow: var(--button-shadow-hover);
   transform: translateY(-2px);
 }
