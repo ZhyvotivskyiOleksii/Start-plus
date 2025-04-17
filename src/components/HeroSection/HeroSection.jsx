@@ -31,16 +31,18 @@ export default function HeroSection({ lang = "pl" }) {
   return (
     <section className={css.hero}>
       <div className={css.heroContent}>
-
         <div className={css.textBlock}>
           <h1>{heading}</h1>
           <p>{subheading}</p>
           <button className={css.ctaButton}>{button}</button>
         </div>
         <div className={css.imageBlock}>
-          <img src="/hero/hero-bg1.png" alt="Hero" className={css.heroImage} />
+          <img
+            src="public\hero\photo_2025-04-17_02-10-57-removebg-preview.png"
+            alt="Hero"
+            className={css.heroImage}
+          />
         </div>
-
       </div>
     </section>
   );

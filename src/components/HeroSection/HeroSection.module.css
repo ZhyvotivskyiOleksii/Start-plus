@@ -1,31 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap");
+
 :where(:root) {
-  --background-color: #1A1A1A;
-  --text-color: #FFFFFF;
+  --background-color: #1a1a1a;
+  --text-color: #ffffff;
   --text-secondary-color: #ececec;
-  --accent-color: #A16BFF;
+  --accent-color: #a16bff;
   --discount-color: #28a745;
   --button-bg-start: rgba(50, 50, 50, 0.8);
   --button-bg-end: rgba(20, 20, 20, 0.8);
-  --button-text-color: #FFFFFF;
+  --button-text-color: #ffffff;
   --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
   --button-border-light: rgba(255, 255, 255, 0.2);
   --button-border-dark: rgba(0, 0, 0, 0.5);
-  --service-bg: #2A2A2A;
+  --service-bg: #2a2a2a;
   --service-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   --service-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.2);
 }
 
 .hero {
-  position: relative;
-
   min-height: 100vh;
   width: 100%;
-
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("/src/assets/bg.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-image: url("/src/assets/bg.webp");
   color: var(--text-color);
   display: flex;
   align-items: center;
@@ -35,21 +35,10 @@
   padding: 0;
   box-sizing: border-box;
   z-index: 1;
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-  z-index: 0;
+  padding-top: 150px;
 }
 
 .heroContent {
-
-  position: relative;
-
-  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -65,27 +54,33 @@
 }
 
 .textBlock h1 {
-  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-family: "Cormorant", serif;
+  font-style: italic;
+  font-size: clamp(3rem, 9vw, 5.25rem);
   font-weight: 800;
   margin-bottom: 1rem;
   line-height: 1.2;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #fcfcfc; /* насичений фіолетовий */
+  text-shadow: 0 0 5px #c77dff, 0 0 10px #c77dff, 0 0 20px #e0aaff;
   text-transform: uppercase;
 }
 
 .textBlock p {
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-family: "Cormorant", serif;
+  font-weight: 800;
+  font-size: clamp(1.5rem, 3.75vw, 1.8rem);
   margin-bottom: 2rem;
-  color: var(--text-secondary-color);
+  color: #fcfcfc; /* насичений фіолетовий */
+  text-shadow: 0 0 5px #c77dff, 0 0 10px #c77dff, 0 0 20px #e0aaff;
 }
 
 .ctaButton {
-
   padding: clamp(12px, 1.5vw, 15px) clamp(25px, 3vw, 35px);
   font-size: clamp(1rem, 1.6vw, 1.2rem);
   font-weight: 700;
-  color: #FFFFFF;
-  background: linear-gradient(135deg, #A16BFF 0%, #6E4BDC 100%);
+  color: #ffffff;
+  text-shadow: 0 0 5px #c77dff, 0 0 10px #c77dff, 0 0 20px #e0aaff;
+  background: linear-gradient(135deg, #a16bff 20%, #6e4bdc 80%);
   border: 1px solid rgba(161, 107, 255, 0.3);
   border-radius: 12px;
 
@@ -97,12 +92,11 @@
 }
 
 .ctaButton:hover {
-  background: linear-gradient(135deg, #B47EFF 0%, #7F55D6 100%);
+  background: linear-gradient(135deg, #b47eff 0%, #7f55d6 100%);
   box-shadow: 0 6px 20px rgba(161, 107, 255, 0.5);
   transform: scale(1.03) translateY(-2px);
   border-color: rgba(161, 107, 255, 0.5);
 }
-
 
 .ctaButton:active {
   transform: scale(0.98);
@@ -116,7 +110,12 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
   transition: 0.5s;
 }
 
@@ -127,14 +126,27 @@
 .imageBlock {
   flex: 1;
   display: flex;
-  align-items: flex-end;
-  justify-content: flex-end;
+  /* align-items: flex-end;
+  justify-content: flex-end; */
 }
 
 .heroImage {
   max-width: 800px;
   height: auto;
   object-fit: contain;
+  animation: float 3.5s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
 }
 
 @media (max-width: 1024px) {
@@ -150,12 +162,12 @@
   }
   .imageBlock {
     justify-content: center;
-
   }
 }
 
 @media (max-width: 768px) {
   .hero {
+    padding-top: 50px;
     min-height: 80vh;
   }
   .textBlock h1 {
@@ -171,11 +183,12 @@
     font-size: clamp(0.9rem, 2vw, 1rem);
   }
   .heroImage {
+    padding-top: 50px;
     max-width: 400px;
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .hero {
     min-height: 100vh;
   }
@@ -211,6 +224,5 @@
   }
   .heroImage {
     max-width: 500px;
-
   }
 }
