@@ -1,18 +1,4 @@
-:root {
-  --background-color: #1A1A1A;
-  --text-color: #FFFFFF;
-  --text-secondary-color: #B0B0B0;
-  --accent-color: #A16BFF;
-  --button-bg-start: rgba(50, 50, 50, 0.8);
-  --button-bg-end: rgba(20, 20, 20, 0.8);
-  --button-text-color: #FFFFFF;
-  --button-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  --button-shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.4);
-  --button-border-light: rgba(255, 255, 255, 0.2);
-  --button-border-dark: rgba(0, 0, 0, 0.5);
-  --service-bg: #2A2A2A;
-  --input-bg: rgba(40, 40, 40, 0.9);
-}
+
 
 .loginContainer {
   display: flex;
@@ -30,13 +16,10 @@
 .loginBox {
   padding: clamp(20px, 3vw, 30px);
   border-radius: 16px;
-  background: var(--service-bg);
   width: 100%;
   max-width: clamp(400px, 40vw, 500px);
   text-align: center;
   box-sizing: border-box;
-  box-shadow: var(--button-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   transition: transform 0.3s ease;
 }

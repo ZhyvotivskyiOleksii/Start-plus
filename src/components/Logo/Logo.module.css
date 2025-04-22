@@ -7,9 +7,10 @@
 
 .logoText {
   font-size: 20px;
-  font-weight: bold;
   color: #A16BFF;
   transition: 0.5s;
+  font-family: "FuturaPT2", sans-serif;
+
 }
 
 .logoPlus {

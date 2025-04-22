@@ -18,7 +18,6 @@ app.post("/api/send-sms", async (req, res) => {
   const code = Math.floor(100000 + Math.random() * 900000).toString();
 
   try {
-    // Перевірка користувача в базі даних
     console.log("Перевірка користувача в базі даних...");
     let userExists = false;
     try {
@@ -30,7 +29,6 @@ app.post("/api/send-sms", async (req, res) => {
       throw dbError;
     }
 
-    // Збереження коду в базі даних
     console.log("Збереження коду в базі даних...");
     try {
       await pool.execute("INSERT INTO sms_codes (phone, code) VALUES (?, ?)", [phone, code]);
@@ -40,7 +38,6 @@ app.post("/api/send-sms", async (req, res) => {
       throw dbError;
     }
 
-    // Відправка SMS
     console.log("Відправка SMS...");
     try {
       await sendSms(phone, code);
