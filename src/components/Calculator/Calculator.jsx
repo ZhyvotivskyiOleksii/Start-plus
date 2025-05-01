@@ -13,7 +13,7 @@ export default function Calculator() {
   const [discount, setDiscount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  
+
   // Ініціалізація поточного місяця і року з актуальної дати
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -94,16 +94,17 @@ export default function Calculator() {
     city.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [street, setStreet] = useState("Edwarda Habicha");
-  const [postalCode, setPostalCode] = useState("02-495");
-  const [houseNumber, setHouseNumber] = useState("18/45");
+  // Убираем заполненные контактные данные
+  const [street, setStreet] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
   const [apartmentNumber, setApartmentNumber] = useState("");
   const [building, setBuilding] = useState("");
   const [floor, setFloor] = useState("");
   const [intercomCode, setIntercomCode] = useState("");
-  const [name, setName] = useState("OLEKSII");
-  const [phone, setPhone] = useState("+48 796238044");
-  const [email, setEmail] = useState("gamesdashev@gmail.com");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [agreeToMarketing, setAgreeToMarketing] = useState(false);
@@ -270,15 +271,35 @@ export default function Calculator() {
   }
 
   function calculateWorkTime() {
-    const baseHours = 0;
-    const roomTime = rooms * 0.5;
-    const bathroomTime = bathrooms * 1;
+    // Базовое время: 3 часа (включает 1 комнату и 1 ванную)
+    let baseHours = 3;
+
+    // Если выбраны дополнительные услуги, базовое время сбрасываем до 0
+    const hasAdditionalServices = paidServices.some((service) => {
+      const qty = selectedServices[service.id];
+      return (service.type === "checkbox" && qty) || (service.type === "quantity" && qty > 0);
+    });
+
+    if (hasAdditionalServices) {
+      baseHours = 0; // Сбрасываем базовое время, если есть дополнительные услуги
+    }
+
+    // Время за дополнительные комнаты (сверх 1): 30 минут (0.5 часа) за каждую
+    const additionalRooms = Math.max(0, rooms - 1);
+    const roomTime = additionalRooms * 0.5;
+
+    // Время за дополнительные ванные (сверх 1): 1 час за каждую
+    const additionalBathrooms = Math.max(0, bathrooms - 1);
+    const bathroomTime = additionalBathrooms * 1;
+
+    // Время за дополнительные услуги
     const additionalServiceTime = paidServices.reduce((sum, service) => {
       const qty = selectedServices[service.id];
       if (service.type === "checkbox" && qty) return sum + (service.additionalTime / 60);
       if (service.type === "quantity" && qty > 0) return sum + (service.additionalTime / 60) * qty;
       return sum;
     }, 0);
+
     return baseHours + roomTime + bathroomTime + additionalServiceTime;
   }
 

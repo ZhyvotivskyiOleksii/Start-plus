@@ -5,6 +5,8 @@ import HeroSection from "./components/HeroSection/HeroSection";
 import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
 import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator";
+import PrivateHouseCleaning from "./components/PrivateHouseCleaning/PrivateHouseCleaning"; // Добавляем импорт
+// import OfficeCleaning from "./components/OfficeCleaning/OfficeCleaning"; // Закомментируем пока
 import AdminPanel from "./components/AdminPanel";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/dashboard/Dashboard";
@@ -54,10 +56,9 @@ function AppContent() {
         <Route path="/" element={<HeroSection lang={lang} />} />
         <Route path="/calculator" element={<Calculator lang={lang} />} />
         <Route path="/renovation" element={<RenovationCalculator lang={lang} />} />
-        <Route
-          path="/window-cleaning"
-          element={<WindowCleaningCalculator lang={lang} />}
-        />
+        <Route path="/window-cleaning" element={<WindowCleaningCalculator lang={lang} />} />
+        <Route path="/private-house" element={<PrivateHouseCleaning lang={lang} />} /> {/* Добавляем маршрут */}
+        {/* <Route path="/office-cleaning" element={<OfficeCleaning lang={lang} />} /> Закомментируем пока */}
         <Route
           path="/admin"
           element={isAuthenticated ? <AdminPanel lang={lang} /> : <Navigate to="/" />}
