@@ -187,6 +187,7 @@
   word-break: keep-word;
   hyphens: none;
   max-width: 30%;
+ padding-top: 20px;
 }
 
 @media (max-width: 768px) {
