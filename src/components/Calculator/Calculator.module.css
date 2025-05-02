@@ -1,5 +1,4 @@
 :root {
-  --secondary-bgr: #8851df;
   --background-color: #1A1A1A;
   --text-color: #FFFFFF;
   --text-secondary-color: #B0B0B0;
@@ -43,11 +42,10 @@
   --dot-bg: rgba(255, 255, 255, 0.4);
   --popular-shadow: rgba(107, 70, 193, 0.5);
   --new-shadow: rgba(56, 161, 105, 0.5);
-  --specialist-bg: #2F2A44;
 }
 
 .calc-wrap {
-  margin-top: clamp(120px, 12vw, 180px);
+  margin-top: clamp(80px, 8vw, 120px);
   position: relative;
   color: var(--text-color);
   width: 100%;
@@ -61,7 +59,7 @@
 .calculator-container {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(10px, 2vw, 20px);
+  gap: clamp(20px, 3vw, 30px);
   padding: clamp(10px, 2vw, 20px) 0;
   width: 100%;
   max-width: 1440px;
@@ -80,13 +78,13 @@
   flex: 1 1 35%;
   min-width: 300px;
   position: sticky;
-  top: clamp(120px, 12vw, 180px);
+  top: clamp(80px, 8vw, 120px);
   height: fit-content;
-  background: linear-gradient(145deg, #2A2A2A, #1F1F1F);
-  padding: clamp(15px, 2vw, 25px);
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--light-border);
+  background: var(--service-bg);
+  padding: clamp(10px, 1.5vw, 15px);
+  border-radius: 12px;
+  box-shadow: var(--service-shadow);
+  box-sizing: border-box;
 }
 
 button {
@@ -94,12 +92,12 @@ button {
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   color: var(--button-text-color);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
-  font-weight: 500;
+  font-weight: 600;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,27 +110,27 @@ button {
 button:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .sticky-order-button {
   width: 100%;
-  padding: clamp(10px, 1.5vw, 14px);
-  background: linear-gradient(145deg, var(--accent-color), var(--secondary-bgr));
-  color: var(--button-text-color);
-  font-weight: 600;
-  font-size: clamp(0.9rem, 1.5vmin, 1rem);
+  padding: clamp(10px, 1.5vw, 12px);
+  background: linear-gradient(145deg, #6b46c1, #7d55d1);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.6vmin, 1.05rem);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 12px;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -140,26 +138,28 @@ button:active {
 }
 
 .sticky-order-button:hover {
-  background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
+  background: linear-gradient(145deg, #7d55d1, #9f67e8);
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .sticky-order-button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 760px) {
   .sticky-order-button {
     position: fixed;
     bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: calc(100% - 40px);
-    max-width: 400px;
-    z-index: 1;
-    margin-top: 0;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    transform: none;
+    max-width: none;
+    z-index: 1000;
+    padding: 12px;
+    font-size: 1rem;
   }
 }
 
@@ -172,19 +172,19 @@ button:active {
 .user-type {
   display: flex;
   gap: clamp(8px, 1vw, 10px);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .user-type button {
   flex: 1;
   padding: clamp(8px, 1vw, 10px);
-  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--disabled-bg);
   color: var(--button-text-color);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -199,25 +199,30 @@ button:active {
 .user-type button:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .user-type button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 760px) {
-  .user-type {flex-direction: column;}
-  .user-type button {width: 100%;}
+  .user-type {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .user-type button {
+    width: 100%;
+  }
 }
 
 .quantity-selector {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: clamp(10px, 2vw, 20px);
-  margin-bottom: 20px;
+  gap: clamp(10px, 2vw, 16px);
+  margin-bottom: 16px;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -229,31 +234,31 @@ button:active {
   text-align: center;
   gap: clamp(8px, 1.2vw, 12px);
   background: var(--service-bg);
-  padding: clamp(6px, 1.2vw, 10px) clamp(12px, 1.8vw, 16px);
-  border-radius: 16px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  padding: clamp(6px, 1vw, 8px) clamp(10px, 1.5vw, 12px);
+  border-radius: 10px;
+  box-shadow: var(--service-shadow);
   flex: 1;
-  min-width: 220px;
+  min-width: 200px;
   width: 100%;
-  transition: background 0.5s ease, box-shadow 0.5s ease;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 .counter:hover {
   background: var(--secondary-bg);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--service-shadow-hover);
 }
 
 .counter-button {
-  width: clamp(28px, 3.5vw, 32px);
-  height: clamp(28px, 3.5vw, 32px);
+  width: clamp(26px, 3vw, 30px);
+  height: clamp(26px, 3vw, 30px);
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: clamp(0.9rem, 1.8vmin, 1.1rem);
   color: var(--button-text-color);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -263,12 +268,12 @@ button:active {
 .counter-button:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .counter-button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .counter-button:disabled {
@@ -279,17 +284,17 @@ button:active {
 }
 
 .counter-value {
-  font-size: clamp(1rem, 1.8vmin, 1.2rem);
-  font-weight: 600;
+  font-size: clamp(1.1rem, 2vmin, 1.3rem);
+  font-weight: 700;
   color: var(--text-color);
-  min-width: 45px;
+  min-width: 40px;
   text-align: center;
-  transition: color 0.5s ease;
+  transition: color 0.3s ease;
   flex-shrink: 0;
 }
 
 .counter-label {
-  font-size: clamp(0.85rem, 1.4vmin, 1rem);
+  font-size: clamp(0.9rem, 1.5vmin, 1rem);
   color: var(--text-secondary-color);
   font-weight: 500;
   text-transform: lowercase;
@@ -297,69 +302,83 @@ button:active {
 }
 
 @media (max-width: 760px) {
-  .quantity-selector {gap: 12px;}
-  .counter {margin: 0 auto;width: 100%;max-width: 280px;padding: 8px 12px;}
-  .counter-button {width: 30px;height: 30px;font-size: 1rem;}
-  .counter-value {font-size: 1.1rem;min-width: 40px;}
+  .quantity-selector {
+    gap: 10px;
+  }
+  .counter {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 260px;
+    padding: 6px 10px;
+  }
+  .counter-button {
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+  }
+  .counter-value {
+    font-size: 1.2rem;
+    min-width: 35px;
+  }
 }
 
 .note {
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-secondary-color);
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .additional-services {
-  margin-top: clamp(30px, 5vw, 50px);
-  margin-bottom: clamp(30px, 5vw, 50px);
+  margin-top: clamp(20px, 4vw, 30px);
+  margin-bottom: clamp(20px, 4vw, 30px);
 }
 
 .additional-services h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 2rem);
-  margin-bottom: 12px;
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
+  margin-bottom: 10px;
   color: var(--text-color);
   font-family: "Futura PT", sans-serif;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .service-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .service-item {
   display: flex;
   justify-content: center;
-  gap: clamp(15px, 4vw, 40px);
+  gap: clamp(12px, 3vw, 20px);
   align-items: center;
-  padding: clamp(6px, 1.2vw, 10px) clamp(8px, 1.5vw, 12px);
-  border-radius: 10px;
+  padding: clamp(6px, 1vw, 8px) clamp(8px, 1.2vw, 10px);
+  border-radius: 8px;
   background: var(--service-bg);
   box-shadow: var(--service-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .service-item:hover {
   background: var(--secondary-bg);
   box-shadow: var(--service-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .service-item:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .checkbox-label {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  gap: 6px;
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--text-color);
   cursor: pointer;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .checkbox-wrapper {
@@ -370,26 +389,26 @@ button:active {
 
 .custom-checkbox {
   appearance: none;
-  width: clamp(16px, 1.8vw, 20px);
-  height: clamp(12px, 1.6vw, 16px);
+  width: clamp(14px, 1.6vw, 18px);
+  height: clamp(14px, 1.6vw, 18px);
   border: 2px solid var(--accent-color);
   border-radius: 4px;
   cursor: pointer;
   position: relative;
   background: var(--service-bg);
   box-shadow: var(--service-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
 .custom-checkbox:hover {
   background: var(--secondary-bg);
   box-shadow: var(--service-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .custom-checkbox:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .custom-checkbox:checked {
@@ -403,8 +422,8 @@ button:active {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--text-color);
-  font-size: clamp(7px, 1.1vmin, 9px);
+  color: #ffffff;
+  font-size: clamp(8px, 1.2vmin, 10px);
 }
 
 .annex-section {
@@ -414,15 +433,21 @@ button:active {
 }
 
 @media (max-width: 1125px) {
-  .service-item {gap: clamp(12px, 2.5vw, 25px);padding: clamp(5px, 0.8vw, 8px) clamp(6px, 1.2vw, 10px);}
+  .service-item {
+    gap: clamp(10px, 2vw, 15px);
+    padding: clamp(5px, 0.8vw, 6px) clamp(6px, 1vw, 8px);
+  }
 }
 
 @media (max-width: 760px) {
-  .service-item {gap: 12px;text-align: center;}
+  .service-item {
+    gap: 10px;
+    text-align: center;
+  }
 }
 
 .vacuum-notice {
-  margin-top: 12px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -431,7 +456,7 @@ button:active {
 .icon-checkbox-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .text-price-wrapper {
@@ -442,7 +467,7 @@ button:active {
 
 .text-price-wrapper p {
   margin: 0;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-color);
 }
 
@@ -451,115 +476,120 @@ button:active {
   border: none;
   border-radius: 4px;
   padding: 4px 8px;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-color);
   cursor: default;
   width: fit-content;
+  font-weight: 600;
 }
 
 .service-icon {
-  width: clamp(40px, 6vw, 60px);
-  height: clamp(40px, 6vw, 60px);
+  width: clamp(32px, 5vw, 40px);
+  height: clamp(32px, 5vw, 40px);
   object-fit: contain;
 }
 
 @media (max-width: 480px) {
-  .service-item {gap: 12px;text-align: center;padding: 8px 10px;}
-  .checkbox-label {display: block;align-items: center;gap: 12px;}
-  .icon-checkbox-wrapper {display: flex;justify-content: center;width: 100%;align-items: center;}
-  .service-icon {width: 28px;height: 28px;}
-  .custom-checkbox {width: 14px;height: 14px;}
-  .text-price-wrapper {align-items: flex-start;}
-  .vacuum-price {padding: 3px 6px;font-size: 0.75rem;}
+  .service-item {
+    gap: 8px;
+    text-align: center;
+    padding: 6px 8px;
+  }
+  .checkbox-label {
+    display: block;
+    align-items: center;
+    gap: 10px;
+  }
+  .icon-checkbox-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    align-items: center;
+  }
+  .service-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .custom-checkbox {
+    width: 14px;
+    height: 14px;
+  }
+  .text-price-wrapper {
+    align-items: flex-start;
+  }
+  .vacuum-price {
+    padding: 3px 6px;
+    font-size: 0.8rem;
+  }
 }
 
 .calculator-right h2 {
-  font-size: clamp(1.2rem, 2.2vmin, 1.4rem);
-  font-family: "Futura PT", sans-serif;
-  color: var(--text-color);
-  margin-bottom: 12px;
-  line-height: 1.3;
-  letter-spacing: 0.5px;
-  font-weight: 800;
-}
-
-.location-info {
-  margin-bottom: 20px;
-  background: var(--secondary-bg);
-  padding: clamp(8px, 1.2vw, 16px);
-  border-radius: 10px;
-  border: 1px solid var(--tertiary-bg);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.location-info:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.location-info h4 {
   font-size: clamp(1.1rem, 2vmin, 1.3rem);
   font-family: "Futura PT", sans-serif;
   color: var(--text-color);
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
-  font-weight: 800;
-}
-
-.location-info p {
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
-  color: var(--text-secondary-color);
-  margin: 0;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  letter-spacing: 0.3px;
   font-weight: 700;
 }
 
-.specialist-info {
-  background: var(--specialist-bg);
-  padding: clamp(8px, 1.2vw, 16px);
-  border-radius: 10px;
-  margin-bottom: 20px;
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  border: 1px solid var(--accent-color);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+.location-info {
+  margin-bottom: 12px;
 }
 
-.specialist-info:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+.location-info h4 {
+  font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
+  font-family: "Futura PT", sans-serif;
+  color: var(--text-color);
+  margin-bottom: 4px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
+}
+
+.location-info p {
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
+  color: var(--text-secondary-color);
+  margin: 0;
+  font-weight: 600;
+}
+
+.specialist-info {
+  background: var(--secondary-bg);
+  padding: clamp(6px, 1vw, 10px);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--tertiary-bg);
 }
 
 .specialist-info img {
-  width: clamp(28px, 3.5vw, 32px);
-  height: clamp(28px, 3.5vw, 32px);
+  width: clamp(24px, 3vw, 28px);
+  height: clamp(24px, 3vw, 28px);
 }
 
 .specialist-info p {
   font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   margin: 0;
   color: var(--text-secondary-color);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .calculator-right h4 {
-  font-size: clamp(1.1rem, 2vmin, 1.3rem);
+  font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
   color: var(--text-color);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-family: "Futura PT", sans-serif;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .cleaners {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 12px;
-  background: var(--secondary-bg);
-  padding: clamp(8px, 1.2vw, 16px);
-  border-radius: 10px;
-  border: 1px solid var(--tertiary-bg);
+  margin-bottom: 10px;
 }
 
 .cleaners-icon {
@@ -568,64 +598,56 @@ button:active {
 }
 
 .cleaners p {
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .selected-date {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding: 12px;
-  border-radius: 10px;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 8px;
   border: 1px solid var(--tertiary-bg);
-  transition: background 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  background: var(--secondary-bg);
-}
-
-.selected-date:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
 }
 
 .calendar-icon {
-  font-size: clamp(1rem, 1.8vmin, 1.2rem);
+  font-size: clamp(0.9rem, 1.6vmin, 1.1rem);
   color: var(--accent-color);
 }
 
 .selected-date p {
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
   margin: 0;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .promo-code {
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .promo-container {
   display: flex;
   align-items: center;
-  padding: 0 0 0 12px;
+  padding: 0 0 0 10px;
   background: var(--secondary-bg);
-  border-radius: 8px;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: background 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 6px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: background 0.3s ease;
 }
 
 .promo-container:hover {
   background: var(--tertiary-bg);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .promo-icon {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   color: var(--text-secondary-color);
   margin-right: 6px;
 }
@@ -635,21 +657,21 @@ button:active {
   border: none;
   outline: none;
   background: transparent;
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .promo-container button {
-  background: linear-gradient(145deg, var(--accent-color), var(--secondary-bgr));
+  background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   color: var(--button-text-color);
   border: none;
-  border-radius: 10px;
-  padding: 12px 10px;
+  border-radius: 6px;
+  padding: 8px 10px;
   cursor: pointer;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -659,23 +681,26 @@ button:active {
 .promo-container button:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .promo-container button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .total {
   text-align: center;
-  margin-top: 12px;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--secondary-bg);
+  border-radius: 8px;
 }
 
 .total p {
-  font-size: clamp(1.2rem, 2.4vmin, 1.5rem);
+  font-size: clamp(1.2rem, 2.2vmin, 1.4rem);
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   color: var(--text-color);
 }
 
@@ -685,21 +710,22 @@ button:active {
 
 .total p del {
   color: var(--text-secondary-color);
-  margin-left: 5px;
+  margin-left: 6px;
+  font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
 }
 
 .payment-icons {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .payment-icons img {
-  width: clamp(28px, 3.5vw, 36px);
-  height: clamp(28px, 3.5vw, 36px);
+  width: clamp(26px, 3vw, 32px);
+  height: clamp(26px, 3vw, 32px);
   filter: grayscale(0%);
-  transition: filter 0.5s ease;
+  transition: filter 0.3s ease;
 }
 
 .payment-icons img:hover {
@@ -707,22 +733,12 @@ button:active {
 }
 
 .location-cost {
-  margin-bottom: 16px;
-  background: var(--secondary-bg);
-  padding: clamp(8px, 1.2vw, 16px);
-  border-radius: 10px;
-  border: 1px solid var(--tertiary-bg);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.location-cost:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
 }
 
 .location-cost p {
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
-  font-weight: 700;
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
+  font-weight: 600;
   color: var(--text-secondary-color);
   margin: 0;
 }
@@ -730,29 +746,24 @@ button:active {
 .selected-services-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .selected-service-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(5px, 0.8vw, 6px) clamp(8px, 1.2vw, 10px);
+  padding: clamp(4px, 0.6vw, 5px) clamp(6px, 1vw, 8px);
   background: var(--light-overlay);
   border: 1px solid var(--light-border);
-  border-radius: 8px;
-  flex: 1 1 calc(50% - 6px);
-  min-width: clamp(110px, 38vw, 140px);
-  max-width: calc(50% - 6px);
+  border-radius: 6px;
+  flex: 1 1 calc(50% - 4px);
+  min-width: clamp(100px, 36vw, 120px);
+  max-width: calc(50% - 4px);
   position: relative;
   box-sizing: border-box;
-  transition: background 0.3s ease, border 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.selected-service-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease, border 0.3s ease;
 }
 
 .service-info {
@@ -764,16 +775,16 @@ button:active {
 }
 
 .selected-service-icon {
-  width: clamp(14px, 2.2vw, 18px);
-  height: clamp(14px, 2.2vw, 18px);
+  width: clamp(14px, 2vw, 16px);
+  height: clamp(14px, 2vw, 16px);
   object-fit: contain;
   flex-shrink: 0;
 }
 
 .service-info p {
   margin: 0;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
-  font-weight: 700;
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-weight: 600;
   color: var(--text-color);
   line-height: 1.3;
   white-space: nowrap;
@@ -786,14 +797,14 @@ button:active {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-right: 18px;
+  margin-right: 16px;
   flex-shrink: 0;
 }
 
 .service-price p {
   margin: 0;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
-  font-weight: 700;
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-weight: 600;
   color: var(--text-color);
   white-space: nowrap;
 }
@@ -801,20 +812,20 @@ button:active {
 .selected-service-item .remove-btn {
   position: absolute;
   top: 50%;
-  right: 6px;
+  right: 4px;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: var(--remove-bg-start);
-  font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
+  font-size: clamp(0.75rem, 1.2vmin, 0.85rem);
   cursor: pointer;
   transition: color 0.3s ease;
   padding: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(12px, 1.8vw, 14px);
-  height: clamp(12px, 1.8vw, 14px);
+  width: clamp(10px, 1.6vw, 12px);
+  height: clamp(10px, 1.6vw, 12px);
   flex-shrink: 0;
 }
 
@@ -823,56 +834,76 @@ button:active {
 }
 
 @media (max-width: 760px) {
-  .selected-service-item {flex: 1 1 calc(50% - 6px);min-width: 130px;max-width: calc(50% - 6px);}
-  .service-info p {font-size: 0.75rem;}
-  .service-price p {font-size: 0.75rem;}
-  .selected-service-icon {width: 16px;height: 16px;}
+  .selected-service-item {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 110px;
+    max-width: calc(50% - 4px);
+  }
 }
 
 @media (max-width: 480px) {
-  .selected-service-item {flex: 1 1 calc(50% - 6px);min-width: 110px;max-width: calc(50% - 6px);padding: 5px 8px;}
-  .service-info p {font-size: 0.7rem;}
-  .service-price p {font-size: 0.7rem;}
-  .selected-service-icon {width: 14px;height: 14px;}
-  .selected-service-item .remove-btn {right: 5px;font-size: 0.85rem;width: 12px;height: 12px;}
+  .selected-service-item {
+    flex: 1 1 calc(50% - 4px);
+    min-width: 100px;
+    max-width: calc(50% - 4px);
+    padding: 4px 6px;
+  }
+  .service-info p {
+    font-size: 0.8rem;
+  }
+  .service-price p {
+    font-size: 0.8rem;
+  }
+  .selected-service-icon {
+    width: 14px;
+    height: 14px;
+  }
+  .selected-service-item .remove-btn {
+    right: 4px;
+    font-size: 0.8rem;
+    width: 10px;
+    height: 10px;
+  }
 }
 
 .cacl-title {
-  font-size: clamp(2rem, 5vmin, 3rem);
+  font-size: clamp(1.8rem, 4vmin, 2.2rem);
   font-weight: 800;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--text-color);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 .subtitle {
-  font-size: clamp(1rem, 2vmin, 1.2rem);
+  font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
   color: var(--text-secondary-color);
   margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .calendar-section {
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .calendar-section h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 1rem);
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
   color: var(--text-color);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
   font-family: "Futura PT", sans-serif;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .calendar-container {
-  border-radius: 12px;
-  transition: box-shadow 0.5s ease;
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease;
 }
 
 .calendar-time-wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(8px, 1.8vw, 14px);
+  gap: clamp(8px, 1.5vw, 12px);
 }
 
 .calendar-wrapper {
@@ -882,31 +913,37 @@ button:active {
 
 .time-wrapper {
   flex: 1 1 30%;
-  max-width: 240px;
+  max-width: 220px;
 }
 
 @media (max-width: 1125px) {
-  .calendar-wrapper {flex: 1 1 100%;}
-  .time-wrapper {flex: 1 1 100%;max-width: 100%;margin: 0 auto;}
+  .calendar-wrapper {
+    flex: 1 1 100%;
+  }
+  .time-wrapper {
+    flex: 1 1 100%;
+    max-width: 100%;
+    margin: 0 auto;
+  }
 }
 
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .nav-button {
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   border: none;
-  border-radius: 10px;
-  width: clamp(35px, 3.5vw, 40px);
-  height: clamp(28px, 3.5vw, 32px);
+  border-radius: 8px;
+  width: clamp(32px, 3vw, 36px);
+  height: clamp(26px, 3vw, 30px);
   cursor: pointer;
   color: var(--button-text-color);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -916,36 +953,36 @@ button:active {
 .nav-button:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .nav-button:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .nav-button svg {
-  font-size: clamp(1.1rem, 1.8vmin, 1.3rem);
+  font-size: clamp(1rem, 1.6vmin, 1.2rem);
 }
 
 .calendar-header h5 {
-  font-size: clamp(1.2rem, 2.2vmin, 1.4rem);
+  font-size: clamp(1rem, 2vmin, 1.2rem);
   color: var(--text-color);
   font-family: "Futura PT", sans-serif;
   margin: 0;
-  text-transform: lowercase;
+  text-transform: capitalize;
   text-align: center;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  letter-spacing: 0.3px;
+  font-weight: 600;
 }
 
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-secondary-color);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   gap: 2px;
 }
 
@@ -968,16 +1005,16 @@ button:active {
 
 .calendar-day {
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: clamp(32px, 4.5vw, 38px);
-  height: clamp(42px, 5.5vw, 48px);
+  min-width: clamp(30px, 4vw, 36px);
+  height: clamp(40px, 5vw, 46px);
   box-shadow: var(--button-shadow);
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
@@ -987,14 +1024,14 @@ button:active {
 
 .day-number {
   font-weight: 600;
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--button-text-color);
 }
 
 .calendar-day.hoverable:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .calendar-day.selected {
@@ -1054,8 +1091,8 @@ button:active {
 }
 
 .day-label {
-  font-size: clamp(0.45rem, 0.9vmin, 0.55rem);
-  margin-top: 1px;
+  font-size: clamp(0.5rem, 0.9vmin, 0.6rem);
+  margin-top: 2px;
   color: var(--button-text-color);
 }
 
@@ -1064,52 +1101,52 @@ button:active {
   top: 0;
   right: 0;
   background: var(--discount-color);
-  color: var(--text-color);
-  font-size: clamp(0.65rem, 0.9vmin, 0.65rem);
-  padding: 4px 6px;
-  border-radius: 5px;
+  color: #ffffff;
+  font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
+  padding: 3px 5px;
+  border-radius: 4px;
   font-weight: 700;
 }
 
 .calendar-footer {
-  margin-top: 10px;
+  margin-top: 8px;
   text-align: center;
   color: var(--text-secondary-color);
-  font-size: clamp(0.65rem, 1.4vmin, 0.75rem);
+  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
 }
 
 .calendar-footer p {
   margin: 2px 0;
-  font-size: clamp(0.65rem, 1.4vmin, 0.75rem);
+  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
   color: var(--text-secondary-color);
 }
 
 .time-wrapper h5 {
-  font-size: clamp(1.1rem, 2vmin, 1.3rem);
+  font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
   color: var(--text-color);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-family: "Futura PT", sans-serif;
   text-align: center;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .time-slots {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
   gap: 4px;
   width: 100%;
 }
 
 .time-slot {
-  padding: clamp(5px, 0.8vw, 7px);
+  padding: clamp(5px, 0.8vw, 6px);
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: clamp(0.65rem, 1.4vmin, 0.75rem);
+  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--button-text-color);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   text-align: center;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
@@ -1120,12 +1157,12 @@ button:active {
 .time-slot:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .time-slot:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .time-slot.selected {
@@ -1141,41 +1178,46 @@ button:active {
 }
 
 @media (max-width: 1125px) {
-  .time-slots {grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));}
-  .time-slot {padding: 5px;font-size: 0.7rem;}
+  .time-slots {
+    grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+  }
+  .time-slot {
+    padding: 4px;
+    font-size: 0.8rem;
+  }
 }
 
 .frequency-section {
-  margin-top: 20px;
-  padding: clamp(10px, 1.8vw, 14px);
-  border-radius: 12px;
-  transition: box-shadow 0.5s ease;
+  margin-top: 16px;
+  padding: clamp(8px, 1.5vw, 12px);
+  border-radius: 10px;
+  transition: box-shadow 0.3s ease;
 }
 
 .frequency-section h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 2rem);
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
   font-family: "Futura PT", sans-serif;
   color: var(--text-color);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .frequency-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 6px;
 }
 
 .frequency-option {
   display: flex;
   align-items: center;
-  padding: clamp(8px, 1.2vw, 10px);
+  padding: clamp(6px, 1vw, 8px);
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border: none;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
@@ -1186,49 +1228,48 @@ button:active {
 .frequency-option:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .frequency-option:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .frequency-option.selected {
-  background: #FFFFFF; /* Белый фон для активных услуг */
-  color: var(--background-color);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(145deg, var(--button-bg-selected-start), var(--button-bg-selected-end));
+  color: var(--button-text-color);
 }
 
 .frequency-option.selected .frequency-title,
 .frequency-option.selected .frequency-price,
 .frequency-option.selected .frequency-discount {
-  color: var(--background-color);
+  color: var(--button-text-color);
 }
 
 .frequency-content {
   flex: 1;
   text-align: left;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .frequency-title {
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
-  font-weight: 500;
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
+  font-weight: 600;
   color: var(--button-text-color);
   margin: 0;
   line-height: 1.2;
 }
 
 .frequency-discount {
-  font-size: clamp(0.65rem, 1.4vmin, 0.75rem);
+  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
   font-weight: 600;
   color: var(--discount-color);
   margin: 2px 0;
 }
 
 .frequency-price {
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   font-weight: 600;
   color: var(--button-text-color);
   margin: 2px 0;
@@ -1243,60 +1284,52 @@ button:active {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 16px;
-  padding: 12px;
-  transition: background 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  background: var(--secondary-bg);
-  border-radius: 10px;
-  border: 1px solid var(--tertiary-bg);
-}
-
-.selected-frequency:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+  padding: 8px;
+  transition: background 0.3s ease;
 }
 
 .selected-frequency p {
-  font-size: clamp(0.85rem, 1.6vmin, 0.95rem);
-  font-weight: 700;
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
+  font-weight: 600;
   color: var(--text-color);
   margin: 0;
 }
 
 .discount-inline {
-  font-size: clamp(0.55rem, 0.9vmin, 0.65rem);
+  font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
   color: var(--discount-color);
   margin-left: 4px;
 }
 
 .paid-services-section {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .paid-services-section h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 2rem);
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
   font-family: "Futura PT", sans-serif;
   color: var(--text-color);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .paid-services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(clamp(140px, 18vw, 160px), 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(130px, 16vw, 150px), 1fr));
+  gap: 12px;
 }
 
 .paid-service-card {
   background: var(--disabled-bg);
-  border-radius: 10px;
-  padding: clamp(10px, 1.8vw, 12px);
+  border-radius: 8px;
+  padding: clamp(8px, 1.5vw, 10px);
   text-align: center;
   position: relative;
   cursor: pointer;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -1306,12 +1339,12 @@ button:active {
 .paid-service-card:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .paid-service-card:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .paid-service-card.selected {
@@ -1321,7 +1354,7 @@ button:active {
 
 .paid-service-card p {
   margin: 0;
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--button-text-color);
 }
 
@@ -1330,19 +1363,19 @@ button:active {
 }
 
 .paid-service-card .service-icon {
-  width: clamp(45px, 7vw, 60px);
-  height: clamp(45px, 7vw, 60px);
+  width: clamp(40px, 6vw, 50px);
+  height: clamp(40px, 6vw, 50px);
   object-fit: contain;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .price-wrapper {
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .price-new {
-  font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
-  font-weight: bold;
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
+  font-weight: 700;
   color: var(--button-text-color);
   margin-right: 4px;
 }
@@ -1362,21 +1395,21 @@ button:active {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .qty-btn {
-  width: clamp(22px, 2.8vw, 28px);
-  height: clamp(22px, 2.8vw, 28px);
+  width: clamp(20px, 2.5vw, 24px);
+  height: clamp(20px, 2.5vw, 24px);
   background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
   border: none;
-  border-radius: 10px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
+  font-size: clamp(0.8rem, 1.4vmin, 0.9rem);
   color: var(--button-text-color);
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -1386,12 +1419,12 @@ button:active {
 .qty-btn:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .qty-btn:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .qty-btn:disabled {
@@ -1402,10 +1435,10 @@ button:active {
 }
 
 .qty-value {
-  font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   font-weight: 600;
   color: var(--button-text-color);
-  min-width: 28px;
+  min-width: 24px;
   text-align: center;
 }
 
@@ -1415,21 +1448,21 @@ button:active {
 
 .remove-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
   background: linear-gradient(145deg, var(--remove-bg-start), var(--remove-bg-end));
-  color: var(--text-color);
+  color: #ffffff;
   border: none;
-  border-radius: 10px;
-  width: clamp(18px, 2.2vw, 22px);
-  height: clamp(18px, 2.2vw, 22px);
+  border-radius: 6px;
+  width: clamp(16px, 2vw, 20px);
+  height: clamp(16px, 2vw, 20px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
+  font-size: clamp(0.8rem, 1.4vmin, 0.9rem);
   cursor: pointer;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   border-top: 1px solid var(--button-border-light);
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
@@ -1439,49 +1472,50 @@ button:active {
 .remove-btn:hover {
   background: linear-gradient(145deg, var(--remove-bg-hover-start), var(--remove-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .remove-btn:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .city-select {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   position: relative;
 }
 
 .city-button {
-  padding: clamp(8px, 1.2vw, 10px) clamp(12px, 1.8vw, 14px);
+  padding: clamp(8px, 1vw, 10px) clamp(10px, 1.5vw, 12px);
   background: var(--secondary-bg);
-  border-radius: 12px;
+  border-radius: 8px;
   text-align: left;
-  font-size: clamp(0.8rem, 1.4vmin, 0.9rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
   cursor: pointer;
-  transition: background 0.5s ease;
+  transition: background 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: var(--button-shadow);
+  font-weight: 600;
 }
 
 .city-button:hover {
   background: var(--tertiary-bg);
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .city-search {
   width: 60%;
-  padding: 8px 14px;
+  padding: 8px 12px;
   border: none;
   border-bottom: 2px solid var(--tertiary-bg);
   background: var(--secondary-bg);
-  font-size: clamp(0.8rem, 1.4vmin, 0.9rem);
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   outline: none;
   border-radius: 6px;
 }
@@ -1493,24 +1527,24 @@ button:active {
   border: none;
   box-shadow: none;
   z-index: 1000;
-  padding: 8px 0;
+  padding: 6px 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .city-option {
-  flex: 0 0 calc(25% - 8px);
-  min-width: clamp(140px, 18vw, 160px);
-  padding: clamp(0.6vw, 0.8vw, 0.8vw);
+  flex: 0 0 calc(25% - 6px);
+  min-width: clamp(130px, 16vw, 150px);
+  padding: clamp(0.5vw, 0.8vw, 0.7vw);
   background: var(--disabled-bg);
   border: none;
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--button-text-color);
   cursor: pointer;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1523,12 +1557,12 @@ button:active {
 .city-option:hover {
   background: linear-gradient(145deg, var(--button-bg-hover-start), var(--button-bg-hover-end));
   box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .city-option:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .city-option.selected {
@@ -1538,11 +1572,11 @@ button:active {
 
 .city-option .city-price {
   background: var(--highlight-color);
-  color: var(--background-color);
+  color: var(--highlight-contrast-color);
   padding: 2px 5px;
   border-radius: 4px;
   font-weight: 600;
-  font-size: clamp(0.65rem, 1.4vmin, 0.75rem);
+  font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
 }
 
 .city-option.selected .city-price {
@@ -1551,42 +1585,56 @@ button:active {
 }
 
 @media (max-width: 1125px) {
-  .city-option {flex: 0 0 calc(33.33% - 8px);min-width: 140px;}
+  .city-option {
+    flex: 0 0 calc(33.33% - 6px);
+    min-width: 130px;
+  }
 }
 
 @media (max-width: 760px) {
-  .city-option {flex: 0 0 calc(20% - 8px);min-width: 110px;}
-  .day-label {font-size: 0.45rem;margin-top: 1px;color: var(--text-secondary-color);}
-  .calendar-section h4 {font-size: clamp(1rem, 3.2vmin, 1rem);}
+  .city-option {
+    flex: 0 0 calc(20% - 6px);
+    min-width: 100px;
+  }
+  .day-label {
+    font-size: 0.5rem;
+    margin-top: 2px;
+    color: var(--text-secondary-color);
+  }
+  .calendar-section h4 {
+    font-size: clamp(1.1rem, 2.5vmin, 1.3rem);
+  }
 }
 
 @media (max-width: 480px) {
-  .city-option {flex: 0 0 calc(50% - 8px);}
+  .city-option {
+    flex: 0 0 calc(50% - 6px);
+  }
 }
 
 .address-section {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .address-section h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 2rem);
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
   font-family: "Futura PT", sans-serif;
   color: var(--text-color);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .address-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .address-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(110px, 28vw, 140px), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(100px, 26vw, 130px), 1fr));
+  gap: 10px;
 }
 
 .input-group {
@@ -1595,7 +1643,7 @@ button:active {
 
 .input-label {
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 10px;
   font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-secondary-color);
@@ -1607,13 +1655,13 @@ button:active {
 .contact-input,
 .contact-textarea {
   width: 100%;
-  padding: clamp(22px, 2.8vw, 28px) 10px 8px 10px;
+  padding: clamp(20px, 2.5vw, 24px) 10px 6px 10px;
   background: var(--secondary-bg);
-  border-radius: 8px;
-  font-size: clamp(0.8rem, 1.4vmin, 0.9rem);
+  border-radius: 6px;
+  font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   border: none;
   color: var(--text-color);
-  transition: border-color 0.5s ease;
+  transition: border-color 0.3s ease;
 }
 
 .address-input:focus,
@@ -1630,80 +1678,140 @@ button:active {
 .contact-textarea.filled + .input-label,
 .contact-textarea:focus + .input-label {
   top: 4px;
-  font-size: clamp(0.6rem, 1.4vmin, 0.7rem);
+  font-size: clamp(0.65rem, 1.2vmin, 0.75rem);
   color: var(--accent-color);
 }
 
 .contact-textarea {
-  height: 90px;
+  height: 80px;
   resize: none;
 }
 
 .contact-section {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .contact-section h4 {
-  font-size: clamp(1.6rem, 3.2vmin, 2rem);
+  font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
   font-family: "Futura PT", sans-serif;
   color: var(--text-color);
-  margin-bottom: 16px;
-  letter-spacing: 0.5px;
-  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
 }
 
 .contact-fields {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .contact-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(clamp(140px, 38vw, 180px), 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(clamp(130px, 36vw, 160px), 1fr));
+  gap: 10px;
 }
 
 .agreement-section {
-  margin-top: 28px;
+  margin-top: 20px;
 }
 
 .agreement-label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
+  gap: 6px;
+  font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--text-color);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   cursor: pointer;
+  font-weight: 500;
 }
 
 @media (max-width: 760px) {
-  .calculator-container {flex-direction: column;padding: 0;}
-  .calculator-left, .calculator-right {flex: 1 1 100%;position: static;box-shadow: none;border-radius: 0;margin-top: 0;padding: 0px;}
-  .discount-label {position: absolute;padding: 2px 4px;top: 0;right: 0;font-size: 0.45rem;}
-  .calculator-right {top: 0;margin-top: 8px;padding: 20px;border-radius: 8px;}
-  .calendar-grid {grid-template-columns: repeat(7, minmax(28px, 1fr));gap: 2px;}
-  .calendar-day {min-width: 28px;height: 48px;font-size: 0.7rem;}
-  .frequency-options {grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));gap: 6px;}
-  .frequency-option {padding: 6px;}
-  .service-block {flex-direction: column;}
-  .paid-services-grid {grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));gap: 12px;}
-  .specialist-info {flex-direction: column;text-align: center;}
-  .selected-date, .selected-frequency, .promo-code, .total {width: 100%;}
-  .payment-icons {flex-wrap: wrap;}
-  .cacl-title {font-size: 1.5rem;}
+  .calculator-container {
+    flex-direction: column;
+    padding: 0;
+  }
+  .calculator-left,
+  .calculator-right {
+    flex: 1 1 100%;
+    position: static;
+    box-shadow: none;
+    border-radius: 0;
+    margin-top: 0;
+    padding: 0px;
+  }
+  .calculator-right {
+    margin-top: 8px;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  .discount-label {
+    padding: 2px 4px;
+    font-size: 0.5rem;
+  }
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(26px, 1fr));
+    gap: 2px;
+  }
+  .calendar-day {
+    min-width: 26px;
+    height: 44px;
+    font-size: 0.75rem;
+  }
+  .frequency-options {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 5px;
+  }
+  .frequency-option {
+    padding: 5px;
+  }
+  .service-block {
+    flex-direction: column;
+  }
+  .paid-services-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+  .specialist-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  .selected-date,
+  .selected-frequency,
+  .promo-code,
+  .total {
+    width: 100%;
+  }
+  .payment-icons {
+    flex-wrap: wrap;
+    margin-bottom: 60px;
+  }
+  .cacl-title {
+    font-size: 1.6rem;
+  }
 }
 
 @media (max-width: 480px) {
-  .calendar-grid {grid-template-columns: repeat(7, minmax(22px, 1fr));}
-  .calendar-day {min-width: 22px;height: 38px;font-size: 0.6rem;}
-  .time-slots {grid-template-columns: repeat(auto-fit, minmax(55px, 1fr));}
-  .time-slot {padding: 4px;font-size: 0.65rem;}
+  .calendar-grid {
+    grid-template-columns: repeat(7, minmax(22px, 1fr));
+  }
+  .calendar-day {
+    min-width: 22px;
+    height: 36px;
+    font-size: 0.65rem;
+  }
+  .time-slots {
+    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
+  }
+  .time-slot {
+    padding: 3px;
+    font-size: 0.7rem;
+  }
 }
 
 .error-border {
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.3) !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3) !important;
   border-color: var(--error-color) !important;
 }
 

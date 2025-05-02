@@ -12,7 +12,6 @@ export default function BarMenu({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [userPhone, setUserPhone] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -22,15 +21,6 @@ export default function BarMenu({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    const storedPhone = localStorage.getItem("phone");
-    if (isAuthenticated && storedPhone) {
-      setUserPhone(storedPhone);
-    } else {
-      setUserPhone("");
-    }
-  }, [isAuthenticated]);
 
   const menuItems = {
     en: [
@@ -63,15 +53,7 @@ export default function BarMenu({
     ],
   };
 
-  const welcomeText = {
-    en: "Welcome",
-    pl: "Witaj",
-    uk: "Вітаємо",
-    ru: "Добро пожаловать",
-  };
-
   const items = menuItems[lang] || menuItems.pl;
-  const welcome = welcomeText[lang] || welcomeText.pl;
 
   const handleMenuClick = (itemName) => {
     const standardNames = {
@@ -121,22 +103,6 @@ export default function BarMenu({
     if (closeMobileMenu && isMobile) closeMobileMenu();
   };
 
-  const handleUserClick = () => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    } else {
-      if (location.pathname === "/dashboard") {
-        document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
-        setTimeout(() => {
-          navigate("/");
-        }, 300);
-      } else {
-        navigate("/dashboard");
-      }
-    }
-    if (closeMobileMenu && isMobile) closeMobileMenu();
-  };
-
   return (
     <nav className={css.barMenu}>
       <div className={`${css["menu-container"]} ${isOpen ? css.open : css.close}`}>
@@ -180,25 +146,6 @@ export default function BarMenu({
             ))}
           </ul>
         )}
-        <div className={css["user-action"]} onClick={handleUserClick}>
-          {isAuthenticated && !isMobile ? (
-            <div className={css["user-info"]}>
-              <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
-              <div className={css["user-info-text"]}>
-                <span className={css["welcome-text"]}>{welcome}</span>
-                <span className={css["user-phone"]}>{userPhone}</span>
-              </div>
-            </div>
-          ) : (
-            <button className={css["login-button"]}>
-              <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
-              {lang === "en" && "Login"}
-              {lang === "pl" && "Zaloguj się"}
-              {lang === "uk" && "Увійти"}
-              {lang === "ru" && "Войти"}
-            </button>
-          )}
-        </div>
       </div>
     </nav>
   );

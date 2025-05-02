@@ -76,13 +76,17 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
   };
 
   const handleUserClick = () => {
-    if (location.pathname === "/dashboard") {
-      document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
-      setTimeout(() => {
-        navigate("/");
-      }, 300);
+    if (!isAuthenticated) {
+      navigate("/login");
     } else {
-      navigate("/dashboard");
+      if (location.pathname === "/dashboard") {
+        document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
+        setTimeout(() => {
+          navigate("/");
+        }, 300);
+      } else {
+        navigate("/dashboard");
+      }
     }
   };
 
@@ -94,6 +98,15 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
   };
 
   const welcome = welcomeText[lang] || welcomeText.pl;
+
+  const loginButtonText = {
+    en: "Login",
+    pl: "Zaloguj się",
+    uk: "Увійти",
+    ru: "Войти",
+  };
+
+  const loginText = loginButtonText[lang] || loginButtonText.pl;
 
   return (
     <>
@@ -109,40 +122,53 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
             isOpen={true}
           />
         </div>
-        <div className={css.desktopLang}>
-          <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
-            <FaGlobe className={css.icon} />
-            <img src={getFlagPath(lang)} alt={`${lang} flag`} className={css.flagIcon} />
-            <span>{languages[lang]}</span>
+        <div className={css["header-right"]}>
+          <div className={css.desktopLang}>
+            <div className={css.langBox} onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <FaGlobe className={css.icon} />
+              <img src={getFlagPath(lang)} alt={`${lang} flag`} className={css.flagIcon} />
+              <span>{languages[lang]}</span>
+            </div>
+            {dropdownOpen && (
+              <ul className={css.dropdown}>
+                {Object.keys(languages).map((key) => (
+                  <li key={key} onClick={() => handleLanguageChange(key)}>
+                    <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
+                    {languages[key]}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-          {dropdownOpen && (
-            <ul className={css.dropdown}>
-              {Object.keys(languages).map((key) => (
-                <li key={key} onClick={() => handleLanguageChange(key)}>
-                  <img src={getFlagPath(key)} alt={`${key} flag`} className={css.flagIcon} />
-                  {languages[key]}
-                </li>
-              ))}
-            </ul>
+          {/* Добавляем кнопку логина или профиль на десктопе */}
+          {!isMobile && (
+            <div className={css["user-action"]} onClick={handleUserClick}>
+              {isAuthenticated ? (
+                <div className={css["user-info"]}>
+                  <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
+                  <div className={css["user-info-text"]}>
+                    <span className={css["welcome-text"]}>{welcome}</span>
+                    <span className={css["user-phone"]}>{userPhone}</span>
+                  </div>
+                </div>
+              ) : (
+                <button className={css["login-button"]}>
+                  <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
+                  {loginText}
+                </button>
+              )}
+            </div>
           )}
         </div>
-        {isMobile && isAuthenticated && (
-          <div className={css["user-info"]} onClick={handleUserClick}>
-            <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
-            <div className={css["user-info-text"]}>
-              <span className={css["welcome-text"]}>{welcome}</span>
-              <span className={css["user-phone"]}>{userPhone}</span>
-            </div>
-          </div>
-        )}
-        {isMobile && !isAuthenticated && !mobileOpen && (
+        {/* На мобильных показываем бургер-меню вместо user-info */}
+        {isMobile && !mobileOpen && (
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaBars />
           </button>
         )}
       </header>
 
-      {isMobile && !isAuthenticated && (
+      {isMobile && (
         <div className={`${css.mobileMenu} ${mobileOpen ? css.show : ""}`}>
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaTimes />
@@ -157,6 +183,23 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
               closeMobileMenu={toggleMobileMenu}
               isOpen={mobileOpen}
             />
+          </div>
+          {/* Добавляем кнопку логина или профиль в мобильном меню */}
+          <div className={css["user-action-mobile"]} onClick={handleUserClick}>
+            {isAuthenticated ? (
+              <div className={css["user-info"]}>
+                <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
+                <div className={css["user-info-text"]}>
+                  <span className={css["welcome-text"]}>{welcome}</span>
+                  <span className={css["user-phone"]}>{userPhone}</span>
+                </div>
+              </div>
+            ) : (
+              <button className={css["login-button"]}>
+                <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
+                {loginText}
+              </button>
+            )}
           </div>
           <div className={css.socials}>
             <a href="#" target="_blank" rel="noreferrer">
