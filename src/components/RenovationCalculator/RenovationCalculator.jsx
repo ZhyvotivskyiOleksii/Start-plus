@@ -7,11 +7,8 @@ export default function RenovationCalculator({ lang }) {
   const [windows, setWindows] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-  
-  // Ініціалізація поточного місяця і року з актуальної дати
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  
   const [bookedDates] = useState(new Set(["2025-04-15"]));
   const [discounts] = useState({
     "2025-04-10": 18,
@@ -111,7 +108,6 @@ export default function RenovationCalculator({ lang }) {
     "19:00", "20:00",
   ];
 
-  // Оставляем только польский текст
   const texts = {
     title: "Mieszkanie po remoncie",
     areaLabel: "Powierzchnia m²",
@@ -133,7 +129,7 @@ export default function RenovationCalculator({ lang }) {
     intercomCodeLabel: "Kod od domofonu",
     citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
     contactTitle: "DANE KONTAKTOWE",
-    clientTypeLabel: "Typ klienta",
+    clientTypeLabel: "Typ клиента",
     privateLabel: "Osoba prywatna",
     companyLabel: "Firma",
     nameLabel: "Imię",
@@ -160,7 +156,7 @@ export default function RenovationCalculator({ lang }) {
     metersLabel: "Metów",
   };
 
-  const t = texts; // Теперь просто используем texts напрямую, так как у нас только один язык
+  const t = texts;
 
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
@@ -245,7 +241,7 @@ export default function RenovationCalculator({ lang }) {
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const days = [];
 
-    const today = new Date(); // Використовуємо актуальну дату
+    const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
@@ -427,7 +423,6 @@ export default function RenovationCalculator({ lang }) {
       <section className={css["calculator-impuls"]}>
         <div className={css["calculator-container"]}>
           <div className={css["calculator-left"]}>
-            {/* Добавляем блок user-type в начало calculator-left */}
             <div className={css["user-type"]}>
               <button
                 className={`${css["user-type-button"]} ${clientType === "private" ? css.active : ""}`}
@@ -540,7 +535,7 @@ export default function RenovationCalculator({ lang }) {
                   </div>
 
                   <div className={css["time-wrapper"]} ref={timeSlotsRef}>
-                    <h5>{t.timeLabel}</h5>
+                    <h4>{t.timeLabel}</h4>
                     <div className={css["time-slots"]}>
                       {availableTimes.map((time) => (
                         <button

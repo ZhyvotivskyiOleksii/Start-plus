@@ -41,7 +41,7 @@ php -v
 
 
 
-  /* :root {
+  :root {
   --background-color: #1A1A1A;
   --text-color: #FFFFFF;
   --text-secondary-color: #B0B0B0;
@@ -85,4 +85,4 @@ php -v
   --dot-bg: rgba(255, 255, 255, 0.4);
   --popular-shadow: rgba(107, 70, 193, 0.5);
   --new-shadow: rgba(56, 161, 105, 0.5);
-}   */
+}

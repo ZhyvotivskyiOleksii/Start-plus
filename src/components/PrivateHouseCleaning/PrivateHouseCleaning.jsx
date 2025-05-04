@@ -14,7 +14,6 @@ export default function PrivateHouseCleaning({ lang }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
-  // Ініціалізація поточного місяця і року з актуальної дати
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
@@ -115,7 +114,6 @@ export default function PrivateHouseCleaning({ lang }) {
     "Jednorazowe sprzątanie": 0,
   };
 
-  // Цены для частного дома
   const basePrice = 250.0;
   const roomCost = 60.0;
   const bathroomCost = 40.0;
@@ -141,7 +139,7 @@ export default function PrivateHouseCleaning({ lang }) {
     { id: 4, name: "Mycie naczyń", price: 20.00, oldPrice: 25.00, icon: "/icon/dishes.png", type: "checkbox", additionalTime: 20 },
     { id: 5, name: "Czyszczenie lodówki", price: 32.00, oldPrice: 40.00, icon: "/icon/fridge.png", type: "checkbox", additionalTime: 20 },
     { id: 6, name: "Mycie mikrofalówki", price: 14.40, oldPrice: 18.00, icon: "/icon/microwave.png", type: "checkbox", additionalTime: 20 },
-    { id: 7, name: "Sprzątanie ogrodu/terasy", price: 50.00, oldPrice: 60.00, icon: "/icon/garden.png", type: "quantity", additionalTime: 30 },
+    { id: 7, name: "Sprzątanie balkonu", price: 28.00, oldPrice: 35.00, icon: "/icon/balcony.png", type: "quantity", additionalTime: 20 },
     { id: 8, name: "Mycie okien (szt.)", price: 32.00, oldPrice: 40.00, icon: "/icon/window.png", type: "quantity", additionalTime: 20 },
     { id: 9, name: "Prasowanie", price: 40.00, oldPrice: 50.00, icon: "/icon/iron.png", type: "quantity", additionalTime: 20 },
     { id: 10, name: "Sprzątanie kuwety", price: 8.00, oldPrice: 10.00, icon: "/icon/pets.png", type: "quantity", additionalTime: 20 },
@@ -271,10 +269,7 @@ export default function PrivateHouseCleaning({ lang }) {
   }
 
   function calculateWorkTime() {
-    // Базовое время: 4 часа 20 минут (4.33 часа) — включает 1 комнату и 1 ванную
     let baseHours = 4.33;
-
-    // Если выбраны дополнительные услуги, базовое время сбрасываем до 0
     const hasAdditionalServices = paidServices.some((service) => {
       const qty = selectedServices[service.id];
       return (service.type === "checkbox" && qty) || (service.type === "quantity" && qty > 0);
@@ -284,15 +279,10 @@ export default function PrivateHouseCleaning({ lang }) {
       baseHours = 0;
     }
 
-    // Время за дополнительные комнаты (сверх 1): 30 минут (0.5 часа) за каждую
     const additionalRooms = Math.max(0, rooms - 1);
     const roomTime = additionalRooms * 0.5;
-
-    // Время за дополнительные ванные (сверх 1): 1 час 20 минут (1.33 часа) за каждую
     const additionalBathrooms = Math.max(0, bathrooms - 1);
     const bathroomTime = additionalBathrooms * 1.33;
-
-    // Время за дополнительные услуги
     const additionalServiceTime = paidServices.reduce((sum, service) => {
       const qty = selectedServices[service.id];
       if (service.type === "checkbox" && qty) return sum + (service.additionalTime / 60);

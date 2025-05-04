@@ -342,30 +342,48 @@ export default function WindowCleaningCalculator({ lang }) {
   }, [agreeToTerms, agreeToMarketing]);
 
   const handleWindowsChange = (increment) => {
-    setWindows((prev) => Math.max(5, prev + increment));
+    const parsedValue = parseInt(windows, 10);
+    if (isNaN(parsedValue)) {
+      setWindows(5 + increment);
+    } else {
+      setWindows(Math.max(5, parsedValue + increment));
+    }
   };
 
   const handleBalconiesChange = (increment) => {
-    setBalconies((prev) => Math.max(0, prev + increment));
+    const parsedValue = parseInt(balconies, 10);
+    if (isNaN(parsedValue)) {
+      setBalconies(Math.max(0, increment));
+    } else {
+      setBalconies(Math.max(0, parsedValue + increment));
+    }
   };
 
   const handleWindowsInputChange = (e) => {
     const value = e.target.value;
-    if (value === "" || isNaN(value)) {
-      setWindows(5);
-    } else {
-      const numValue = parseInt(value, 10);
-      setWindows(isNaN(numValue) ? 5 : Math.max(5, numValue));
-    }
+    setWindows(value);
   };
 
   const handleBalconiesInputChange = (e) => {
     const value = e.target.value;
-    if (value === "" || isNaN(value)) {
+    setBalconies(value);
+  };
+
+  const handleWindowsBlur = () => {
+    const parsedValue = parseInt(windows, 10);
+    if (isNaN(parsedValue) || windows === "") {
+      setWindows(5);
+    } else {
+      setWindows(Math.max(5, parsedValue));
+    }
+  };
+
+  const handleBalconiesBlur = () => {
+    const parsedValue = parseInt(balconies, 10);
+    if (isNaN(parsedValue) || balconies === "") {
       setBalconies(0);
     } else {
-      const numValue = parseInt(value, 10);
-      setBalconies(isNaN(numValue) ? 0 : Math.max(0, numValue));
+      setBalconies(Math.max(0, parsedValue));
     }
   };
 
@@ -446,7 +464,13 @@ export default function WindowCleaningCalculator({ lang }) {
   };
 
   const calculateBasePrice = () => {
-    let total = windows * pricePerWindow + balconies * pricePerBalcony;
+    let parsedWindows = parseInt(windows, 10);
+    let parsedBalconies = parseInt(balconies, 10);
+
+    if (isNaN(parsedWindows)) parsedWindows = 5;
+    if (isNaN(parsedBalconies)) parsedBalconies = 0;
+
+    let total = parsedWindows * pricePerWindow + parsedBalconies * pricePerBalcony;
     total += cities[selectedCity] || 0;
     total *= companyMultiplier;
     return total.toFixed(2);
@@ -469,8 +493,14 @@ export default function WindowCleaningCalculator({ lang }) {
   };
 
   const calculateWorkTime = () => {
-    const windowsTime = windows * 0.5;
-    const balconiesTime = balconies * 0.75;
+    let parsedWindows = parseInt(windows, 10);
+    let parsedBalconies = parseInt(balconies, 10);
+
+    if (isNaN(parsedWindows)) parsedWindows = 5;
+    if (isNaN(parsedBalconies)) parsedBalconies = 0;
+
+    const windowsTime = parsedWindows * 0.5;
+    const balconiesTime = parsedBalconies * 0.75;
     return windowsTime + balconiesTime;
   };
 
@@ -512,9 +542,12 @@ export default function WindowCleaningCalculator({ lang }) {
       return;
     }
 
+    const parsedWindows = parseInt(windows, 10) || 5;
+    const parsedBalconies = parseInt(balconies, 10) || 0;
+
     const orderData = {
-      windows,
-      balconies,
+      windows: parsedWindows,
+      balconies: parsedBalconies,
       totalPrice: calculateTotal(),
       selectedDate: selectedDate.toISOString(),
       selectedTime,
@@ -599,6 +632,7 @@ export default function WindowCleaningCalculator({ lang }) {
                     type="number"
                     value={windows}
                     onChange={handleWindowsInputChange}
+                    onBlur={handleWindowsBlur}
                     className={css["counter-value"]}
                     style={{
                       width: "60px",
@@ -633,6 +667,7 @@ export default function WindowCleaningCalculator({ lang }) {
                     type="number"
                     value={balconies}
                     onChange={handleBalconiesInputChange}
+                    onBlur={handleBalconiesBlur}
                     className={css["counter-value"]}
                     style={{
                       width: "60px",

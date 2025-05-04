@@ -14,7 +14,6 @@ export default function Calculator() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
 
-  // Ініціалізація поточного місяця і року з актуальної дати
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
