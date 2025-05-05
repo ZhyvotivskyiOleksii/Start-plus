@@ -1,72 +1,70 @@
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+
 import AppBar from "./components/AppBar/AppBar";
 import HeroSection from "./components/HeroSection/HeroSection";
 import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
 import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator";
-import PrivateHouseCleaning from "./components/PrivateHouseCleaning/PrivateHouseCleaning"; 
-import OfficeCleaning from "./components/OfficeCleaning/OfficeCleaning"; 
+import PrivateHouseCleaning from "./components/PrivateHouseCleaning/PrivateHouseCleaning";
+import OfficeCleaning from "./components/OfficeCleaning/OfficeCleaning";
 import AdminPanel from "./components/AdminPanel";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/dashboard/Dashboard";
 
 function AppContent() {
+  /* ---------- локалізація ---------- */
   const [lang, setLang] = useState(localStorage.getItem("lang") || "pl");
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
+  useEffect(() => localStorage.setItem("lang", lang), [lang]);
+
+  /* ---------- токен звичайного користувача ---------- */
+  const [userToken, setUserToken] = useState(localStorage.getItem("token"));
+  const isUserAuth = !!userToken;
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.setItem("lang", lang);
-  }, [lang]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    console.log("Тест: Перевірка токена при завантаженні:", token);
-    setIsAuthenticated(!!token);
-  }, []);
-
+  /* ---------- login / logout ---------- */
   const handleLogin = (token, phone) => {
     localStorage.setItem("token", token);
     if (phone) localStorage.setItem("phone", phone);
-    setIsAuthenticated(true);
-    console.log("Тест: Успішний вхід, token і phone збережені:", { token, phone });
-    console.log("Тест: Перенаправлення на /dashboard після входу");
+    setUserToken(token);
     navigate("/dashboard", { replace: true });
   };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("phone");
-    setIsAuthenticated(false);
-    console.log("Тест: Успішний вихід");
+    setUserToken(null);
     navigate("/", { replace: true });
   };
 
   return (
-    <div>
+    <>
       <AppBar
         lang={lang}
         setLang={setLang}
-        isAuthenticated={isAuthenticated}
+        isAuthenticated={isUserAuth}
         handleLogin={handleLogin}
         handleLogout={handleLogout}
       />
+
       <Routes>
+        {/* публічні сторінки */}
         <Route path="/" element={<HeroSection lang={lang} />} />
         <Route path="/calculator" element={<Calculator lang={lang} />} />
         <Route path="/renovation" element={<RenovationCalculator lang={lang} />} />
         <Route path="/window-cleaning" element={<WindowCleaningCalculator lang={lang} />} />
-        <Route path="/private-house" element={<PrivateHouseCleaning lang={lang} />} /> 
-        <Route path="/office-cleaning" element={<OfficeCleaning lang={lang} />} /> 
-        <Route
-          path="/admin"
-          element={isAuthenticated ? <AdminPanel lang={lang} /> : <Navigate to="/" />}
-        />
+        <Route path="/private-house" element={<PrivateHouseCleaning lang={lang} />} />
+        <Route path="/office-cleaning" element={<OfficeCleaning lang={lang} />} />
+
+        {/* адмін‑панель відкривається завжди, далі власний логін */}
+        <Route path="/admin" element={<AdminPanel lang={lang} />} />
+
+        {/* SMS‑авторизація клієнта */}
         <Route
           path="/login"
           element={
-            !isAuthenticated ? (
+            !isUserAuth ? (
               <Login lang={lang} handleLogin={handleLogin} />
             ) : (
               <Navigate to="/dashboard" replace />
@@ -76,16 +74,18 @@ function AppContent() {
         <Route
           path="/dashboard"
           element={
-            isAuthenticated ? (
+            isUserAuth ? (
               <Dashboard lang={lang} handleLogout={handleLogout} />
             ) : (
               <Navigate to="/login" replace />
             )
           }
         />
+
+        {/* catch‑all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </div>
+    </>
   );
 }
 

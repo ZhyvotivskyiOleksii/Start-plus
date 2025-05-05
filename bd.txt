@@ -19,19 +19,23 @@ node server.js
 
 
 
-
-php -S localhost:8000
-cd cleaning-backend-php
-
+cd /Users/oleksiizhyvotivskyi/Desktop/Start-plus/sms-auth-php
+php -S localhost:3001 index.php            
 
 
 
 
 
 
+lsof -i tcp:3306
+# або, якщо lsof немає
+sudo lsof -nP -iTCP -sTCP:LISTEN | grep 3306
 
 
-php -v
+
+
+
+
 
 
 

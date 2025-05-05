@@ -1,94 +1,310 @@
+body {
+  background: linear-gradient(135deg, #e0e7ff 0%, #f3f4f6 100%);
+  font-family: "Inter", sans-serif;
+  margin: 0;
+}
+
 .calc-wrap {
-    margin-top: 120px;
-    position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+}
+
+.login-container {
+  background: #fff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-container h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d2d2d;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.login-container .input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container input:focus {
+  outline: none;
+  border-color: #4a00e0;
+  box-shadow: 0 0 0 3px rgba(74, 0, 224, 0.1);
+}
+
+.login-container input::placeholder {
+  color: #999;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 12px;
+  background: #4a00e0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.login-container button:hover {
+  background: #8e2de2;
+  transform: translateY(-2px);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cacl-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: "Inter", sans-serif;
+  color: #2d2d2d;
+  text-align: center;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-panel {
+  background: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 700px;
+  transition: transform 0.3s ease;
+}
+
+.admin-panel:hover {
+  transform: translateY(-5px);
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  border: none;
+  background: #f0f0f0;
+  cursor: pointer;
+  border-radius: 8px 8px 0 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.tabs button.active {
+  background: #7b3fe4;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(123, 63, 228, 0.3);
+}
+
+.tabs button:hover {
+  background: #6a35cc;
+  color: #fff;
+}
+
+.tab-content {
+  padding: 20px 0;
+}
+
+.tab-content h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.tab-content input {
+  padding: 12px 16px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tab-content input:focus {
+  outline: none;
+  border-color: #7b3fe4;
+  box-shadow: 0 0 0 3px rgba(123, 63, 228, 0.1);
+}
+
+.tab-content button {
+  padding: 12px 20px;
+  background: #7b3fe4;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.1s ease;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.tab-content button:hover {
+  background: #6a35cc;
+  transform: translateY(-2px);
+}
+
+.promo-result {
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #333;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.item-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.item-list li {
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.item-list li:hover {
+  background: #e9ecef;
+}
+
+.admin-button {
+  padding: 12px 20px;
+  background: #ff4d4f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  width: 100%;
+  max-width: 200px;
+  text-align: center;
+  margin-top: 30px;
+  transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.admin-button:hover {
+  background: #e63946;
+  transform: translateY(-2px);
+}
+
+.error {
+  color: #ff4d4f;
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .calc-wrap {
+    padding: 15px;
   }
-  
-  .calculator-impuls {
-    margin-top: 60px;
-    margin-bottom: 60px;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-  
-  .calculator-container {
-    display: flex;
-    gap: 30px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .calculator-left {
-    flex: 2;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .admin-section {
-    margin-bottom: 20px;
-  }
-  
-  .admin-section h4 {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-  }
-  
-  .admin-section input {
-    padding: 8px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .admin-section button {
-    padding: 8px 15px;
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .admin-section button:hover {
-    background: #0056b3;
-  }
-  
-  .admin-button {
-    width: 100%;
-    padding: 10px;
-    background: #A16BFF;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .admin-button:hover {
-    background: #9055f7;
-  }
-  
+
   .cacl-title {
-    font-size: 2.875rem;
-    font-weight: bold;
-    font-family: "FuturaPT2", sans-serif;
-    color: #333;
+    font-size: 2rem;
   }
-  
-  @media screen and (max-width: 768px) {
-    .calculator-container {
-      flex-direction: column;
-    }
-  
-    .calculator-left {
-      flex: 1;
-      position: static;
-      box-shadow: none;
-    }
+
+  .admin-panel {
+    padding: 20px;
   }
+
+  .tabs button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+
+  .tab-content input,
+  .tab-content button {
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .cacl-title {
+    font-size: 1.75rem;
+  }
+
+  .admin-panel {
+    padding: 15px;
+  }
+
+  .tabs {
+    gap: 8px;
+  }
+
+  .tabs button {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .login-container {
+    padding: 20px;
+    max-width: 300px;
+  }
+
+  .login-container h2 {
+    font-size: 1.5rem;
+  }
+}

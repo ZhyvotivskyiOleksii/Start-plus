@@ -10,9 +10,7 @@ export default function Login({ lang, handleLogin }) {
   const [smsCode, setSmsCode] = useState("");
   const [verifyError, setVerifyError] = useState("");
 
-  useEffect(() => {
-    console.log("Тест: showVerification змінився на", showVerification);
-  }, [showVerification]);
+  useEffect(() => {}, [showVerification]);
 
   const translations = {
     pl: {
@@ -61,7 +59,7 @@ export default function Login({ lang, handleLogin }) {
     },
   };
 
-  const t = translations[lang] || translations["pl"];
+  const t = translations[lang] || translations.pl;
 
   const countryCodes = [
     { code: "+48", name: "Poland", flag: "🇵🇱" },
@@ -94,35 +92,25 @@ export default function Login({ lang, handleLogin }) {
     e.preventDefault();
     const phoneRegex = /^\+?[1-9]\d{9,14}$/;
     const fullPhone = countryCode + phone.replace(/[^0-9]/g, "");
-
-    if (phoneRegex.test(fullPhone)) {
-      try {
-        console.log(`Тест: Відправка SMS на ${fullPhone}`);
-        const response = await fetch("http://localhost:3001/api/send-sms", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ phone: fullPhone }),
-        });
-        console.log("Тест: Отримана відповідь від сервера (SMS):", response.status, response.statusText);
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.log("Тест: Деталі помилки сервера (SMS):", errorData);
-          throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`);
-        }
-        const data = await response.json();
-        console.log("Тест: Дані від сервера (SMS):", data);
-        console.log("Тест: SMS надіслано, показуємо поле для коду");
-        setShowVerification(true);
-        setError("");
-      } catch (error) {
-        console.log("Тест: Помилка підключення:", error.message);
-        setError("Помилка підключення: " + error.message);
-        setShowVerification(false);
-      }
-    } else {
+    if (!phoneRegex.test(fullPhone)) {
       setError(t.error);
+      setShowVerification(false);
+      return;
+    }
+    try {
+      const response = await fetch("http://localhost:3001/api/send-sms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: fullPhone }),
+      });
+      if (!response.ok) {
+        const { message } = await response.json();
+        throw new Error(message);
+      }
+      setShowVerification(true);
+      setError("");
+    } catch (err) {
+      setError(err.message);
       setShowVerification(false);
     }
   };
@@ -134,53 +122,42 @@ export default function Login({ lang, handleLogin }) {
       setVerifyError("Введіть код");
       return;
     }
-    if (!showVerification) {
-      console.log("Тест: Верифікація не має викликатися, showVerification = false");
-      return;
-    }
+    if (!showVerification) return;
     try {
-      console.log(`Тест: Перевірка коду для ${fullPhone}, введений код: ${smsCode}`);
       const response = await fetch("http://localhost:3001/api/verify-sms", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: fullPhone, code: smsCode }),
       });
-      console.log("Тест: Отримана відповідь від сервера (Verify):", response.status, response.statusText);
       if (!response.ok) {
-        const errorData = await response.json();
-        console.log("Тест: Деталі помилки сервера (Verify):", errorData);
-        throw new Error(`Помилка сервера: ${response.status} ${response.statusText}`);
+        const { message } = await response.json();
+        throw new Error(message);
       }
       const data = await response.json();
-      console.log("Тест: Дані від сервера (Verify):", data);
-      console.log("Тест: Верифікація успішна, викликаємо handleLogin");
       handleLogin(data.token, fullPhone);
       setPhone("");
       setSmsCode("");
       setShowVerification(false);
       setError("");
       setVerifyError("");
-    } catch (error) {
-      console.log("Тест: Помилка перевірки:", error.message);
-      setVerifyError("Помилка перевірки: " + error.message);
+    } catch (err) {
+      setVerifyError(err.message);
     }
   };
 
-  const selectedCountry = countryCodes.find(
-    (country) => country.code === countryCode
-  );
+  const selectedCountry = countryCodes.find((c) => c.code === countryCode);
 
   return (
     <div className={css.loginContainer}>
       <div className={css.illustration}>
         <img src="/icon/login-passcode.svg" alt="Login illustration" />
       </div>
-
       <div className={css.loginBox}>
         <h2 className={css.title}>{t.title}</h2>
-        <form onSubmit={showVerification ? handleVerifyCode : handleSubmit} className={css.form}>
+        <form
+          onSubmit={showVerification ? handleVerifyCode : handleSubmit}
+          className={css.form}
+        >
           <div className={css.phoneInputWrapper}>
             <label className={css.label}>{t.phonePlaceholder}</label>
             <div className={css.phoneInput}>
@@ -199,7 +176,6 @@ export default function Login({ lang, handleLogin }) {
               <div className={css.verticalDivider}></div>
               <input
                 type="tel"
-                placeholder=""
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className={css.phoneNumber}
@@ -207,16 +183,16 @@ export default function Login({ lang, handleLogin }) {
             </div>
             {isCountryListOpen && (
               <div className={css.countryList}>
-                {countryCodes.map((country) => (
+                {countryCodes.map((c) => (
                   <div
-                    key={country.code}
+                    key={c.code}
                     className={css.countryItem}
                     onClick={() => {
-                      setCountryCode(country.code);
+                      setCountryCode(c.code);
                       setIsCountryListOpen(false);
                     }}
                   >
-                    {country.flag} {country.name} ({country.code})
+                    {c.flag} {c.name} ({c.code})
                   </div>
                 ))}
               </div>
@@ -230,7 +206,6 @@ export default function Login({ lang, handleLogin }) {
               <label className={css.label}>{t.verifyPlaceholder}</label>
               <input
                 type="text"
-                placeholder=""
                 value={smsCode}
                 onChange={(e) => setSmsCode(e.target.value)}
                 className={css.smsCodeInput}
