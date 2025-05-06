@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from "react-router-dom";
+/*  src/App.jsx  */
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import AppBar from "./components/AppBar/AppBar";
@@ -17,11 +18,13 @@ function AppContent() {
   const [lang, setLang] = useState(localStorage.getItem("lang") || "pl");
   useEffect(() => localStorage.setItem("lang", lang), [lang]);
 
-  /* ---------- токен звичайного користувача ---------- */
+  /* ---------- токен клієнта ---------- */
   const [userToken, setUserToken] = useState(localStorage.getItem("token"));
   const isUserAuth = !!userToken;
 
-  const navigate = useNavigate();
+  const navigate   = useNavigate();
+  const location   = useLocation();           // потрібен, аби сховати AppBar в адмін‑панелі
+  const hideAppBar = location.pathname.startsWith("/admin");
 
   /* ---------- login / logout ---------- */
   const handleLogin = (token, phone) => {
@@ -40,25 +43,27 @@ function AppContent() {
 
   return (
     <>
-      <AppBar
-        lang={lang}
-        setLang={setLang}
-        isAuthenticated={isUserAuth}
-        handleLogin={handleLogin}
-        handleLogout={handleLogout}
-      />
+      {!hideAppBar && (
+        <AppBar
+          lang={lang}
+          setLang={setLang}
+          isAuthenticated={isUserAuth}
+          handleLogin={handleLogin}
+          handleLogout={handleLogout}
+        />
+      )}
 
       <Routes>
         {/* публічні сторінки */}
-        <Route path="/" element={<HeroSection lang={lang} />} />
-        <Route path="/calculator" element={<Calculator lang={lang} />} />
-        <Route path="/renovation" element={<RenovationCalculator lang={lang} />} />
-        <Route path="/window-cleaning" element={<WindowCleaningCalculator lang={lang} />} />
-        <Route path="/private-house" element={<PrivateHouseCleaning lang={lang} />} />
-        <Route path="/office-cleaning" element={<OfficeCleaning lang={lang} />} />
+        <Route path="/"                element={<HeroSection             lang={lang} />} />
+        <Route path="/calculator"       element={<Calculator              lang={lang} />} />
+        <Route path="/renovation"       element={<RenovationCalculator    lang={lang} />} />
+        <Route path="/window-cleaning"  element={<WindowCleaningCalculator lang={lang} />} />
+        <Route path="/private-house"    element={<PrivateHouseCleaning    lang={lang} />} />
+        <Route path="/office-cleaning"  element={<OfficeCleaning          lang={lang} />} />
 
-        {/* адмін‑панель відкривається завжди, далі власний логін */}
-        <Route path="/admin" element={<AdminPanel lang={lang} />} />
+        {/* адмін‑панель (далі власний логін усередині) */}
+        <Route path="/admin/*"          element={<AdminPanel              lang={lang} />} />
 
         {/* SMS‑авторизація клієнта */}
         <Route

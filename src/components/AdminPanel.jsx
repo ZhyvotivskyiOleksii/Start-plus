@@ -2,6 +2,22 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import css from "./AdminPanel.module.css";
+import {
+  FaCalendarAlt,
+  FaPercentage,
+  FaTrash,
+  FaCalculator,
+  FaUsers,
+  FaTag,
+  FaBroom,
+  FaTools,
+  FaWindowRestore,
+  FaBuilding,
+  FaHome,
+  FaChevronLeft,
+  FaChevronRight,
+  FaBars,
+} from "react-icons/fa";
 
 const API = import.meta.env.VITE_API || "http://localhost:3001/api";
 
@@ -17,7 +33,11 @@ export default function AdminPanel() {
   const [newPromoCode, setNewPromoCode] = useState("");
   const [promoCodes, setPromoCodes] = useState([]);
   const [discounts, setDiscounts] = useState([]);
-  const [currentTab, setCurrentTab] = useState("discounts");
+  const [isSidebarActive, setIsSidebarActive] = useState(false);
+  const [currentSection, setCurrentSection] = useState(null);
+  const [currentCalculatorTab, setCurrentCalculatorTab] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   const navigate = useNavigate();
   const api = axios.create({ baseURL: API });
@@ -66,7 +86,9 @@ export default function AdminPanel() {
     }
     setIsLoading(true);
     try {
-      await api.post("/discounts", { date: newDiscountDate, percentage: newDiscountPercent });
+      const normalizedDate = new Date(newDiscountDate);
+      const formattedDate = normalizedDate.toISOString().split("T")[0];
+      await api.post("/discounts", { date: formattedDate, percentage: newDiscountPercent });
       fetchDiscounts();
       setNewDiscountDate("");
       setNewDiscountPercent("");
@@ -75,6 +97,15 @@ export default function AdminPanel() {
       setError("Failed to add discount.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const deleteDiscount = async (id) => {
+    try {
+      await api.delete(`/discounts/${id}`);
+      fetchDiscounts();
+    } catch {
+      setError("Failed to delete discount.");
     }
   };
 
@@ -102,12 +133,67 @@ export default function AdminPanel() {
     }
   };
 
+  const deletePromoCode = async (id) => {
+    try {
+      await api.delete(`/promo-codes/${id}`);
+      fetchPromoCodes();
+    } catch {
+      setError("Failed to delete promo code.");
+    }
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
       fetchDiscounts();
       fetchPromoCodes();
     }
   }, [isLoggedIn]);
+
+  function handlePrevMonth() {
+    const newMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  }
+
+  function handleNextMonth() {
+    const newMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+    const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  }
+
+  function renderCalendar() {
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const days = [];
+    const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      days.push(<div key={`empty-${i}`} className={css["calendar-day"]}></div>);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const discountValue = discounts.find(d => d.date === formattedDate)?.percentage || 0;
+
+      days.push(
+        <div
+          key={day}
+          className={`
+            ${css["calendar-day"]}
+            ${discountValue ? css.discount : ""}
+          `}
+          onClick={() => setNewDiscountDate(formattedDate)}
+        >
+          <span className={css["day-number"]}>{day}</span>
+          {discountValue > 0 && <span className={css["discount-label"]}>-{discountValue}%</span>}
+        </div>
+      );
+    }
+    return days;
+  }
 
   if (!isLoggedIn) {
     return (
@@ -144,98 +230,219 @@ export default function AdminPanel() {
   return (
     <section className={css["calc-wrap"]}>
       <div className={css.container}>
-        <h2 className={css["cacl-title"]}>Panel Administratora</h2>
-        <div className={css["admin-panel"]}>
-          <div className={css.tabs}>
-            <button
-              className={currentTab === "discounts" ? css.active : ""}
-              onClick={() => setCurrentTab("discounts")}
+        {/* Ліва панель */}
+        <div className={`${css.navigation} ${isSidebarActive ? css.active : ""}`}>
+          <ul>
+            <li className={css["nav-header"]}>
+              <div className={css["nav-item"]}>
+                <span className={css.icon}>
+                  <FaCalculator />
+                </span>
+                <span className={css.title}>Admin Panel</span>
+              </div>
+            </li>
+            <li
+              className={currentSection === "calculator" ? css.active : ""}
+              onClick={() => setCurrentSection("calculator")}
             >
-              Zniżki
-            </button>
-            <button
-              className={currentTab === "promos" ? css.active : ""}
-              onClick={() => setCurrentTab("promos")}
+              <div className={css["nav-item"]}>
+                <span className={css.icon}>
+                  <FaCalculator />
+                </span>
+                <span className={css.title}>Kalkulator</span>
+              </div>
+            </li>
+            <li
+              className={currentSection === "users" ? css.active : ""}
+              onClick={() => setCurrentSection("users")}
             >
-              Promokody
-            </button>
-          </div>
-
-          {error && <p className={css.error}>{error}</p>}
-
-          {currentTab === "discounts" && (
-            <div className={css["tab-content"]}>
-              <h4>Ustaw zniżki na daty</h4>
-              <div className={css["input-group"]}>
-                <input
-                  type="date"
-                  value={newDiscountDate}
-                  onChange={(e) => setNewDiscountDate(e.target.value)}
-                  disabled={isLoading}
-                />
+              <div className={css["nav-item"]}>
+                <span className={css.icon}>
+                  <FaUsers />
+                </span>
+                <span className={css.title}>Użytkownicy</span>
               </div>
-              <div className={css["input-group"]}>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={newDiscountPercent}
-                  onChange={(e) => setNewDiscountPercent(e.target.value)}
-                  placeholder="Procent zniżki"
-                  disabled={isLoading}
-                />
+            </li>
+            <li
+              className={currentSection === "promocodes" ? css.active : ""}
+              onClick={() => setCurrentSection("promocodes")}
+            >
+              <div className={css["nav-item"]}>
+                <span className={css.icon}>
+                  <FaTag />
+                </span>
+                <span className={css.title}>Promokody</span>
               </div>
-              <button onClick={addDiscount} disabled={isLoading}>
-                {isLoading ? "Adding..." : "Dodaj zniżkę"}
-              </button>
-              <ul className={css["item-list"]}>
-                {discounts.map((d) => (
-                  <li key={d.id}>
-                    <span>{d.date}</span>
-                    <span>{d.percentage}%</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {currentTab === "promos" && (
-            <div className={css["tab-content"]}>
-              <h4>Generuj promokody</h4>
-              <div className={css["input-group"]}>
-                <input
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={newPromoDiscount}
-                  onChange={(e) => setNewPromoDiscount(e.target.value)}
-                  placeholder="Procent zniżki"
-                  disabled={isLoading}
-                />
+            </li>
+            <li onClick={() => navigate("/")}>
+              <div className={css["nav-item"]}>
+                <span className={css.icon}>
+                  <FaTag />
+                </span>
+                <span className={css.title}>Wróć</span>
               </div>
-              <button onClick={generatePromoCode} disabled={isLoading}>
-                {isLoading ? "Generating..." : "Generuj promokod"}
-              </button>
-              {newPromoCode && (
-                <p className={css["promo-result"]}>
-                  Nowy promokod: <strong>{newPromoCode}</strong>
-                </p>
-              )}
-              <ul className={css["item-list"]}>
-                {promoCodes.map((p) => (
-                  <li key={p.id}>
-                    <span>{p.code}</span>
-                    <span>{p.discount}%</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            </li>
+          </ul>
         </div>
 
-        <button className={css["admin-button"]} onClick={() => navigate("/")}>
-          Wróć
-        </button>
+        {/* Основний контент */}
+        <div className={`${css.main} ${isSidebarActive ? css.active : ""}`}>
+          <div className={css.topbar}>
+            <div className={css.toggle} onClick={() => setIsSidebarActive(!isSidebarActive)}>
+              <FaBars />
+            </div>
+          </div>
+          <div className={css["content-area"]}>
+            {currentSection === "calculator" && (
+              <div className={css["right-panel"]}>
+                <div className={css["calculator-tabs"]}>
+                  <button
+                    className={`${css["tab-button"]} ${currentCalculatorTab === "regular" ? css.active : ""}`}
+                    onClick={() => setCurrentCalculatorTab("regular")}
+                  >
+                    <FaBroom /> Zwyke sprzątanie
+                  </button>
+                  <button
+                    className={`${css["tab-button"]} ${currentCalculatorTab === "post-renovation" ? css.active : ""}`}
+                    onClick={() => setCurrentCalculatorTab("post-renovation")}
+                  >
+                    <FaTools /> Po remoncie
+                  </button>
+                  <button
+                    className={`${css["tab-button"]} ${currentCalculatorTab === "window-cleaning" ? css.active : ""}`}
+                    onClick={() => setCurrentCalculatorTab("window-cleaning")}
+                  >
+                    <FaWindowRestore /> Mycie okien
+                  </button>
+                  <button
+                    className={`${css["tab-button"]} ${currentCalculatorTab === "office-cleaning" ? css.active : ""}`}
+                    onClick={() => setCurrentCalculatorTab("office-cleaning")}
+                  >
+                    <FaBuilding /> Uборка офісів
+                  </button>
+                  <button
+                    className={`${css["tab-button"]} ${currentCalculatorTab === "private-house" ? css.active : ""}`}
+                    onClick={() => setCurrentCalculatorTab("private-house")}
+                  >
+                    <FaHome /> Dom prywatny
+                  </button>
+                </div>
+                {currentCalculatorTab && (
+                  <div className={css["admin-panel"]}>
+                    <h4>Wybierz datę i ustaw zniżkę</h4>
+                    <div className={css["calendar-section"]}>
+                      <div className={css["calendar-container"]}>
+                        <div className={css["calendar-wrapper"]}>
+                          <div className={css["calendar-header"]}>
+                            <button onClick={handlePrevMonth} className={css["nav-button"]}>
+                              <FaChevronLeft />
+                            </button>
+                            <h5>
+                              {[
+                                "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
+                                "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"
+                              ][currentMonth]}{" "}
+                              {currentYear}
+                            </h5>
+                            <button onClick={handleNextMonth} className={css["nav-button"]}>
+                              <FaChevronRight />
+                            </button>
+                          </div>
+
+                          <div className={css["calendar-days"]}>
+                            <div>pon</div>
+                            <div>wt</div>
+                            <div>śr</div>
+                            <div>czw</div>
+                            <div>pt</div>
+                            <div>sob</div>
+                            <div>niedz</div>
+                          </div>
+
+                          <div className={css["calendar-grid"]}>
+                            {renderCalendar()}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {newDiscountDate && (
+                      <div className={css["discount-form"]}>
+                        <h4>Zniżka dla {newDiscountDate}</h4>
+                        <div className={css["input-group"]}>
+                          <FaPercentage className={css["input-icon"]} />
+                          <input
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={newDiscountPercent}
+                            onChange={(e) => setNewDiscountPercent(e.target.value)}
+                            placeholder="Procent zniżki"
+                            disabled={isLoading}
+                          />
+                        </div>
+                        <button onClick={addDiscount} disabled={isLoading}>
+                          {isLoading ? "Adding..." : "Dodaj zniżkę"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {currentSection === "promocodes" && (
+              <div className={css["right-panel"]}>
+                <div className={css["admin-panel"]}>
+                  <h4>Generuj promokody</h4>
+                  <div className={css["input-group"]}>
+                    <FaPercentage className={css["input-icon"]} />
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      value={newPromoDiscount}
+                      onChange={(e) => setNewPromoDiscount(e.target.value)}
+                      placeholder="Procent zniżki"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <button onClick={generatePromoCode} disabled={isLoading}>
+                    {isLoading ? "Generating..." : "Generuj promokod"}
+                  </button>
+                  {newPromoCode && (
+                    <p className={css["promo-result"]}>
+                      Nowy promokod: <strong>{newPromoCode}</strong>
+                    </p>
+                  )}
+                  <ul className={css["item-list"]}>
+                    {promoCodes.map((p) => (
+                      <li key={p.id}>
+                        <span>{p.code}</span>
+                        <span>{p.discount}%</span>
+                        <button
+                          className={css["delete-btn"]}
+                          onClick={() => deletePromoCode(p.id)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            )}
+
+            {currentSection === "users" && (
+              <div className={css["right-panel"]}>
+                <div className={css["admin-panel"]}>
+                  <h4>Użytkownicy</h4>
+                  <p>Tutaj będzie lista użytkowników (в майбутньому).</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );

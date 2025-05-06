@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import css from "./Calculator.module.css";
 import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import axios from "axios";
+
+const API = import.meta.env.VITE_API || "http://localhost:3001/api";
 
 export default function Calculator() {
   const [clientType, setClientType] = useState("Osoba prywatna");
@@ -13,36 +16,17 @@ export default function Calculator() {
   const [discount, setDiscount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
-
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-
   const [bookedDates] = useState(new Set(["2025-03-15"]));
-  const [discounts] = useState({
-    "2025-03-10": 18,
-    "2025-03-11": 20,
-    "2025-03-12": 15,
-    "2025-03-13": 20,
-    "2025-03-14": 15,
-    "2025-03-15": 15,
-    "2025-03-16": 20,
-    "2025-03-17": 20,
-    "2025-03-18": 18,
-    "2025-03-25": 20,
-    "2025-03-26": 10,
-    "2025-03-27": 20,
-    "2025-03-28": 20,
-    "2025-03-29": 20,
-    "2025-03-30": 15,
-    "2025-04-03": 18,
-  });
-  const [promoCodes] = useState([]);
+  const [discounts, setDiscounts] = useState({});
+  const [promoCodes, setPromoCodes] = useState([]);
   const [cleaningFrequency, setCleaningFrequency] = useState("Jednorazowe sprzątanie");
   const [vacuumNeeded, setVacuumNeeded] = useState(false);
-
   const [selectedCity, setSelectedCity] = useState("Warszawa");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
   const cities = {
     "Warszawa": 0.00,
     "Piastów": 30.00,
@@ -93,7 +77,6 @@ export default function Calculator() {
     city.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Убираем заполненные контактные данные
   const [street, setStreet] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [houseNumber, setHouseNumber] = useState("");
@@ -161,6 +144,40 @@ export default function Calculator() {
   const rightBlockRef = useRef(null);
   const [isSticked, setIsSticked] = useState(true);
 
+  const api = axios.create({ baseURL: API });
+
+  useEffect(() => {
+    const fetchDiscounts = async () => {
+      try {
+        const { data } = await api.get("/discounts");
+        const discountMap = data.reduce((acc, discount) => {
+          // Нормалізуємо дату з сервера, щоб уникнути зсуву
+          const date = new Date(discount.date);
+          const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+          return {
+            ...acc,
+            [formattedDate]: discount.percentage,
+          };
+        }, {});
+        setDiscounts(discountMap);
+      } catch {
+        console.error("Failed to fetch discounts");
+      }
+    };
+
+    const fetchPromoCodes = async () => {
+      try {
+        const { data } = await api.get("/promo-codes");
+        setPromoCodes(data);
+      } catch {
+        console.error("Failed to fetch promo codes");
+      }
+    };
+
+    fetchDiscounts();
+    fetchPromoCodes();
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -212,11 +229,12 @@ export default function Calculator() {
 
   function handlePromoApply() {
     const promoCode = promoCodes.find((code) => code.code === promo.toUpperCase());
-    if (promoCode) setDiscount(promoCode.discount);
-    else if (promo.toLowerCase() === "weekend") setDiscount(20);
-    else if (promo.toLowerCase() === "twoweeks") setDiscount(15);
-    else if (promo.toLowerCase() === "month") setDiscount(10);
-    else setDiscount(0);
+    if (promoCode) {
+      setDiscount(promoCode.discount);
+    } else {
+      setDiscount(0);
+      alert("Invalid promo code");
+    }
   }
 
   function handlePrevMonth() {
@@ -255,8 +273,10 @@ export default function Calculator() {
     let total = parseFloat(calculateBasePrice());
     let appliedDiscount = discount;
     if (selectedDate) {
-      const dateString = selectedDate.toISOString().split("T")[0];
-      const dateDiscount = discounts[dateString] || 0;
+      // Нормалізуємо дату для порівняння
+      const date = new Date(selectedDate);
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const dateDiscount = discounts[formattedDate] || 0;
       appliedDiscount = Math.max(appliedDiscount, dateDiscount);
     }
     const freqDiscount = frequencyDiscounts[cleaningFrequency] || 0;
@@ -270,28 +290,20 @@ export default function Calculator() {
   }
 
   function calculateWorkTime() {
-    // Базовое время: 3 часа (включает 1 комнату и 1 ванную)
     let baseHours = 3;
-
-    // Если выбраны дополнительные услуги, базовое время сбрасываем до 0
     const hasAdditionalServices = paidServices.some((service) => {
       const qty = selectedServices[service.id];
       return (service.type === "checkbox" && qty) || (service.type === "quantity" && qty > 0);
     });
 
     if (hasAdditionalServices) {
-      baseHours = 0; // Сбрасываем базовое время, если есть дополнительные услуги
+      baseHours = 0;
     }
 
-    // Время за дополнительные комнаты (сверх 1): 30 минут (0.5 часа) за каждую
     const additionalRooms = Math.max(0, rooms - 1);
     const roomTime = additionalRooms * 0.5;
-
-    // Время за дополнительные ванные (сверх 1): 1 час за каждую
     const additionalBathrooms = Math.max(0, bathrooms - 1);
     const bathroomTime = additionalBathrooms * 1;
-
-    // Время за дополнительные услуги
     const additionalServiceTime = paidServices.reduce((sum, service) => {
       const qty = selectedServices[service.id];
       if (service.type === "checkbox" && qty) return sum + (service.additionalTime / 60);
@@ -320,11 +332,9 @@ export default function Calculator() {
     const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     const days = [];
-
     const today = new Date();
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-
     const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
 
     for (let i = 0; i < adjustedFirstDay; i++) {
@@ -333,15 +343,14 @@ export default function Calculator() {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const dateString = date.toISOString().split("T")[0];
-      const discountValue = discounts[dateString] || 0;
-
+      // Нормалізуємо дату для порівняння
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const discountValue = discounts[formattedDate] || 0;
       const isToday = date.toDateString() === today.toDateString();
       const isTomorrow = date.toDateString() === tomorrow.toDateString();
       const isPast = date < today && !isToday;
-      const isBooked = bookedDates.has(dateString);
+      const isBooked = bookedDates.has(formattedDate);
       const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
-
       const isSelectable = !isPast && !isToday && !isTomorrow && !isBooked;
 
       days.push(
@@ -414,6 +423,9 @@ export default function Calculator() {
       return;
     }
 
+    // Нормалізуємо дату для надсилання
+    const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+
     const orderData = {
       clientType,
       rooms,
@@ -433,7 +445,7 @@ export default function Calculator() {
           quantity: selectedServices[service.id],
         })),
       totalPrice: calculateTotal(),
-      selectedDate: selectedDate.toISOString(),
+      selectedDate: formattedDate,
       selectedTime,
       cleaningFrequency,
       city: selectedCity,
@@ -994,11 +1006,14 @@ export default function Calculator() {
               {selectedDate && selectedTime ? (
                 <p>
                   {formatSelectedDate()}, {selectedTime}{" "}
-                  {discounts[selectedDate.toISOString().split("T")[0]] && (
-                    <span className={css["discount-inline"]}>
-                      -{discounts[selectedDate.toISOString().split("T")[0]]}%
-                    </span>
-                  )}
+                  {selectedDate &&
+                    discounts[
+                      `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+                    ] && (
+                      <span className={css["discount-inline"]}>
+                        -{discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`]}%
+                      </span>
+                    )}
                 </p>
               ) : (
                 <p>Wybierz termin i godzinę</p>
