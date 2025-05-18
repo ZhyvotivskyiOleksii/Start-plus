@@ -8,7 +8,7 @@ import RenovationCalculator from "./components/RenovationCalculator/RenovationCa
 import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator";
 import PrivateHouseCleaning from "./components/PrivateHouseCleaning/PrivateHouseCleaning";
 import OfficeCleaning from "./components/OfficeCleaning/OfficeCleaning";
-import AdminPanel from "./components/AdminPanel";
+import AdminPanel from "./components/Admin/AdminPanel";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/dashboard/Dashboard";
 
