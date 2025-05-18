@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import css from "../Calculator/Calculator.module.css";
 import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-export default function PrivateHouseCleaning({ lang }) {
+const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+
+export default function PrivateHouseCleaning({ lang, type, title }) {
   const [clientType, setClientType] = useState("Osoba prywatna");
   const [rooms, setRooms] = useState(1);
   const [bathrooms, setBathrooms] = useState(1);
@@ -18,27 +21,11 @@ export default function PrivateHouseCleaning({ lang }) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   const [bookedDates] = useState(new Set(["2025-03-15"]));
-  const [discounts] = useState({
-    "2025-03-10": 18,
-    "2025-03-11": 20,
-    "2025-03-12": 15,
-    "2025-03-13": 20,
-    "2025-03-14": 15,
-    "2025-03-15": 15,
-    "2025-03-16": 20,
-    "2025-03-17": 20,
-    "2025-03-18": 18,
-    "2025-03-25": 20,
-    "2025-03-26": 10,
-    "2025-03-27": 20,
-    "2025-03-28": 20,
-    "2025-03-29": 20,
-    "2025-03-30": 15,
-    "2025-04-03": 18,
-  });
+  const [discounts, setDiscounts] = useState({});
   const [promoCodes] = useState([]);
   const [cleaningFrequency, setCleaningFrequency] = useState("Jednorazowe sprzątanie");
   const [vacuumNeeded, setVacuumNeeded] = useState(false);
+  const [error, setError] = useState(null);
 
   const [selectedCity, setSelectedCity] = useState("Warszawa");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
@@ -161,6 +148,38 @@ export default function PrivateHouseCleaning({ lang }) {
   const [isSticked, setIsSticked] = useState(true);
 
   useEffect(() => {
+    const fetchDiscounts = async () => {
+      if (!type || type === "undefined") {
+        console.log(`Помилка: type є ${type}, пропускаємо запит до API`);
+        return;
+      }
+
+      try {
+        console.log(`Завантаження знижок для type: ${type}`);
+        const { data } = await axios.get(`${API}/discounts?type=${type}`);
+        console.log(`Сирі дані знижок для ${type}:`, data);
+        const discountMap = data.reduce((acc, discount) => {
+          const date = new Date(discount.date + 'T00:00:00Z');
+          const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+          return {
+            ...acc,
+            [formattedDate]: discount.percentage,
+          };
+        }, {});
+        console.log(`Знижки для ${type} після обробки:`, discountMap);
+        if (Object.keys(discountMap).length > 0) {
+          setDiscounts(discountMap);
+        }
+        setError(null);
+      } catch (err) {
+        console.error(`Помилка завантаження знижок для ${type}:`, err);
+        setError(`Не вдалося завантажити знижки для ${type}. Спробуйте ще раз.`);
+      }
+    };
+    fetchDiscounts();
+  }, [type]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) setIsSticked(false);
@@ -254,8 +273,8 @@ export default function PrivateHouseCleaning({ lang }) {
     let total = parseFloat(calculateBasePrice());
     let appliedDiscount = discount;
     if (selectedDate) {
-      const dateString = selectedDate.toISOString().split("T")[0];
-      const dateDiscount = discounts[dateString] || 0;
+      const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+      const dateDiscount = discounts[formattedDate] || 0;
       appliedDiscount = Math.max(appliedDiscount, dateDiscount);
     }
     const freqDiscount = frequencyDiscounts[cleaningFrequency] || 0;
@@ -324,13 +343,16 @@ export default function PrivateHouseCleaning({ lang }) {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const dateString = date.toISOString().split("T")[0];
-      const discountValue = discounts[dateString] || 0;
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const discountValue = discounts[formattedDate] || 0;
+
+      console.log(`Дата: ${formattedDate}, Знижка: ${discountValue}`);
+      console.log(`Чи показуємо знижку? ${discountValue > 0 ? "Так" : "Ні"}`);
 
       const isToday = date.toDateString() === today.toDateString();
       const isTomorrow = date.toDateString() === tomorrow.toDateString();
       const isPast = date < today && !isToday;
-      const isBooked = bookedDates.has(dateString);
+      const isBooked = bookedDates.has(formattedDate);
       const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
 
       const isSelectable = !isPast && !isToday && !isTomorrow && !isBooked;
@@ -342,7 +364,7 @@ export default function PrivateHouseCleaning({ lang }) {
             ${css["calendar-day"]}
             ${!isSelectable ? css.disabled : ""}
             ${isSelected ? css.selected : ""}
-            ${discountValue ? css.discount : ""}
+            ${discountValue > 0 ? css.discount : ""}
             ${isPast ? css.past : ""}
             ${isToday ? css.today : ""}
             ${isTomorrow ? css.tomorrow : ""}
@@ -469,9 +491,11 @@ export default function PrivateHouseCleaning({ lang }) {
   return (
     <section className={css["calc-wrap"]}>
       <div className={css.container}>
-        <h2 className={css["cacl-title"]}>Sprzątanie domu prywatnego {selectedCity}</h2>
+        <h2 className={css["cacl-title"]}>{title} {selectedCity}</h2>
         <p className={css.subtitle}>Wybierz poniższe parametry, aby obliczyć koszt.</p>
       </div>
+
+      {error && <div className={css.error}>{error}</div>}
 
       <section className={css["calculator-impuls"]}>
         <div className={css["calculator-container"]}>
@@ -985,9 +1009,9 @@ export default function PrivateHouseCleaning({ lang }) {
               {selectedDate && selectedTime ? (
                 <p>
                   {formatSelectedDate()}, {selectedTime}{" "}
-                  {discounts[selectedDate.toISOString().split("T")[0]] && (
+                  {discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`] && (
                     <span className={css["discount-inline"]}>
-                      -{discounts[selectedDate.toISOString().split("T")[0]]}%
+                      -{discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`]}%
                     </span>
                   )}
                 </p>

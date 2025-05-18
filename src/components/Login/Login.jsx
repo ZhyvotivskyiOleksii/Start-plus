@@ -179,6 +179,7 @@ export default function Login({ lang, handleLogin }) {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 className={css.phoneNumber}
+                placeholder={t.phonePlaceholder}
               />
             </div>
             {isCountryListOpen && (
@@ -209,6 +210,7 @@ export default function Login({ lang, handleLogin }) {
                 value={smsCode}
                 onChange={(e) => setSmsCode(e.target.value)}
                 className={css.smsCodeInput}
+                placeholder={t.verifyPlaceholder}
               />
               {verifyError && <p className={css.error}>{verifyError}</p>}
             </div>

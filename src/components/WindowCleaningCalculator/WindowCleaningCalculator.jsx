@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import css from "./WindowCleaningCalculator.module.css";
 import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-export default function WindowCleaningCalculator({ lang }) {
+const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+
+export default function WindowCleaningCalculator({ lang, type, title }) {
   const [windows, setWindows] = useState(5);
   const [balconies, setBalconies] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -10,22 +13,14 @@ export default function WindowCleaningCalculator({ lang }) {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [bookedDates] = useState(new Set(["2025-04-15"]));
-  const [discounts] = useState({
-    "2025-04-10": 18,
-    "2025-04-11": 20,
-    "2025-04-12": 15,
-    "2025-04-13": 20,
-    "2025-04-14": 15,
-    "2025-04-15": 15,
-    "2025-04-16": 20,
-    "2025-04-17": 20,
-    "2025-04-18": 18,
-  });
+  const [discounts, setDiscounts] = useState({});
   const [promo, setPromo] = useState("");
   const [discount, setDiscount] = useState(0);
   const [selectedCity, setSelectedCity] = useState("Warszawa");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [error, setError] = useState(null);
+
   const cities = {
     Warszawa: 0.00,
     Piastów: 30.00,
@@ -312,6 +307,38 @@ export default function WindowCleaningCalculator({ lang }) {
   const [isSticked, setIsSticked] = useState(true);
 
   useEffect(() => {
+    const fetchDiscounts = async () => {
+      if (!type || type === "undefined") {
+        console.log(`Помилка: type є ${type}, пропускаємо запит до API`);
+        return;
+      }
+
+      try {
+        console.log(`Завантаження знижок для type: ${type}`);
+        const { data } = await axios.get(`${API}/discounts?type=${type}`);
+        console.log(`Сирі дані знижок для ${type}:`, data);
+        const discountMap = data.reduce((acc, discount) => {
+          const date = new Date(discount.date + 'T00:00:00Z');
+          const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+          return {
+            ...acc,
+            [formattedDate]: discount.percentage,
+          };
+        }, {});
+        console.log(`Знижки для ${type} після обробки:`, discountMap);
+        if (Object.keys(discountMap).length > 0) {
+          setDiscounts(discountMap);
+        }
+        setError(null);
+      } catch (err) {
+        console.error(`Помилка завантаження знижок для ${type}:`, err);
+        setError(`Не вдалося завантажити знижки для ${type}. Спробуйте ще раз.`);
+      }
+    };
+    fetchDiscounts();
+  }, [type]);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) setIsSticked(false);
@@ -418,13 +445,16 @@ export default function WindowCleaningCalculator({ lang }) {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
-      const dateString = date.toISOString().split("T")[0];
-      const discountValue = discounts[dateString] || 0;
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const discountValue = discounts[formattedDate] || 0;
+
+      console.log(`Дата: ${formattedDate}, Знижка: ${discountValue}`);
+      console.log(`Чи показуємо знижку? ${discountValue > 0 ? "Так" : "Ні"}`);
 
       const isToday = date.toDateString() === today.toDateString();
       const isTomorrow = date.toDateString() === tomorrow.toDateString();
       const isPast = date < today && !isToday;
-      const isBooked = bookedDates.has(dateString);
+      const isBooked = bookedDates.has(formattedDate);
       const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
 
       const isSelectable = !isPast && !isToday && !isTomorrow && !isBooked;
@@ -436,7 +466,7 @@ export default function WindowCleaningCalculator({ lang }) {
             ${css["calendar-day"]}
             ${!isSelectable ? css.disabled : ""}
             ${isSelected ? css.selected : ""}
-            ${discountValue ? css.discount : ""}
+            ${discountValue > 0 ? css.discount : ""}
             ${isPast ? css.past : ""}
             ${isToday ? css.today : ""}
             ${isTomorrow ? css.tomorrow : ""}
@@ -480,8 +510,8 @@ export default function WindowCleaningCalculator({ lang }) {
     let total = parseFloat(calculateBasePrice());
     let appliedDiscount = discount;
     if (selectedDate) {
-      const dateString = selectedDate.toISOString().split("T")[0];
-      const dateDiscount = discounts[dateString] || 0;
+      const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+      const dateDiscount = discounts[formattedDate] || 0;
       appliedDiscount = Math.max(appliedDiscount, dateDiscount);
     }
     const discountAmount = total * (appliedDiscount / 100);
@@ -599,6 +629,8 @@ export default function WindowCleaningCalculator({ lang }) {
         <h2 className={css["cacl-title"]}>{t.title} {selectedCity}</h2>
         <p className={css.subtitle}>{t.subtitle}</p>
       </div>
+
+      {error && <div className={css.error}>{error}</div>}
 
       <section className={css["calculator-impuls"]}>
         <div className={css["calculator-container"]}>
@@ -983,9 +1015,9 @@ export default function WindowCleaningCalculator({ lang }) {
               {selectedDate && selectedTime ? (
                 <p>
                   {formatSelectedDate()}, {selectedTime}{" "}
-                  {discounts[selectedDate.toISOString().split("T")[0]] && (
+                  {discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`] && (
                     <span className={css["discount-inline"]}>
-                      -{discounts[selectedDate.toISOString().split("T")[0]]}%
+                      -{discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`]}%
                     </span>
                   )}
                 </p>

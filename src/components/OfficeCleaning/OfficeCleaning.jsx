@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import officeCss from "./OfficeCleaning.module.css";
 import calcCss from "../Calculator/Calculator.module.css";
-import { FaPercentage } from "react-icons/fa";
+import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-export default function OfficeCleaning({ lang }) {
+const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+
+export default function OfficeCleaning({ lang, type, title }) {
   const [officeArea, setOfficeArea] = useState(10);
   const [workspaces, setWorkspaces] = useState(0);
   const [cleaningFrequency, setCleaningFrequency] = useState("Jednorazowe sprzątanie");
@@ -12,6 +15,13 @@ export default function OfficeCleaning({ lang }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [promo, setPromo] = useState("");
   const [discount, setDiscount] = useState(0);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedTime, setSelectedTime] = useState(null);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [bookedDates] = useState(new Set(["2025-03-15"]));
+  const [discounts, setDiscounts] = useState({});
+  const [error, setError] = useState(null);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -86,6 +96,64 @@ export default function OfficeCleaning({ lang }) {
   const pricePerSquareMeter = 6.15;
   const pricePerWorkspace = 12.30;
 
+  const calendarRef = useRef(null);
+  const timeSlotsRef = useRef(null);
+
+  const months = [
+    "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
+    "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"
+  ];
+  const availableTimes = [
+    "7:30", "8:00", "9:00", "10:00",
+    "11:00", "12:00", "13:00", "14:00",
+    "15:00", "16:00", "17:00", "18:00",
+    "19:00", "20:00",
+  ];
+
+  useEffect(() => {
+    const fetchDiscounts = async () => {
+      if (!type || type === "undefined") {
+        console.log(`Помилка: type є ${type}, пропускаємо запит до API`);
+        return;
+      }
+
+      try {
+        console.log(`Завантаження знижок для type: ${type}`);
+        const { data } = await axios.get(`${API}/discounts?type=${type}`);
+        console.log(`Сирі дані знижок для ${type}:`, data);
+        const discountMap = data.reduce((acc, discount) => {
+          const date = new Date(discount.date + 'T00:00:00Z');
+          const formattedDate = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+          return {
+            ...acc,
+            [formattedDate]: discount.percentage,
+          };
+        }, {});
+        console.log(`Знижки для ${type} після обробки:`, discountMap);
+        if (Object.keys(discountMap).length > 0) {
+          setDiscounts(discountMap);
+        }
+        setError(null);
+      } catch (err) {
+        console.error(`Помилка завантаження знижок для ${type}:`, err);
+        setError(`Не вдалося завантажити знижки для ${type}. Спробуйте ще раз.`);
+      }
+    };
+    fetchDiscounts();
+  }, [type]);
+
+  useEffect(() => {
+    if (selectedDate && calendarRef.current) {
+      calendarRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (selectedTime && timeSlotsRef.current) {
+      timeSlotsRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [selectedTime]);
+
   const handleOfficeAreaInputChange = (e) => {
     const value = e.target.value;
     setOfficeArea(value);
@@ -143,8 +211,14 @@ export default function OfficeCleaning({ lang }) {
 
   const calculateTotal = () => {
     let total = parseFloat(calculateBasePrice());
+    let appliedDiscount = discount;
+    if (selectedDate) {
+      const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+      const dateDiscount = discounts[formattedDate] || 0;
+      appliedDiscount = Math.max(appliedDiscount, dateDiscount);
+    }
     const freqDiscount = frequencyDiscounts[cleaningFrequency] || 0;
-    const appliedDiscount = Math.max(discount, freqDiscount);
+    appliedDiscount = Math.max(appliedDiscount, freqDiscount);
     const discountAmount = total * (appliedDiscount / 100);
     return (total - discountAmount).toFixed(2);
   };
@@ -180,11 +254,104 @@ export default function OfficeCleaning({ lang }) {
     return minutes > 0 ? `${hours} godzin ${minutes} minut` : `${hours} godziny`;
   };
 
+  const handlePrevMonth = () => {
+    const newMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  };
+
+  const handleNextMonth = () => {
+    const newMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+    const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+    setCurrentMonth(newMonth);
+    setCurrentYear(newYear);
+  };
+
+  const renderCalendar = () => {
+    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+    const days = [];
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+    for (let i = 0; i < adjustedFirstDay; i++) {
+      days.push(<div key={`empty-${i}`} className={calcCss["calendar-day"]}></div>);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      const discountValue = discounts[formattedDate] || 0;
+
+      console.log(`Дата: ${formattedDate}, Знижка: ${discountValue}`);
+      console.log(`Чи показуємо знижку? ${discountValue > 0 ? "Так" : "Ні"}`);
+
+      const isToday = date.toDateString() === today.toDateString();
+      const isTomorrow = date.toDateString() === tomorrow.toDateString();
+      const isPast = date < today && !isToday;
+      const isBooked = bookedDates.has(formattedDate);
+      const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
+
+      const isSelectable = !isPast && !isToday && !isTomorrow && !isBooked;
+
+      days.push(
+        <div
+          key={day}
+          className={`
+            ${calcCss["calendar-day"]}
+            ${!isSelectable ? calcCss.disabled : ""}
+            ${isSelected ? calcCss.selected : ""}
+            ${discountValue > 0 ? calcCss.discount : ""}
+            ${isPast ? calcCss.past : ""}
+            ${isToday ? calcCss.today : ""}
+            ${isTomorrow ? calcCss.tomorrow : ""}
+            ${isSelectable ? calcCss.hoverable : ""}
+          `}
+          onClick={() => isSelectable && setSelectedDate(date)}
+        >
+          <span className={calcCss["day-number"]}>{day}</span>
+          {discountValue > 0 && <span className={calcCss["discount-label"]}>-{discountValue}%</span>}
+          {isToday && <span className={calcCss["day-label"]}>dziś</span>}
+          {isTomorrow && <span className={calcCss["day-label"]}>jutro</span>}
+          {isPast && <span className={calcCss["day-label"]}>niedostępny</span>}
+        </div>
+      );
+    }
+    return days;
+  };
+
+  const formatSelectedDate = () => {
+    if (!selectedDate) return "";
+    const day = selectedDate.getDate();
+    const month = months[selectedDate.getMonth()];
+    const year = selectedDate.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
   async function handleOrder() {
     if (!agreeToTerms || !agreeToMarketing) {
       alert("Proszę zaakceptować regulamin i zgodę na przetwarzanie danych.");
       return;
     }
+
+    // Додаткові перевірки, якщо календар активний
+    /*
+    if (!selectedDate) {
+      calendarRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (!selectedTime) {
+      timeSlotsRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    */
 
     const parsedOfficeArea = parseInt(officeArea, 10) || 10;
     const parsedWorkspaces = parseInt(workspaces, 10) || 0;
@@ -194,6 +361,8 @@ export default function OfficeCleaning({ lang }) {
       workspaces: parsedWorkspaces,
       cleaningFrequency,
       totalPrice: calculateTotal(),
+      selectedDate: selectedDate ? selectedDate.toISOString() : null,
+      selectedTime,
       city: selectedCity,
       clientInfo: {
         name,
@@ -235,12 +404,14 @@ export default function OfficeCleaning({ lang }) {
     <section className={`${officeCss["calc-wrap"]} ${calcCss["calc-wrap"]}`}>
       <div className={`${officeCss.container} ${calcCss.container}`}>
         <h2 className={`${officeCss["cacl-title"]} ${calcCss["cacl-title"]}`}>
-          Sprzątanie biura {selectedCity}
+          {title} {selectedCity}
         </h2>
         <p className={`${officeCss.subtitle} ${calcCss.subtitle}`}>
           Wybierz parametry, aby obliczyć koszt u sprzątania biura.
         </p>
       </div>
+
+      {error && <div className={calcCss.error}>{error}</div>}
 
       <section className={`${officeCss["calculator-impuls"]} ${calcCss["calculator-impuls"]}`}>
         <div className={`${officeCss["calculator-container"]} ${calcCss["calculator-container"]}`}>
@@ -338,6 +509,66 @@ export default function OfficeCleaning({ lang }) {
                 </div>
               </div>
             </div>
+
+            {/* Закоментований календар для майбутнього використання */}
+            {/*
+            <div className={`${officeCss["calendar-section"]} ${calcCss["calendar-section"]}`} ref={calendarRef}>
+              <h4>WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA</h4>
+              <div className={`${officeCss["calendar-container"]} ${calcCss["calendar-container"]}`}>
+                <div className={`${officeCss["calendar-time-wrapper"]} ${calcCss["calendar-time-wrapper"]}`}>
+                  <div className={`${officeCss["calendar-wrapper"]} ${calcCss["calendar-wrapper"]}`}>
+                    <div className={`${officeCss["calendar-header"]} ${calcCss["calendar-header"]}`}>
+                      <button onClick={handlePrevMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
+                        <FaChevronLeft />
+                      </button>
+                      <h5>
+                        {months[currentMonth]} {currentYear}
+                      </h5>
+                      <button onClick={handleNextMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
+                        <FaChevronRight />
+                      </button>
+                    </div>
+
+                    <div className={`${officeCss["calendar-days"]} ${calcCss["calendar-days"]}`}>
+                      <div>pon</div>
+                      <div>wt</div>
+                      <div>śr</div>
+                      <div>czw</div>
+                      <div>pt</div>
+                      <div>sob</div>
+                      <div>niedz</div>
+                    </div>
+
+                    <div className={`${officeCss["calendar-grid"]} ${calcCss["calendar-grid"]}`}>
+                      {renderCalendar()}
+                    </div>
+                  </div>
+
+                  <div className={`${officeCss["time-wrapper"]} ${calcCss["time-wrapper"]}`} ref={timeSlotsRef}>
+                    <h5>Godzina</h5>
+                    <div className={`${officeCss["time-slots"]} ${calcCss["time-slots"]}`}>
+                      {availableTimes.map((time) => (
+                        <button
+                          key={time}
+                          className={`${officeCss["time-slot"]} ${calcCss["time-slot"]} ${
+                            selectedTime === time ? calcCss.selected : ""
+                          }`}
+                          onClick={() => setSelectedTime(time)}
+                          disabled={!selectedDate}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`${officeCss["calendar-footer"]} ${calcCss["calendar-footer"]}`}>
+                  <p>Można zacząć w dowolnym momencie</p>
+                </div>
+              </div>
+            </div>
+            */}
 
             <div className={`${officeCss["frequency-section"]} ${calcCss["frequency-section"]}`}>
               <h4>CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA</h4>
@@ -530,6 +761,25 @@ export default function OfficeCleaning({ lang }) {
                 Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.
               </p>
             </div>
+
+            {/* Закоментоване відображення дати для майбутнього використання */}
+            {/*
+            <div className={`${officeCss["selected-date"]} ${calcCss["selected-date"]}`}>
+              <FaCalendarAlt className={`${officeCss["calendar-icon"]} ${calcCss["calendar-icon"]}`} />
+              {selectedDate && selectedTime ? (
+                <p>
+                  {formatSelectedDate()}, {selectedTime}{" "}
+                  {discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`] && (
+                    <span className={`${officeCss["discount-inline"]} ${calcCss["discount-inline"]}`}>
+                      -{discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`]}%
+                    </span>
+                  )}
+                </p>
+              ) : (
+                <p>Wybierz termin i godzinę</p>
+              )}
+            </div>
+            */}
 
             <div className={`${officeCss["selected-frequency"]} ${calcCss["selected-frequency"]}`}>
               <p>
