@@ -39,18 +39,19 @@ try {
 } catch(PDOException $e) {
     logit("Помилка підключення до бази даних: ".$e->getMessage());
     http_response_code(500); 
-    echo '{"message":"DB error"}'; 
+    echo '{"message":"Помилка підключення до бази даних"}'; 
     exit;
 }
 
 /* SMS helper */
 function sms_send(string $phone, string $code): void {
     $apiKey = $_ENV['SMS_API_KEY'] ?? '';
+    $from = $_ENV['SMS_FROM'] ?? 'Info';
     if (!$apiKey) throw new RuntimeException('SMS_API_KEY відсутній');
     $payload = http_build_query([
         'access_token' => $apiKey,
         'to' => $phone,
-        'from' => 'Info',
+        'from' => $from,
         'message' => "Twój kod weryfikacyjny to: $code",
         'format' => 'json'
     ]);
@@ -62,8 +63,16 @@ function sms_send(string $phone, string $code): void {
         CURLOPT_TIMEOUT => 10
     ]);
     $resp = json_decode(curl_exec($ch), true); 
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
-    if ($resp['error'] ?? false) throw new RuntimeException($resp['message']);
+    if ($resp['error'] ?? false) {
+        logit("Помилка відправлення SMS: " . $resp['message']);
+        throw new RuntimeException($resp['message']);
+    }
+    if ($httpCode !== 200) {
+        logit("Помилка відправлення SMS: HTTP статус $httpCode");
+        throw new RuntimeException("Помилка відправлення SMS: HTTP статус $httpCode");
+    }
 }
 
 /* вхідні дані */
@@ -75,16 +84,22 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($uri === '/api/login' && $method === 'POST') {
     $u = $input['username'] ?? ''; 
     $p = $input['password'] ?? '';
+    if (!$u || !$p) {
+        logit("Невдалий вхід admin: відсутні username або password");
+        http_response_code(400); 
+        echo json_encode(['message' => 'Username і password обов’язкові']);
+        exit;
+    }
     $q = $pdo->prepare('SELECT password FROM admins WHERE username=?'); 
     $q->execute([$u]);
     $row = $q->fetch();
     if ($row && password_verify($p, $row['password'])) {
         logit("Admin $u увійшов");
-        echo '{"message":"Login successful"}';
+        echo json_encode(['message' => 'Login successful']);
     } else {
         logit("Невдалий вхід admin: $u");
         http_response_code(401); 
-        echo '{"message":"Invalid credentials"}';
+        echo json_encode(['message' => 'Невірний username або password']);
     } 
     exit;
 }
@@ -94,7 +109,7 @@ if ($uri === '/api/send-sms' && $method === 'POST') {
     $phone = $input['phone'] ?? null;
     if (!$phone) {
         http_response_code(400);
-        echo '{"message":"Номер телефона обязателен"}';
+        echo json_encode(['message' => 'Номер телефона обов’язковий']);
         exit;
     }
     $code = (string)random_int(100000, 999999);
@@ -114,7 +129,7 @@ if ($uri === '/api/send-sms' && $method === 'POST') {
     } catch (Throwable $e) {
         logit("Помилка в /api/send-sms: ".$e->getMessage());
         http_response_code(500);
-        echo '{"message":"Помилка відправлення SMS"}';
+        echo json_encode(['message' => 'Помилка відправлення SMS: ' . $e->getMessage()]);
     } 
     exit;
 }
@@ -125,7 +140,7 @@ if ($uri === '/api/verify-sms' && $method === 'POST') {
     $code = $input['code'] ?? null;
     if (!$phone || !$code) {
         http_response_code(400);
-        echo '{"message":"Номер телефона і код обов’язкові"}';
+        echo json_encode(['message' => 'Номер телефона і код обов’язкові']);
         exit;
     }
     try {
@@ -135,7 +150,7 @@ if ($uri === '/api/verify-sms' && $method === 'POST') {
         if (!$s->rowCount()) {
             logit("Невірний код"); 
             http_response_code(400);
-            echo '{"message":"Невірний код"}';
+            echo json_encode(['message' => 'Невірний код']);
             exit;
         }
         logit("Видалення коду з бази даних...");
@@ -158,7 +173,7 @@ if ($uri === '/api/verify-sms' && $method === 'POST') {
     } catch (Throwable $e) {
         logit("Помилка в /api/verify-sms: ".$e->getMessage());
         http_response_code(500);
-        echo '{"message":"Помилка верифікації"}';
+        echo json_encode(['message' => 'Помилка верифікації: ' . $e->getMessage()]);
     } 
     exit;
 }
@@ -183,16 +198,36 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$date || $perc < 0 || $perc > 100) {
             logit("Помилка: Невірні дані для знижки");
             http_response_code(400);
-            echo '{"message":"Невірні дані"}';
+            echo json_encode(['message' => 'Невірні дані для знижки: date і percentage (0-100) обов’язкові']);
             exit;
         }
         logit("Додаємо знижку $perc% на $date для type: $type");
         try {
-            $pdo->beginTransaction();
-            $stmt = $pdo->prepare('INSERT INTO discounts (date, percentage, type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE percentage = ?');
-            $stmt->execute([$date, $perc, $type, $perc]);
-            $pdo->commit();
-            logit("Знижку $perc% встановлено на $date для type: $type");
+            // Перевірка, чи існує запис
+            $checkStmt = $pdo->prepare('SELECT * FROM discounts WHERE date = ? AND type = ?');
+            $checkStmt->execute([$date, $type]);
+            $existingDiscount = $checkStmt->fetch();
+            if ($existingDiscount) {
+                logit("Знижка вже існує, оновлюємо: " . json_encode($existingDiscount));
+                $stmt = $pdo->prepare('UPDATE discounts SET percentage = ? WHERE date = ? AND type = ?');
+                $stmt->execute([$perc, $date, $type]);
+                $affectedRows = $stmt->rowCount();
+                logit("Оновлено рядків: $affectedRows");
+            } else {
+                logit("Знижки немає, додаємо нову");
+                $stmt = $pdo->prepare('INSERT INTO discounts (date, percentage, type) VALUES (?, ?, ?)');
+                $stmt->execute([$date, $perc, $type]);
+                $affectedRows = $stmt->rowCount();
+                logit("Додано рядків: $affectedRows");
+                if ($affectedRows == 0) {
+                    logit("Помилка: Знижка не додана!");
+                    http_response_code(500);
+                    echo json_encode(['message' => 'Помилка: Знижка не додана']);
+                    exit;
+                }
+            }
+
+            // Перевірка наявності знижки
             $checkStmt = $pdo->prepare('SELECT * FROM discounts WHERE date = ? AND type = ?');
             $checkStmt->execute([$date, $type]);
             $result = $checkStmt->fetch();
@@ -200,13 +235,19 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
                 logit("Перевірка: Знижка знайдена в базі: date=$date, percentage={$result['percentage']}, type={$result['type']}");
             } else {
                 logit("Помилка: Знижка НЕ знайдена в базі після додавання!");
+                $debugStmt = $pdo->prepare('SELECT * FROM discounts WHERE type = ?');
+                $debugStmt->execute([$type]);
+                $allDiscounts = $debugStmt->fetchAll();
+                logit("Усі знижки для type=$type: " . json_encode($allDiscounts));
+                http_response_code(500);
+                echo json_encode(['message' => 'Помилка: Знижка не знайдена після додавання']);
+                exit;
             }
-            echo '{"message":"ok"}';
+            echo json_encode(['message' => 'Знижка успішно додана']);
         } catch (PDOException $e) {
-            $pdo->rollBack();
             logit("Помилка запису в базу даних: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка запису в базу даних"}';
+            echo json_encode(['message' => 'Помилка запису в базу даних: ' . $e->getMessage()]);
             exit;
         }
         exit;
@@ -216,7 +257,7 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$id) {
             logit("Помилка: ID знижки обов’язковий");
             http_response_code(400);
-            echo '{"message":"ID знижки обов’язковий"}';
+            echo json_encode(['message' => 'ID знижки обов’язковий']);
             exit;
         }
         logit("Видаляємо знижку з id: $id");
@@ -226,16 +267,16 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Знижку з id $id видалено");
-                echo '{"message":"ok"}';
+                echo json_encode(['message' => 'Знижка успішно видалена']);
             } else {
                 logit("Знижку з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Знижка не знайдена"}';
+                echo json_encode(['message' => 'Знижка не знайдена']);
             }
         } catch (PDOException $e) {
             logit("Помилка видалення з бази даних: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка видалення з бази даних"}';
+            echo json_encode(['message' => 'Помилка видалення з бази даних: ' . $e->getMessage()]);
             exit;
         }
         exit;
@@ -257,7 +298,7 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$code || $disc < 0 || $disc > 100) {
             logit("Помилка: Невірні дані для промокоду");
             http_response_code(400);
-            echo '{"message":"Невірні дані"}';
+            echo json_encode(['message' => 'Невірні дані для промокоду: code і discount (0-100) обов’язкові']);
             exit;
         }
         logit("Додаємо промокод $code зі знижкою $disc%");
@@ -265,11 +306,11 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
             $stmt = $pdo->prepare('INSERT INTO promo_codes (code, discount) VALUES (?, ?)');
             $stmt->execute([$code, $disc]);
             logit("Створено промокод $code зі знижкою $disc%");
-            echo '{"message":"ok"}';
+            echo json_encode(['message' => 'Промокод успішно створений']);
         } catch (PDOException $e) {
             logit("Помилка запису промокоду в базу даних: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка запису в базу даних"}';
+            echo json_encode(['message' => 'Помилка запису в базу даних: ' . $e->getMessage()]);
             exit;
         }
         exit;
@@ -279,7 +320,7 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$id) {
             logit("Помилка: ID промокоду обов’язковий");
             http_response_code(400);
-            echo '{"message":"ID промокоду обов’язковий"}';
+            echo json_encode(['message' => 'ID промокоду обов’язковий']);
             exit;
         }
         logit("Видаляємо промокод з id: $id");
@@ -289,16 +330,16 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Промокод з id $id видалено");
-                echo '{"message":"ok"}';
+                echo json_encode(['message' => 'Промокод успішно видалений']);
             } else {
                 logit("Промокод з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Промокод не знайдений"}';
+                echo json_encode(['message' => 'Промокод не знайдений']);
             }
         } catch (PDOException $e) {
             logit("Помилка видалення промокоду з бази даних: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка видалення з бази даних"}';
+            echo json_encode(['message' => 'Помилка видалення з бази даних: ' . $e->getMessage()]);
             exit;
         }
         exit;
@@ -345,7 +386,7 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
         } catch (PDOException $e) {
             logit("Помилка при отриманні користувачів: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при отриманні користувачів"}';
+            echo json_encode(['message' => 'Помилка при отриманні користувачів: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -363,7 +404,7 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             if (!$user) {
                 logit("Користувача з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Користувача не знайдено"}';
+                echo json_encode(['message' => 'Користувача не знайдено']);
                 exit;
             }
 
@@ -378,7 +419,7 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
         } catch (PDOException $e) {
             logit("Помилка при отриманні деталей користувача: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при отриманні деталей користувача"}';
+            echo json_encode(['message' => 'Помилка при отриманні деталей користувача: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -393,7 +434,7 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$name && !$email && !$status) {
             logit("Помилка: Потрібно вказати хоча б одне поле для оновлення");
             http_response_code(400);
-            echo '{"message":"Потрібно вказати хоча б одне поле для оновлення"}';
+            echo json_encode(['message' => 'Потрібно вказати хоча б одне поле для оновлення']);
             exit;
         }
 
@@ -418,7 +459,7 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
         if (empty($updates)) {
             logit("Помилка: Невірні дані для оновлення");
             http_response_code(400);
-            echo '{"message":"Невірні дані для оновлення"}';
+            echo json_encode(['message' => 'Невірні дані для оновлення']);
             exit;
         }
 
@@ -432,16 +473,16 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Користувача з id $id оновлено");
-                echo '{"message":"ok"}';
+                echo json_encode(['message' => 'Користувач успішно оновлений']);
             } else {
                 logit("Користувача з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Користувача не знайдено"}';
+                echo json_encode(['message' => 'Користувача не знайдено']);
             }
         } catch (PDOException $e) {
             logit("Помилка при оновленні користувача: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при оновленні користувача"}';
+            echo json_encode(['message' => 'Помилка при оновленні користувача: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -456,16 +497,16 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Користувача з id $id видалено");
-                echo '{"message":"ok"}';
+                echo json_encode(['message' => 'Користувач успішно видалений']);
             } else {
                 logit("Користувача з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Користувача не знайдено"}';
+                echo json_encode(['message' => 'Користувача не знайдено']);
             }
         } catch (PDOException $e) {
             logit("Помилка при видаленні користувача: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при видаленні користувача"}';
+            echo json_encode(['message' => 'Помилка при видаленні користувача: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -526,7 +567,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         } catch (PDOException $e) {
             logit("Помилка при отриманні замовлень: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при отриманні замовлень"}';
+            echo json_encode(['message' => 'Помилка при отриманні замовлень: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -539,7 +580,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         if (!$status || !in_array($status, ['pending', 'completed', 'cancelled'])) {
             logit("Помилка: Невірний статус замовлення");
             http_response_code(400);
-            echo '{"message":"Невірний статус замовлення"}';
+            echo json_encode(['message' => 'Невірний статус замовлення: має бути pending, completed або cancelled']);
             exit;
         }
 
@@ -550,16 +591,16 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Замовлення з id $id оновлено");
-                echo '{"message":"ok"}';
+                echo json_encode(['message' => 'Замовлення успішно оновлено']);
             } else {
                 logit("Замовлення з id $id не знайдено");
                 http_response_code(404);
-                echo '{"message":"Замовлення не знайдено"}';
+                echo json_encode(['message' => 'Замовлення не знайдено']);
             }
         } catch (PDOException $e) {
             logit("Помилка при оновленні замовлення: " . $e->getMessage());
             http_response_code(500);
-            echo '{"message":"Помилка при оновленні замовлення"}';
+            echo json_encode(['message' => 'Помилка при оновленні замовлення: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -611,10 +652,17 @@ if ($uri === '/api/users/stats' && $method === 'GET') {
     } catch (PDOException $e) {
         logit("Помилка при отриманні статистики: " . $e->getMessage());
         http_response_code(500);
-        echo '{"message":"Помилка при отриманні статистики"}';
+        echo json_encode(['message' => 'Помилка при отриманні статистики: ' . $e->getMessage()]);
     }
     exit;
 }
 
+/* Catch-all для невідомих ендпоінтів */
 http_response_code(404);
-echo '{"message":"not found"}';
+logit("Ендпоінт не знайдено: $uri, метод: $method");
+echo json_encode([
+    'message' => 'Ендпоінт не знайдено',
+    'uri' => $uri,
+    'method' => $method
+]);
+exit;

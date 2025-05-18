@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Modal from "react-modal"; // Імпорт бібліотеки react-modal
+import Modal from "react-modal";
 import css from "./AdminPanel.module.css";
 import {
   FaCalendarAlt,
@@ -31,7 +31,6 @@ import {
 } from "react-icons/io5";
 import { MdGroups } from "react-icons/md";
 
-// Прив’язка модального вікна до кореня програми (для доступності)
 Modal.setAppElement("#root");
 
 const API = import.meta.env.VITE_API || "http://localhost:3001/api";
@@ -373,8 +372,8 @@ function UsersSection({ api }) {
   const [dateFrom, setDateFrom] = useState(localStorage.getItem("dateFrom") || "");
   const [dateTo, setDateTo] = useState(localStorage.getItem("dateTo") || "");
   const [statsPeriod, setStatsPeriod] = useState(localStorage.getItem("statsPeriod") || "30d");
-  const [isModalOpen, setIsModalOpen] = useState(false); // Стан для модального вікна
-  const [userToDelete, setUserToDelete] = useState(null); // Користувач, якого хочемо видалити
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -955,11 +954,15 @@ export default function AdminPanel() {
       console.log(`Fetching discounts for type: ${type}`);
       const { data } = await api.get(`/discounts?type=${type}`);
       console.log(`Discounts for ${type}:`, data);
+      if (!Array.isArray(data)) {
+        throw new Error("Received data is not an array");
+      }
       setDiscounts(data);
       setError("");
     } catch (err) {
       console.error(`Error fetching discounts for ${type}:`, err);
-      setError(`Failed to fetch discounts for ${type}.`);
+      setError(`Failed to fetch discounts for ${type}: ${err.message}`);
+      setDiscounts([]);
     }
   };
 
@@ -974,11 +977,11 @@ export default function AdminPanel() {
 
   const addDiscount = async () => {
     if (!newDiscountDate || !newDiscountPercent || !currentCalculatorTab) {
-      setError("Please fill in all fields.");
+      setError("Будь ласка, заповніть усі поля.");
       return;
     }
     if (newDiscountPercent < 0 || newDiscountPercent > 100) {
-      setError("Discount percentage must be between 0 and 100.");
+      setError("Відсоток знижки має бути від 0 до 100.");
       return;
     }
     setIsLoading(true);
@@ -986,18 +989,22 @@ export default function AdminPanel() {
       const normalizedDate = new Date(newDiscountDate);
       const formattedDate = `${normalizedDate.getFullYear()}-${String(normalizedDate.getMonth() + 1).padStart(2, "0")}-${String(normalizedDate.getDate()).padStart(2, "0")}`;
       console.log(`Adding discount for date: ${formattedDate}, type: ${currentCalculatorTab}, percentage: ${newDiscountPercent}`);
-      await api.post("/discounts", {
+      const response = await api.post("/discounts", {
         date: formattedDate,
         percentage: parseInt(newDiscountPercent),
         type: currentCalculatorTab,
       });
-      fetchDiscounts(currentCalculatorTab);
+      console.log("Add discount response:", response.data);
+
+      // Додаємо затримку перед оновленням, щоб переконатися, що бекенд завершив транзакцію
+      await new Promise(resolve => setTimeout(resolve, 500));
+      await fetchDiscounts(currentCalculatorTab);
       setNewDiscountDate("");
       setNewDiscountPercent("");
       setError("");
     } catch (err) {
       console.error("Error adding discount:", err);
-      setError("Failed to add discount.");
+      setError("Не вдалося додати знижку: " + (err.response?.data?.message || err.message));
     } finally {
       setIsLoading(false);
     }
