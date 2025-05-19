@@ -26,6 +26,20 @@ export default function Calculator() {
   const [selectedCity, setSelectedCity] = useState("Warszawa");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [street, setStreet] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
+  const [apartmentNumber, setApartmentNumber] = useState("");
+  const [building, setBuilding] = useState("");
+  const [floor, setFloor] = useState("");
+  const [intercomCode, setIntercomCode] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [agreeToMarketing, setAgreeToMarketing] = useState(false);
+  const [error, setError] = useState("");
 
   const cities = {
     "Warszawa": 0.00,
@@ -76,20 +90,6 @@ export default function Calculator() {
   const filteredCities = Object.entries(cities).filter(([city]) =>
     city.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const [street, setStreet] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [houseNumber, setHouseNumber] = useState("");
-  const [apartmentNumber, setApartmentNumber] = useState("");
-  const [building, setBuilding] = useState("");
-  const [floor, setFloor] = useState("");
-  const [intercomCode, setIntercomCode] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [agreeToMarketing, setAgreeToMarketing] = useState(false);
 
   const frequencyDiscounts = {
     "Raz w tygodniu": 20,
@@ -151,7 +151,6 @@ export default function Calculator() {
       try {
         const { data } = await api.get("/discounts");
         const discountMap = data.reduce((acc, discount) => {
-          // Нормалізуємо дату з сервера, щоб уникнути зсуву
           const date = new Date(discount.date);
           const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
           return {
@@ -273,7 +272,6 @@ export default function Calculator() {
     let total = parseFloat(calculateBasePrice());
     let appliedDiscount = discount;
     if (selectedDate) {
-      // Нормалізуємо дату для порівняння
       const date = new Date(selectedDate);
       const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       const dateDiscount = discounts[formattedDate] || 0;
@@ -343,7 +341,6 @@ export default function Calculator() {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentYear, currentMonth, day);
-      // Нормалізуємо дату для порівняння
       const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
       const discountValue = discounts[formattedDate] || 0;
       const isToday = date.toDateString() === today.toDateString();
@@ -423,7 +420,6 @@ export default function Calculator() {
       return;
     }
 
-    // Нормалізуємо дату для надсилання
     const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
 
     const orderData = {
@@ -464,9 +460,11 @@ export default function Calculator() {
         email,
         additionalInfo,
       },
+      payment_status: "pending",
     };
 
     try {
+      // Створюємо замовлення
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: {
@@ -475,15 +473,40 @@ export default function Calculator() {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        alert("Zamówienie złożone! Twój account został utworzony. Sprawdź SMS z kodem do logowania.");
-      } else {
-        alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      if (!response.ok) {
+        throw new Error("Wystąpił błąd podczas składania zamówienia.");
       }
+
+      const { orderId } = await response.json();
+
+      // Ініціалізуємо платіж через PayU
+      const amount = parseFloat(calculateTotal());
+
+      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          amount,
+          email: orderData.clientInfo.email,
+          phone: orderData.clientInfo.phone,
+          firstName: orderData.clientInfo.name.split(" ")[0] || "Jan",
+          lastName: orderData.clientInfo.name.split(" ")[1] || "Kowalski",
+        }),
+      });
+
+      if (!paymentResponse.ok) {
+        throw new Error("Nie udało się zainicjować płatności.");
+      }
+
+      const { redirectUri } = await paymentResponse.json();
+
+      // Перенаправляємо користувача на сторінку оплати PayU
+      window.location.href = redirectUri;
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      setError(error.message || "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
     }
   }
 
@@ -1122,6 +1145,8 @@ export default function Calculator() {
                 <strong>Do zapłaty:</strong> {calculateTotal()} zł{" "}
                 <del>{calculateStrikethroughPrice()} zł</del>
               </p>
+
+              {error && <p className={css.error}>{error}</p>}
 
               <button
                 className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : ""}`}

@@ -151,6 +151,9 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       unavailableLabel: "niedostępny",
       windowsBalconiesLabel: "Okna i balkony",
       windowsMinNotice: "Minimalna liczba okien to 5. Jeżeli masz mniej okien, zamów sprzątanie jednopokojowego mieszkania i wskaż ich odpowiednią ilość",
+      paymentSuccess: "Płatność zakończona sukcesem! Twoje zamówienie zostało złożone.",
+      paymentError: "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.",
+      paymentCanceled: "Płatność została anulowana. Spróbuj ponownie.",
     },
     uk: {
       title: "Миття вікон",
@@ -199,6 +202,9 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       unavailableLabel: "недоступно",
       windowsBalconiesLabel: "Вікна та балкони",
       windowsMinNotice: "Мінімальна кількість вікон – 5. Якщо у вас менше вікон, замовте прибирання однокімнатної квартири та вкажіть їх відповідну кількість",
+      paymentSuccess: "Оплата успішна! Ваше замовлення прийнято.",
+      paymentError: "Виникла помилка під час оформлення замовлення. Спробуйте ще раз.",
+      paymentCanceled: "Оплата була скасована. Спробуйте ще раз.",
     },
     ru: {
       title: "Мойка окон",
@@ -247,6 +253,9 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       unavailableLabel: "недоступно",
       windowsBalconiesLabel: "Окна и балконы",
       windowsMinNotice: "Минимальное количество окон – 5. Если у вас меньше окон, закажите уборку однокомнатной квартиры и укажите их соответствующее количество",
+      paymentSuccess: "Оплата прошла успешно! Ваш заказ принят.",
+      paymentError: "Произошла ошибка при оформлении заказа. Попробуйте снова.",
+      paymentCanceled: "Оплата была отменена. Попробуйте снова.",
     },
     en: {
       title: "Window Cleaning",
@@ -295,6 +304,9 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       unavailableLabel: "unavailable",
       windowsBalconiesLabel: "Windows and balconies",
       windowsMinNotice: "The minimum number of windows is 5. If you have fewer windows, order a one-room apartment cleaning and specify their appropriate number",
+      paymentSuccess: "Payment successful! Your order has been placed.",
+      paymentError: "An error occurred while placing the order. Please try again.",
+      paymentCanceled: "Payment was canceled. Please try again.",
     },
   };
 
@@ -375,6 +387,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     } else {
       setWindows(Math.max(5, parsedValue + increment));
     }
+    console.log(`Кількість вікон змінено: ${windows + increment}`);
   };
 
   const handleBalconiesChange = (increment) => {
@@ -384,24 +397,29 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     } else {
       setBalconies(Math.max(0, parsedValue + increment));
     }
+    console.log(`Кількість балконів змінено: ${balconies + increment}`);
   };
 
   const handleWindowsInputChange = (e) => {
     const value = e.target.value;
     setWindows(value);
+    console.log(`Кількість вікон введено вручну: ${value}`);
   };
 
   const handleBalconiesInputChange = (e) => {
     const value = e.target.value;
     setBalconies(value);
+    console.log(`Кількість балконів введено вручну: ${value}`);
   };
 
   const handleWindowsBlur = () => {
     const parsedValue = parseInt(windows, 10);
     if (isNaN(parsedValue) || windows === "") {
       setWindows(5);
+      console.log("Кількість вікон встановлено на мінімальне значення: 5");
     } else {
       setWindows(Math.max(5, parsedValue));
+      console.log(`Кількість вікон після перевірки: ${Math.max(5, parsedValue)}`);
     }
   };
 
@@ -409,8 +427,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     const parsedValue = parseInt(balconies, 10);
     if (isNaN(parsedValue) || balconies === "") {
       setBalconies(0);
+      console.log("Кількість балконів встановлено на 0");
     } else {
       setBalconies(Math.max(0, parsedValue));
+      console.log(`Кількість балконів після перевірки: ${Math.max(0, parsedValue)}`);
     }
   };
 
@@ -419,6 +439,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до попереднього місяця: ${months[newMonth]} ${newYear}`);
   };
 
   const handleNextMonth = () => {
@@ -426,6 +447,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до наступного місяця: ${months[newMonth]} ${newYear}`);
   };
 
   const renderCalendar = () => {
@@ -472,7 +494,12 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
             ${isTomorrow ? css.tomorrow : ""}
             ${isSelectable ? css.hoverable : ""}
           `}
-          onClick={() => isSelectable && setSelectedDate(date)}
+          onClick={() => {
+            if (isSelectable) {
+              setSelectedDate(date);
+              console.log(`Обрана дата: ${formattedDate}`);
+            }
+          }}
         >
           <span className={css["day-number"]}>{day}</span>
           {discountValue > 0 && <span className={css["discount-label"]}>-{discountValue}%</span>}
@@ -503,6 +530,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     let total = parsedWindows * pricePerWindow + parsedBalconies * pricePerBalcony;
     total += cities[selectedCity] || 0;
     total *= companyMultiplier;
+    console.log(`Розрахунок базової ціни: ${total.toFixed(2)} zł (вікна: ${parsedWindows}, балкони: ${parsedBalconies}, місто: ${selectedCity}, множник: ${companyMultiplier})`);
     return total.toFixed(2);
   };
 
@@ -515,11 +543,15 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       appliedDiscount = Math.max(appliedDiscount, dateDiscount);
     }
     const discountAmount = total * (appliedDiscount / 100);
-    return (total - discountAmount).toFixed(2);
+    const finalTotal = (total - discountAmount).toFixed(2);
+    console.log(`Розрахунок загальної ціни: ${finalTotal} zł (знижка: ${appliedDiscount}%, сума знижки: ${discountAmount.toFixed(2)} zł)`);
+    return finalTotal;
   };
 
   const calculateStrikethroughPrice = () => {
-    return (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    const strikethroughPrice = (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    console.log(`Розрахунок перекресленої ціни: ${strikethroughPrice} zł`);
+    return strikethroughPrice;
   };
 
   const calculateWorkTime = () => {
@@ -531,7 +563,9 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
 
     const windowsTime = parsedWindows * 0.5;
     const balconiesTime = parsedBalconies * 0.75;
-    return windowsTime + balconiesTime;
+    const totalTime = windowsTime + balconiesTime;
+    console.log(`Розрахунок часу роботи: ${totalTime} годин (вікна: ${windowsTime}, балкони: ${balconiesTime})`);
+    return totalTime;
   };
 
   const calculateCleanersAndTime = () => {
@@ -540,6 +574,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     const adjustedHours = totalHours / cleaners;
     const hours = Math.floor(adjustedHours);
     const minutes = Math.round((adjustedHours - hours) * 60);
+    console.log(`Розрахунок прибиральників: ${cleaners}, час: ${hours} год ${minutes} хв`);
     return { hours, minutes, cleaners };
   };
 
@@ -549,26 +584,40 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
   };
 
   const handlePromoApply = () => {
-    if (promo.toLowerCase() === "weekend") setDiscount(20);
-    else if (promo.toLowerCase() === "twoweeks") setDiscount(15);
-    else if (promo.toLowerCase() === "month") setDiscount(10);
-    else setDiscount(0);
+    if (promo.toLowerCase() === "weekend") {
+      setDiscount(20);
+      console.log("Застосовано промокод WEEKEND: знижка 20%");
+    } else if (promo.toLowerCase() === "twoweeks") {
+      setDiscount(15);
+      console.log("Застосовано промокод TWOWEEKS: знижка 15%");
+    } else if (promo.toLowerCase() === "month") {
+      setDiscount(10);
+      console.log("Застосовано промокод MONTH: знижка 10%");
+    } else {
+      setDiscount(0);
+      console.log("Невірний промокод, знижка скинута до 0%");
+    }
   };
 
   const handleOrder = async () => {
+    console.log("Початок обробки замовлення...");
+    
     if (!selectedDate) {
       calendarRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Дата не обрана");
       return;
     }
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Час не обраний");
       return;
     }
     if (!agreeToTerms || !agreeToMarketing) {
       agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Не погоджено з умовами або маркетингом");
       return;
     }
 
@@ -576,6 +625,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
     const parsedBalconies = parseInt(balconies, 10) || 0;
 
     const orderData = {
+      order_type: "window_cleaning", // Додаємо order_type для таблиці orders
       windows: parsedWindows,
       balconies: parsedBalconies,
       totalPrice: calculateTotal(),
@@ -593,16 +643,21 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
       },
       clientInfo: {
         clientType,
-        name,
-        companyName: clientType === "company" ? companyName : null,
-        nip: clientType === "company" ? nip : null,
+        name: clientType === "private" ? name : undefined,
+        companyName: clientType === "company" ? companyName : undefined,
+        nip: clientType === "company" ? nip : undefined,
         phone,
         email,
         additionalInfo,
       },
+      payment_status: "pending", // Додаємо статус платежу
     };
 
+    console.log("Дані замовлення:", orderData);
+
     try {
+      // 1. Створюємо замовлення
+      console.log("Відправка запиту на створення замовлення...");
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: {
@@ -611,15 +666,44 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        alert("Zamówienie złożone! Twój account został utworzony. Sprawdź SMS z kodem do logowania.");
-      } else {
-        alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      if (!response.ok) {
+        throw new Error("Не вдалося створити замовлення.");
       }
+
+      const { orderId } = await response.json();
+      console.log(`Замовлення створено з ID: ${orderId}`);
+
+      // 2. Ініціалізуємо платіж через PayU
+      const amount = parseFloat(calculateTotal());
+      console.log(`Ініціалізація платежу PayU для суми: ${amount} zł...`);
+      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          amount,
+          email: orderData.clientInfo.email,
+          phone: orderData.clientInfo.phone,
+          firstName: clientType === "private" ? (orderData.clientInfo.name?.split(" ")[0] || "Jan") : "Firma",
+          lastName: clientType === "private" ? (orderData.clientInfo.name?.split(" ")[1] || "Kowalski") : orderData.clientInfo.companyName || "Firma",
+        }),
+      });
+
+      if (!paymentResponse.ok) {
+        throw new Error("Не вдалося ініціалізувати платіж.");
+      }
+
+      const { redirectUri } = await paymentResponse.json();
+      console.log(`Отримано URL для оплати: ${redirectUri}`);
+
+      // 3. Перенаправляємо користувача на сторінку оплати PayU
+      window.location.href = redirectUri;
+      console.log("Користувача перенаправлено на сторінку оплати PayU");
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      console.error("Помилка при оформленні замовлення:", error);
+      setError(error.message || t.paymentError);
     }
   };
 
@@ -638,13 +722,19 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
             <div className={css["user-type"]}>
               <button
                 className={`${css["user-type-button"]} ${clientType === "private" ? css.active : ""}`}
-                onClick={() => setClientType("private")}
+                onClick={() => {
+                  setClientType("private");
+                  console.log("Обрано тип клієнта: Фізична особа");
+                }}
               >
                 {t.privateLabel}
               </button>
               <button
                 className={`${css["user-type-button"]} ${clientType === "company" ? css.active : ""}`}
-                onClick={() => setClientType("company")}
+                onClick={() => {
+                  setClientType("company");
+                  console.log("Обрано тип клієнта: Компанія");
+                }}
               >
                 {t.companyLabel}
               </button>
@@ -767,7 +857,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                           className={`${css["time-slot"]} ${
                             selectedTime === time ? css.selected : ""
                           }`}
-                          onClick={() => setSelectedTime(time)}
+                          onClick={() => {
+                            setSelectedTime(time);
+                            console.log(`Обрано час: ${time}`);
+                          }}
                           disabled={!selectedDate}
                         >
                           {time}
@@ -811,6 +904,7 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                           setSelectedCity(city);
                           setShowCityDropdown(false);
                           setSearchQuery("");
+                          console.log(`Обрано місто: ${city} (+${cost} zł)`);
                         }}
                       >
                         {city}
@@ -827,7 +921,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={street}
-                      onChange={(e) => setStreet(e.target.value)}
+                      onChange={(e) => {
+                        setStreet(e.target.value);
+                        console.log(`Введено вулицю: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${street ? css.filled : ""}`}
                     />
                   </div>
@@ -836,7 +933,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={postalCode}
-                      onChange={(e) => setPostalCode(e.target.value)}
+                      onChange={(e) => {
+                        setPostalCode(e.target.value);
+                        console.log(`Введено поштовий код: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${postalCode ? css.filled : ""}`}
                     />
                   </div>
@@ -845,7 +945,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={houseNumber}
-                      onChange={(e) => setHouseNumber(e.target.value)}
+                      onChange={(e) => {
+                        setHouseNumber(e.target.value);
+                        console.log(`Введено номер будинку: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${houseNumber ? css.filled : ""}`}
                     />
                   </div>
@@ -854,7 +957,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={apartmentNumber}
-                      onChange={(e) => setApartmentNumber(e.target.value)}
+                      onChange={(e) => {
+                        setApartmentNumber(e.target.value);
+                        console.log(`Введено номер квартири: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${apartmentNumber ? css.filled : ""}`}
                     />
                   </div>
@@ -865,7 +971,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={building}
-                      onChange={(e) => setBuilding(e.target.value)}
+                      onChange={(e) => {
+                        setBuilding(e.target.value);
+                        console.log(`Введено будівлю: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${building ? css.filled : ""}`}
                     />
                   </div>
@@ -874,7 +983,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={floor}
-                      onChange={(e) => setFloor(e.target.value)}
+                      onChange={(e) => {
+                        setFloor(e.target.value);
+                        console.log(`Введено поверх: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${floor ? css.filled : ""}`}
                     />
                   </div>
@@ -883,7 +995,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={intercomCode}
-                      onChange={(e) => setIntercomCode(e.target.value)}
+                      onChange={(e) => {
+                        setIntercomCode(e.target.value);
+                        console.log(`Введено код домофону: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${intercomCode ? css.filled : ""}`}
                     />
                   </div>
@@ -901,7 +1016,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                       <input
                         type="text"
                         value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        onChange={(e) => {
+                          setName(e.target.value);
+                          console.log(`Введено ім'я: ${e.target.value}`);
+                        }}
                         className={`${css["contact-input"]} ${name ? css.filled : ""}`}
                       />
                     </div>
@@ -912,7 +1030,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                         <input
                           type="text"
                           value={companyName}
-                          onChange={(e) => setCompanyName(e.target.value)}
+                          onChange={(e) => {
+                            setCompanyName(e.target.value);
+                            console.log(`Введено назву компанії: ${e.target.value}`);
+                          }}
                           className={`${css["contact-input"]} ${companyName ? css.filled : ""}`}
                         />
                       </div>
@@ -921,7 +1042,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                         <input
                           type="text"
                           value={nip}
-                          onChange={(e) => setNip(e.target.value)}
+                          onChange={(e) => {
+                            setNip(e.target.value);
+                            console.log(`Введено NIP: ${e.target.value}`);
+                          }}
                           className={`${css["contact-input"]} ${nip ? css.filled : ""}`}
                         />
                       </div>
@@ -932,7 +1056,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="text"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        console.log(`Введено телефон: ${e.target.value}`);
+                      }}
                       className={`${css["contact-input"]} ${phone ? css.filled : ""}`}
                     />
                   </div>
@@ -941,7 +1068,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        console.log(`Введено email: ${e.target.value}`);
+                      }}
                       className={`${css["contact-input"]} ${email ? css.filled : ""}`}
                     />
                   </div>
@@ -951,7 +1081,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                     <label className={css["input-label"]}>{t.additionalInfoLabel}</label>
                     <textarea
                       value={additionalInfo}
-                      onChange={(e) => setAdditionalInfo(e.target.value)}
+                      onChange={(e) => {
+                        setAdditionalInfo(e.target.value);
+                        console.log(`Введено додаткову інформацію: ${e.target.value}`);
+                      }}
                       className={`${css["contact-textarea"]} ${additionalInfo ? css.filled : ""}`}
                     />
                   </div>
@@ -964,7 +1097,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                 <input
                   type="checkbox"
                   checked={agreeToTerms}
-                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToTerms(e.target.checked);
+                    console.log(`Згода з умовами: ${e.target.checked}`);
+                  }}
                   className={css["custom-checkbox"]}
                 />
                 {t.agreement1}
@@ -973,7 +1109,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                 <input
                   type="checkbox"
                   checked={agreeToMarketing}
-                  onChange={(e) => setAgreeToMarketing(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToMarketing(e.target.checked);
+                    console.log(`Згода на маркетинг: ${e.target.checked}`);
+                  }}
                   className={css["custom-checkbox"]}
                 />
                 {t.agreement2}
@@ -1042,7 +1181,10 @@ export default function WindowCleaningCalculator({ lang, type, title }) {
                   type="text"
                   placeholder={t.promoPlaceholder}
                   value={promo}
-                  onChange={(e) => setPromo(e.target.value)}
+                  onChange={(e) => {
+                    setPromo(e.target.value);
+                    console.log(`Введено промокод: ${e.target.value}`);
+                  }}
                 />
                 <button onClick={handlePromoApply}>{t.applyPromo}</button>
               </div>

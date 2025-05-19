@@ -69,10 +69,10 @@ function UserOrders({
             {orders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.name || order.phone}</td>
-                <td>{order.service_type}</td>
+                <td>{order.user_id ? `ID: ${order.user_id}` : "Brak użytkownika"}</td>
+                <td>{order.service_type || "Brak"}</td>
                 <td>{order.total_price} zł</td>
-                <td>{new Date(order.order_date).toLocaleString()}</td>
+                <td>{order.order_date ? new Date(order.order_date).toLocaleString() : "Brak daty"}</td>
                 <td>
                   <select value={order.status} onChange={(e) => updateOrder(order.id, e.target.value)}>
                     <option value="pending">Oczekujące</option>

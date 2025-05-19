@@ -120,14 +120,14 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
     },
   };
 
-  // Дані для графіка приблизного доходу (приклад, якщо немає даних у stats)
+  // Дані для графіка приблизного доходу (використовуємо 0, якщо stats.revenue відсутнє)
   const revenueChartData = stats
     ? {
-        labels: ["Okres"], // Можна розширити, якщо є дані за кілька періодів
+        labels: ["Okres"],
         datasets: [
           {
             label: "Przybliżony dochód (PLN)",
-            data: [stats.revenue || 12000], // Приклад даних
+            data: [stats.revenue || 0], // Використовуємо 0, якщо revenue не передано
             borderColor: "#00c4b4",
             backgroundColor: "rgba(0, 196, 180, 0.2)",
             fill: true,
@@ -155,7 +155,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       title: {
         display: true,
         text: "Przybliżony dochód w wybranym okresie",
- Milford: { size: 16 },
+        font: { size: 16 },
         color: "#1a1a1a",
       },
     },

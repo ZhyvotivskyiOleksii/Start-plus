@@ -35,6 +35,15 @@ export default function OfficeCleaning({ lang, type, title }) {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [agreeToMarketing, setAgreeToMarketing] = useState(false);
 
+  // Додаємо поля для адреси, які потрібні для сумісності з таблицею orders
+  const [street, setStreet] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
+  const [apartmentNumber, setApartmentNumber] = useState("");
+  const [building, setBuilding] = useState("");
+  const [floor, setFloor] = useState("");
+  const [intercomCode, setIntercomCode] = useState("");
+
   const cities = {
     "Warszawa": 0.00,
     "Piastów": 30.00,
@@ -98,6 +107,7 @@ export default function OfficeCleaning({ lang, type, title }) {
 
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
+  const agreementRef = useRef(null);
 
   const months = [
     "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
@@ -109,6 +119,59 @@ export default function OfficeCleaning({ lang, type, title }) {
     "15:00", "16:00", "17:00", "18:00",
     "19:00", "20:00",
   ];
+
+  const texts = {
+    pl: {
+      title: title || "Sprzątanie biura",
+      subtitle: "Wybierz parametry, aby obliczyć koszt u sprzątania biura.",
+      areaLabel: "Powierzchnia biura (m²)",
+      workspacesLabel: "Liczba miejsc pracy",
+      frequencyTitle: "CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA",
+      cityLabel: "Wybierz miasto",
+      citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
+      contactTitle: "DANE KONTAKTOWE",
+      nameLabel: "Imię",
+      phoneLabel: "Telefon kontaktowy",
+      emailLabel: "Adres e-mail",
+      additionalInfoLabel: "Dodatkowa informacja do zamówienia",
+      vatTitle: "DANE DO FAKTURY VAT",
+      companyNameLabel: "Nazwa firmy",
+      nipLabel: "NIP",
+      vatAddressLabel: "Adres",
+      vatCityLabel: "Miasto",
+      vatPostalCodeLabel: "Kod pocztowy",
+      agreement1: "Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.",
+      agreement2: "Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora",
+      locationLabel: "Lokalizacja",
+      specialistInfo: "Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.",
+      workTimeLabel: "Przybliżony czas pracy",
+      cleanersLabel: "Kilka sprzątaczy",
+      datePlaceholder: "Wybierz termin i godzinę",
+      locationCostLabel: "Dodatkowy koszt dojazdu",
+      promoPlaceholder: "Promokod",
+      applyPromo: "Zastosuj",
+      totalLabel: "Do zapłaty",
+      orderButton: "Zamawiam za",
+      todayLabel: "dziś",
+      tomorrowLabel: "jutro",
+      unavailableLabel: "niedostępny",
+      vatText: "Cena zawiera VAT, faktura zostanie wysłana na email po zakończeniu sprzątania",
+      paymentSuccess: "Płatność zakończona sukcesem! Twoje zamówienie zostało złożone.",
+      paymentError: "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.",
+      paymentCanceled: "Płatność została anulowana. Spróbuj ponownie.",
+      addressTitle: "WPROWADŹ SWÓJ ADRES",
+      streetLabel: "Ulica",
+      postalCodeLabel: "Kod pocztowy",
+      houseNumberLabel: "Numer domu",
+      apartmentNumberLabel: "Numer mieszkania",
+      buildingLabel: "Budynek",
+      floorLabel: "Piętro",
+      intercomCodeLabel: "Kod od domofonu",
+    },
+    // Додаткові мови можна додати за потреби
+  };
+
+  const t = texts[lang] || texts.pl;
 
   useEffect(() => {
     const fetchDiscounts = async () => {
@@ -154,22 +217,32 @@ export default function OfficeCleaning({ lang, type, title }) {
     }
   }, [selectedTime]);
 
+  useEffect(() => {
+    if (agreeToTerms && agreeToMarketing && agreementRef.current) {
+      agreementRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [agreeToTerms, agreeToMarketing]);
+
   const handleOfficeAreaInputChange = (e) => {
     const value = e.target.value;
     setOfficeArea(value);
+    console.log(`Площа офісу введена вручну: ${value} м²`);
   };
 
   const handleWorkspacesInputChange = (e) => {
     const value = e.target.value;
     setWorkspaces(value);
+    console.log(`Кількість робочих місць введена вручну: ${value}`);
   };
 
   const handleOfficeAreaBlur = () => {
     const parsedValue = parseInt(officeArea, 10);
     if (isNaN(parsedValue) || officeArea === "") {
       setOfficeArea(10);
+      console.log("Площа офісу встановлена на мінімальне значення: 10 м²");
     } else {
       setOfficeArea(Math.max(10, parsedValue));
+      console.log(`Площа офісу після перевірки: ${Math.max(10, parsedValue)} м²`);
     }
   };
 
@@ -177,8 +250,10 @@ export default function OfficeCleaning({ lang, type, title }) {
     const parsedValue = parseInt(workspaces, 10);
     if (isNaN(parsedValue) || workspaces === "") {
       setWorkspaces(0);
+      console.log("Кількість робочих місць встановлена на 0");
     } else {
       setWorkspaces(Math.max(0, parsedValue));
+      console.log(`Кількість робочих місць після перевірки: ${Math.max(0, parsedValue)}`);
     }
   };
 
@@ -189,11 +264,22 @@ export default function OfficeCleaning({ lang, type, title }) {
       { code: "MONTH", discount: 10 },
     ];
     const promoCode = promoCodes.find((code) => code.code === promo.toUpperCase());
-    if (promoCode) setDiscount(promoCode.discount);
-    else if (promo.toLowerCase() === "weekend") setDiscount(20);
-    else if (promo.toLowerCase() === "twoweeks") setDiscount(15);
-    else if (promo.toLowerCase() === "month") setDiscount(10);
-    else setDiscount(0);
+    if (promoCode) {
+      setDiscount(promoCode.discount);
+      console.log(`Застосовано промокод ${promoCode.code}: знижка ${promoCode.discount}%`);
+    } else if (promo.toLowerCase() === "weekend") {
+      setDiscount(20);
+      console.log("Застосовано промокод WEEKEND: знижка 20%");
+    } else if (promo.toLowerCase() === "twoweeks") {
+      setDiscount(15);
+      console.log("Застосовано промокод TWOWEEKS: знижка 15%");
+    } else if (promo.toLowerCase() === "month") {
+      setDiscount(10);
+      console.log("Застосовано промокод MONTH: знижка 10%");
+    } else {
+      setDiscount(0);
+      console.log("Невірний промокод, знижка скинута до 0%");
+    }
   };
 
   const calculateBasePrice = () => {
@@ -206,6 +292,7 @@ export default function OfficeCleaning({ lang, type, title }) {
     let total = Math.max(basePrice, parsedOfficeArea * pricePerSquareMeter);
     total += parsedWorkspaces * pricePerWorkspace;
     total += cities[selectedCity] || 0;
+    console.log(`Розрахунок базової ціни: ${total.toFixed(2)} zł (площа: ${parsedOfficeArea} м², робочі місця: ${parsedWorkspaces}, місто: ${selectedCity})`);
     return total.toFixed(2);
   };
 
@@ -220,11 +307,15 @@ export default function OfficeCleaning({ lang, type, title }) {
     const freqDiscount = frequencyDiscounts[cleaningFrequency] || 0;
     appliedDiscount = Math.max(appliedDiscount, freqDiscount);
     const discountAmount = total * (appliedDiscount / 100);
-    return (total - discountAmount).toFixed(2);
+    const finalTotal = (total - discountAmount).toFixed(2);
+    console.log(`Розрахунок загальної ціни: ${finalTotal} zł (знижка: ${appliedDiscount}%, сума знижки: ${discountAmount.toFixed(2)} zł)`);
+    return finalTotal;
   };
 
   const calculateStrikethroughPrice = () => {
-    return (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    const strikethroughPrice = (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    console.log(`Розрахунок перекресленої ціни: ${strikethroughPrice} zł`);
+    return strikethroughPrice;
   };
 
   const calculateWorkTime = () => {
@@ -237,7 +328,9 @@ export default function OfficeCleaning({ lang, type, title }) {
     let baseHours = 2;
     const areaTime = parsedOfficeArea * 0.05;
     const workspaceTime = parsedWorkspaces * 0.1;
-    return (baseHours + areaTime + workspaceTime).toFixed(1);
+    const totalTime = (baseHours + areaTime + workspaceTime).toFixed(1);
+    console.log(`Розрахунок часу роботи: ${totalTime} годин (площа: ${areaTime}, робочі місця: ${workspaceTime})`);
+    return totalTime;
   };
 
   const calculateCleanersAndTime = () => {
@@ -246,6 +339,7 @@ export default function OfficeCleaning({ lang, type, title }) {
     const adjustedHours = totalHours / cleaners;
     const hours = Math.floor(adjustedHours);
     const minutes = Math.round((adjustedHours - hours) * 60);
+    console.log(`Розрахунок прибиральників: ${cleaners}, час: ${hours} год ${minutes} хв`);
     return { hours, minutes, cleaners };
   };
 
@@ -259,6 +353,7 @@ export default function OfficeCleaning({ lang, type, title }) {
     const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до попереднього місяця: ${months[newMonth]} ${newYear}`);
   };
 
   const handleNextMonth = () => {
@@ -266,6 +361,7 @@ export default function OfficeCleaning({ lang, type, title }) {
     const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до наступного місяця: ${months[newMonth]} ${newYear}`);
   };
 
   const renderCalendar = () => {
@@ -312,13 +408,18 @@ export default function OfficeCleaning({ lang, type, title }) {
             ${isTomorrow ? calcCss.tomorrow : ""}
             ${isSelectable ? calcCss.hoverable : ""}
           `}
-          onClick={() => isSelectable && setSelectedDate(date)}
+          onClick={() => {
+            if (isSelectable) {
+              setSelectedDate(date);
+              console.log(`Обрана дата: ${formattedDate}`);
+            }
+          }}
         >
           <span className={calcCss["day-number"]}>{day}</span>
           {discountValue > 0 && <span className={calcCss["discount-label"]}>-{discountValue}%</span>}
-          {isToday && <span className={calcCss["day-label"]}>dziś</span>}
-          {isTomorrow && <span className={calcCss["day-label"]}>jutro</span>}
-          {isPast && <span className={calcCss["day-label"]}>niedostępny</span>}
+          {isToday && <span className={calcCss["day-label"]}>{t.todayLabel}</span>}
+          {isTomorrow && <span className={calcCss["day-label"]}>{t.tomorrowLabel}</span>}
+          {isPast && <span className={calcCss["day-label"]}>{t.unavailableLabel}</span>}
         </div>
       );
     }
@@ -334,8 +435,12 @@ export default function OfficeCleaning({ lang, type, title }) {
   };
 
   async function handleOrder() {
+    console.log("Початок обробки замовлення...");
+
     if (!agreeToTerms || !agreeToMarketing) {
-      alert("Proszę zaakceptować regulamin i zgodę na przetwarzanie danych.");
+      console.log("Помилка: Не погоджено з умовами або маркетингом");
+      setError("Proszę zaakceptować regulamin i zgodę na przetwarzanie danych.");
+      agreementRef.current?.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
@@ -344,11 +449,13 @@ export default function OfficeCleaning({ lang, type, title }) {
     if (!selectedDate) {
       calendarRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Дата не обрана");
       return;
     }
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Час не обраний");
       return;
     }
     */
@@ -357,6 +464,7 @@ export default function OfficeCleaning({ lang, type, title }) {
     const parsedWorkspaces = parseInt(workspaces, 10) || 0;
 
     const orderData = {
+      order_type: "office", // Додаємо order_type для таблиці orders
       officeArea: parsedOfficeArea,
       workspaces: parsedWorkspaces,
       cleaningFrequency,
@@ -364,6 +472,15 @@ export default function OfficeCleaning({ lang, type, title }) {
       selectedDate: selectedDate ? selectedDate.toISOString() : null,
       selectedTime,
       city: selectedCity,
+      address: {
+        street,
+        postalCode,
+        houseNumber,
+        apartmentNumber,
+        building,
+        floor,
+        intercomCode,
+      },
       clientInfo: {
         name,
         phone,
@@ -377,9 +494,14 @@ export default function OfficeCleaning({ lang, type, title }) {
           vatPostalCode,
         },
       },
+      payment_status: "pending", // Додаємо статус платежу
     };
 
+    console.log("Дані замовлення:", orderData);
+
     try {
+      // 1. Створюємо замовлення
+      console.log("Відправка запиту на створення замовлення...");
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: {
@@ -388,15 +510,44 @@ export default function OfficeCleaning({ lang, type, title }) {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        alert("Zamówienie złożone! Twój account został utworzony. Sprawdź SMS z kodem do logowania.");
-      } else {
-        alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      if (!response.ok) {
+        throw new Error("Не вдалося створити замовлення.");
       }
+
+      const { orderId } = await response.json();
+      console.log(`Замовлення створено з ID: ${orderId}`);
+
+      // 2. Ініціалізуємо платіж через PayU
+      const amount = parseFloat(calculateTotal());
+      console.log(`Ініціалізація платежу PayU для суми: ${amount} zł...`);
+      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          amount,
+          email: orderData.clientInfo.email,
+          phone: orderData.clientInfo.phone,
+          firstName: orderData.clientInfo.name?.split(" ")[0] || "Jan",
+          lastName: orderData.clientInfo.name?.split(" ")[1] || orderData.clientInfo.vatInfo.companyName || "Kowalski",
+        }),
+      });
+
+      if (!paymentResponse.ok) {
+        throw new Error("Не вдалося ініціалізувати платіж.");
+      }
+
+      const { redirectUri } = await paymentResponse.json();
+      console.log(`Отримано URL для оплати: ${redirectUri}`);
+
+      // 3. Перенаправляємо користувача на сторінку оплати PayU
+      window.location.href = redirectUri;
+      console.log("Користувача перенаправлено на сторінку оплати PayU");
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Wystąpił błąd podczas składания zamówienia. Spróbuj ponownie.");
+      console.error("Помилка при оформленні замовлення:", error);
+      setError(error.message || t.paymentError);
     }
   }
 
@@ -404,10 +555,10 @@ export default function OfficeCleaning({ lang, type, title }) {
     <section className={`${officeCss["calc-wrap"]} ${calcCss["calc-wrap"]}`}>
       <div className={`${officeCss.container} ${calcCss.container}`}>
         <h2 className={`${officeCss["cacl-title"]} ${calcCss["cacl-title"]}`}>
-          {title} {selectedCity}
+          {t.title} {selectedCity}
         </h2>
         <p className={`${officeCss.subtitle} ${calcCss.subtitle}`}>
-          Wybierz parametry, aby obliczyć koszt u sprzątania biura.
+          {t.subtitle}
         </p>
       </div>
 
@@ -420,7 +571,7 @@ export default function OfficeCleaning({ lang, type, title }) {
               <div className={`${officeCss["quantity-item"]} ${calcCss["quantity-item"]}`}>
                 <div className={`${officeCss["quantity-header"]} ${calcCss["quantity-header"]}`}>
                   <img src="/icon/area.png" alt="Area" className={`${officeCss["quantity-icon"]} ${calcCss["quantity-icon"]}`} />
-                  <h4>Powierzchnia biura (m²)</h4>
+                  <h4>{t.areaLabel}</h4>
                 </div>
                 <div className={`${officeCss.counter} ${calcCss.counter}`}>
                   <button
@@ -429,8 +580,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                       const parsedValue = parseInt(officeArea, 10);
                       if (isNaN(parsedValue)) {
                         setOfficeArea(10);
+                        console.log("Площа офісу встановлена на мінімальне значення: 10 м²");
                       } else {
                         setOfficeArea(Math.max(10, parsedValue - 1));
+                        console.log(`Площа офісу змінена: ${Math.max(10, parsedValue - 1)} м²`);
                       }
                     }}
                   >
@@ -453,8 +606,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                       const parsedValue = parseInt(officeArea, 10);
                       if (isNaN(parsedValue)) {
                         setOfficeArea(11);
+                        console.log("Площа офісу змінена: 11 м²");
                       } else {
                         setOfficeArea(parsedValue + 1);
+                        console.log(`Площа офісу змінена: ${parsedValue + 1} м²`);
                       }
                     }}
                   >
@@ -466,7 +621,7 @@ export default function OfficeCleaning({ lang, type, title }) {
               <div className={`${officeCss["quantity-item"]} ${calcCss["quantity-item"]}`}>
                 <div className={`${officeCss["quantity-header"]} ${calcCss["quantity-header"]}`}>
                   <img src="/icon/workspace.png" alt="Workspace" className={`${officeCss["quantity-icon"]} ${calcCss["quantity-icon"]}`} />
-                  <h4>Liczba miejsc pracy</h4>
+                  <h4>{t.workspacesLabel}</h4>
                 </div>
                 <div className={`${officeCss.counter} ${calcCss.counter}`}>
                   <button
@@ -475,8 +630,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                       const parsedValue = parseInt(workspaces, 10);
                       if (isNaN(parsedValue)) {
                         setWorkspaces(0);
+                        console.log("Кількість робочих місць встановлена на 0");
                       } else {
                         setWorkspaces(Math.max(0, parsedValue - 1));
+                        console.log(`Кількість робочих місць змінена: ${Math.max(0, parsedValue - 1)}`);
                       }
                     }}
                   >
@@ -499,13 +656,164 @@ export default function OfficeCleaning({ lang, type, title }) {
                       const parsedValue = parseInt(workspaces, 10);
                       if (isNaN(parsedValue)) {
                         setWorkspaces(1);
+                        console.log("Кількість робочих місць змінена: 1");
                       } else {
                         setWorkspaces(parsedValue + 1);
+                        console.log(`Кількість робочих місць змінена: ${parsedValue + 1}`);
                       }
                     }}
                   >
                     +
                   </button>
+                </div>
+              </div>
+            </div>
+
+            <div className={`${officeCss["address-section"]} ${calcCss["address-section"]}`}>
+              <h4>{t.addressTitle}</h4>
+              <div className={`${officeCss["city-select"]} ${calcCss["city-select"]}`}>
+                <button
+                  className={`${officeCss["city-button"]} ${calcCss["city-button"]}`}
+                  onClick={() => setShowCityDropdown(!showCityDropdown)}
+                >
+                  {t.cityLabel}: {selectedCity} +{cities[selectedCity].toFixed(2)} zł ▼
+                </button>
+                {showCityDropdown && (
+                  <div className={`${officeCss["city-dropdown"]} ${calcCss["city-dropdown"]}`}>
+                    <input
+                      type="text"
+                      placeholder={t.citySearchPlaceholder}
+                      value={searchQuery}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        console.log(`Пошук міста: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["city-search"]} ${calcCss["city-search"]}`}
+                    />
+                    {filteredCities.map(([city, cost]) => (
+                      <button
+                        key={city}
+                        className={`${officeCss["city-option"]} ${calcCss["city-option"]} ${
+                          selectedCity === city ? calcCss.selected : ""
+                        }`}
+                        onClick={() => {
+                          setSelectedCity(city);
+                          setShowCityDropdown(false);
+                          setSearchQuery("");
+                          console.log(`Обрано місто: ${city} (+${cost} zł)`);
+                        }}
+                      >
+                        {city}
+                        <span className={`${officeCss["city-price"]} ${calcCss["city-price"]}`}>
+                          +{cost.toFixed(2)} zł
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className={`${officeCss["address-fields"]} ${calcCss["address-fields"]}`}>
+                <div className={`${officeCss["address-row"]} ${calcCss["address-row"]}`}>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.streetLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={street}
+                      onChange={(e) => {
+                        setStreet(e.target.value);
+                        console.log(`Введено вулицю: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${street ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.postalCodeLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={postalCode}
+                      onChange={(e) => {
+                        setPostalCode(e.target.value);
+                        console.log(`Введено поштовий код: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${postalCode ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.houseNumberLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={houseNumber}
+                      onChange={(e) => {
+                        setHouseNumber(e.target.value);
+                        console.log(`Введено номер будинку: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${houseNumber ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.apartmentNumberLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={apartmentNumber}
+                      onChange={(e) => {
+                        setApartmentNumber(e.target.value);
+                        console.log(`Введено номер квартири: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${apartmentNumber ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                </div>
+                <div className={`${officeCss["address-row"]} ${calcCss["address-row"]}`}>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.buildingLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={building}
+                      onChange={(e) => {
+                        setBuilding(e.target.value);
+                        console.log(`Введено будівлю: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${building ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.floorLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={floor}
+                      onChange={(e) => {
+                        setFloor(e.target.value);
+                        console.log(`Введено поверх: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${floor ? calcCss.filled : ""}`}
+                    />
+                  </div>
+                  <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
+                    <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
+                      {t.intercomCodeLabel}
+                    </label>
+                    <input
+                      type="text"
+                      value={intercomCode}
+                      onChange={(e) => {
+                        setIntercomCode(e.target.value);
+                        console.log(`Введено код домофону: ${e.target.value}`);
+                      }}
+                      className={`${officeCss["address-input"]} ${calcCss["address-input"]} ${intercomCode ? calcCss.filled : ""}`}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -553,7 +861,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                           className={`${officeCss["time-slot"]} ${calcCss["time-slot"]} ${
                             selectedTime === time ? calcCss.selected : ""
                           }`}
-                          onClick={() => setSelectedTime(time)}
+                          onClick={() => {
+                            setSelectedTime(time);
+                            console.log(`Обрано час: ${time}`);
+                          }}
                           disabled={!selectedDate}
                         >
                           {time}
@@ -571,7 +882,7 @@ export default function OfficeCleaning({ lang, type, title }) {
             */}
 
             <div className={`${officeCss["frequency-section"]} ${calcCss["frequency-section"]}`}>
-              <h4>CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA</h4>
+              <h4>{t.frequencyTitle}</h4>
               <div className={`${officeCss["frequency-options"]} ${calcCss["frequency-options"]}`}>
                 {Object.entries(frequencyDiscounts).map(([freq, freqDiscount]) => {
                   const freqPrice = (
@@ -585,7 +896,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                       className={`${officeCss["frequency-option"]} ${calcCss["frequency-option"]} ${
                         isSelected ? calcCss.selected : ""
                       }`}
-                      onClick={() => setCleaningFrequency(freq)}
+                      onClick={() => {
+                        setCleaningFrequency(freq);
+                        console.log(`Обрана частота прибирання: ${freq} (-${freqDiscount}%)`);
+                      }}
                     >
                       <div className={`${officeCss["frequency-content"]} ${calcCss["frequency-content"]}`}>
                         <p className={`${officeCss["frequency-title"]} ${calcCss["frequency-title"]}`}>
@@ -605,64 +919,79 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
 
             <div className={`${officeCss["contact-section"]} ${calcCss["contact-section"]}`}>
-              <h4>DANE KONTAKTOWE</h4>
+              <h4>{t.contactTitle}</h4>
               <div className={`${officeCss["contact-fields"]} ${calcCss["contact-fields"]}`}>
                 <div className={`${officeCss["contact-row"]} ${calcCss["contact-row"]}`}>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Imię
+                      {t.nameLabel}
                     </label>
                     <input
                       type="text"
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        console.log(`Введено ім'я: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${name ? calcCss.filled : ""}`}
                     />
                   </div>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Telefon kontaktowy
+                      {t.phoneLabel}
                     </label>
                     <input
                       type="text"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        console.log(`Введено телефон: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${phone ? calcCss.filled : ""}`}
                     />
                   </div>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Adres e-mail
+                      {t.emailLabel}
                     </label>
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        console.log(`Введено email: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${email ? calcCss.filled : ""}`}
                     />
                   </div>
                 </div>
-                <h4>DANE DO FAKTURY VAT</h4>
+                <h4>{t.vatTitle}</h4>
                 <div className={`${officeCss["contact-row"]} ${calcCss["contact-row"]}`}>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Nazwa firmy
+                      {t.companyNameLabel}
                     </label>
                     <input
                       type="text"
                       value={companyName}
-                      onChange={(e) => setCompanyName(e.target.value)}
+                      onChange={(e) => {
+                        setCompanyName(e.target.value);
+                        console.log(`Введено назву компанії: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${companyName ? calcCss.filled : ""}`}
                     />
                   </div>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      NIP
+                      {t.nipLabel}
                     </label>
                     <input
                       type="text"
                       value={nip}
-                      onChange={(e) => setNip(e.target.value)}
+                      onChange={(e) => {
+                        setNip(e.target.value);
+                        console.log(`Введено NIP: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${nip ? calcCss.filled : ""}`}
                     />
                   </div>
@@ -670,34 +999,43 @@ export default function OfficeCleaning({ lang, type, title }) {
                 <div className={`${officeCss["contact-row"]} ${calcCss["contact-row"]}`}>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Adres
+                      {t.vatAddressLabel}
                     </label>
                     <input
                       type="text"
                       value={vatAddress}
-                      onChange={(e) => setVatAddress(e.target.value)}
+                      onChange={(e) => {
+                        setVatAddress(e.target.value);
+                        console.log(`Введено адресу для VAT: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${vatAddress ? calcCss.filled : ""}`}
                     />
                   </div>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Miasto
+                      {t.vatCityLabel}
                     </label>
                     <input
                       type="text"
                       value={vatCity}
-                      onChange={(e) => setVatCity(e.target.value)}
+                      onChange={(e) => {
+                        setVatCity(e.target.value);
+                        console.log(`Введено місто для VAT: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${vatCity ? calcCss.filled : ""}`}
                     />
                   </div>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Kod pocztowy
+                      {t.vatPostalCodeLabel}
                     </label>
                     <input
                       type="text"
                       value={vatPostalCode}
-                      onChange={(e) => setVatPostalCode(e.target.value)}
+                      onChange={(e) => {
+                        setVatPostalCode(e.target.value);
+                        console.log(`Введено поштовий код для VAT: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-input"]} ${calcCss["contact-input"]} ${vatPostalCode ? calcCss.filled : ""}`}
                     />
                   </div>
@@ -705,11 +1043,14 @@ export default function OfficeCleaning({ lang, type, title }) {
                 <div className={`${officeCss["contact-row"]} ${calcCss["contact-row"]}`}>
                   <div className={`${officeCss["input-group"]} ${calcCss["input-group"]}`}>
                     <label className={`${officeCss["input-label"]} ${calcCss["input-label"]}`}>
-                      Dodatkowa informacja do zamówienia
+                      {t.additionalInfoLabel}
                     </label>
                     <textarea
                       value={additionalInfo}
-                      onChange={(e) => setAdditionalInfo(e.target.value)}
+                      onChange={(e) => {
+                        setAdditionalInfo(e.target.value);
+                        console.log(`Введено додаткову інформацію: ${e.target.value}`);
+                      }}
                       className={`${officeCss["contact-textarea"]} ${calcCss["contact-textarea"]} ${additionalInfo ? calcCss.filled : ""}`}
                     />
                   </div>
@@ -717,24 +1058,30 @@ export default function OfficeCleaning({ lang, type, title }) {
               </div>
             </div>
 
-            <div className={`${officeCss["agreement-section"]} ${calcCss["agreement-section"]}`}>
+            <div className={`${officeCss["agreement-section"]} ${calcCss["agreement-section"]}`} ref={agreementRef}>
               <label className={`${officeCss["agreement-label"]} ${calcCss["agreement-label"]}`}>
                 <input
                   type="checkbox"
                   checked={agreeToTerms}
-                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToTerms(e.target.checked);
+                    console.log(`Згода з умовами: ${e.target.checked}`);
+                  }}
                   className={`${officeCss["custom-checkbox"]} ${calcCss["custom-checkbox"]}`}
                 />
-                Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.
+                {t.agreement1}
               </label>
               <label className={`${officeCss["agreement-label"]} ${calcCss["agreement-label"]}`}>
                 <input
                   type="checkbox"
                   checked={agreeToMarketing}
-                  onChange={(e) => setAgreeToMarketing(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToMarketing(e.target.checked);
+                    console.log(`Згода на маркетинг: ${e.target.checked}`);
+                  }}
                   className={`${officeCss["custom-checkbox"]} ${calcCss["custom-checkbox"]}`}
                 />
-                Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora
+                {t.agreement2}
               </label>
             </div>
           </div>
@@ -751,15 +1098,13 @@ export default function OfficeCleaning({ lang, type, title }) {
             </h2>
 
             <div className={`${officeCss["location-info"]} ${calcCss["location-info"]}`}>
-              <h4>Lokalizacja</h4>
+              <h4>{t.locationLabel}</h4>
               <p>{selectedCity}</p>
             </div>
 
             <div className={`${officeCss["specialist-info"]} ${calcCss["specialist-info"]}`}>
               <img src="/icon/bucket.svg" alt="Specialists" />
-              <p>
-                Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.
-              </p>
+              <p>{t.specialistInfo}</p>
             </div>
 
             {/* Закоментоване відображення дати для майбутнього використання */}
@@ -793,11 +1138,11 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
 
             <div className={`${officeCss["location-cost"]} ${calcCss["location-cost"]}`}>
-              <p>Dodatkowy koszt dojazdu: +{cities[selectedCity].toFixed(2)} zł</p>
+              <p>{t.locationCostLabel}: +{cities[selectedCity].toFixed(2)} zł</p>
             </div>
 
             <div className={`${officeCss["work-time"]} ${calcCss["work-time"]}`}>
-              <p>Przybliżony czas pracy: {formatWorkTime()} godzin</p>
+              <p>{t.workTimeLabel}: {formatWorkTime()} godzin</p>
             </div>
 
             <div className={`${officeCss["promo-code"]} ${calcCss["promo-code"]}`}>
@@ -805,24 +1150,27 @@ export default function OfficeCleaning({ lang, type, title }) {
                 <FaPercentage className={`${officeCss["promo-icon"]} ${calcCss["promo-icon"]}`} />
                 <input
                   type="text"
-                  placeholder="Promokod"
+                  placeholder={t.promoPlaceholder}
                   value={promo}
-                  onChange={(e) => setPromo(e.target.value)}
+                  onChange={(e) => {
+                    setPromo(e.target.value);
+                    console.log(`Введено промокод: ${e.target.value}`);
+                  }}
                 />
-                <button onClick={handlePromoApply}>Zastosuj</button>
+                <button onClick={handlePromoApply}>{t.applyPromo}</button>
               </div>
             </div>
 
             <div className={`${officeCss.total} ${calcCss.total}`}>
               <p>
-                <strong>Do zapłaty:</strong>{" "}
+                <strong>{t.totalLabel}:</strong>{" "}
                 {calculateTotal()} zł{" "}
                 <del>{calculateStrikethroughPrice()} zł</del>
               </p>
               <div className={`${officeCss["vat-container"]} ${calcCss["vat-container"]}`}>
                 <img src="/icon/invoice.png" alt="Invoice" className={`${officeCss["invoice-icon"]} ${calcCss["invoice-icon"]}`} />
                 <span className={`${officeCss["vat-text"]} ${calcCss["vat-text"]}`}>
-                  Cena zawiera VAT, faktura zostanie wysłana na email po zakończeniu sprzątania
+                  {t.vatText}
                 </span>
               </div>
 
@@ -830,7 +1178,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                 className={`${officeCss["order-button"]} ${calcCss["order-button"]}`}
                 onClick={handleOrder}
               >
-                Zamawiam za {calculateTotal()} zł
+                {t.orderButton} {calculateTotal()} zł
               </button>
 
               <div className={`${officeCss["payment-icons"]} ${calcCss["payment-icons"]}`}>

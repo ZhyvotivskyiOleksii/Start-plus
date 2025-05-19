@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Перенаправлення запитів до відповідних файлів
+RewriteRule ^api/users(/.*)?$ users.php [L]
+RewriteRule ^api/users/stats(/.*)?$ user_stats.php [L]
+RewriteRule ^api/orders(/.*)?$ orders.php [L]
+
+# Усі інші запити йдуть до index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]

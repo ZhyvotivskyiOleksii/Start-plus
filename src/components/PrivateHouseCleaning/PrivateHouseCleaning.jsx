@@ -141,6 +141,126 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     }), {})
   );
 
+  const texts = {
+    pl: {
+      title: title || "Sprzątanie domu prywatnego",
+      subtitle: "Wybierz poniższe parametry, aby obliczyć koszt.",
+      userTypePrivate: "Osoba prywatna",
+      userTypeCompany: "Firma +23%",
+      roomsLabel: "pokój",
+      roomsLabel2: "pokoje",
+      roomsLabel5: "pokoi",
+      bathroomsLabel: "łazienka",
+      bathroomsLabel2: "łazienki",
+      bathroomsLabel5: "łazienek",
+      kitchenLabel: "Kuchnia",
+      kitchenAnnexLabel: "Aneks kuchenny",
+      note: "* Kompleksowe sprzątanie całego domu, w tym kuchni, toalety oraz łazienki",
+      additionalServices: "Dodatkowe usługi",
+      vacuumNotice: "Na zamówieniu potrzebny jest odkurzacz",
+      vacuumNotice2: "Przywieziemy ręczny odkurzacz do sprzątania",
+      vacuumPrice: `${vacuumCost.toFixed(2)} zł`,
+      calendarTitle: "WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA",
+      timeLabel: "Godzina",
+      calendarFooter: "Można zacząć w dowolnym momencie",
+      frequencyTitle: "CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA",
+      paidServicesTitle: "Dodatkowe usługi płatne",
+      addressTitle: "WPROWADŹ SWÓJ ADRES",
+      cityLabel: "Wybierz miasto",
+      streetLabel: "Ulica",
+      postalCodeLabel: "Kod pocztowy",
+      houseNumberLabel: "Numer domu",
+      apartmentNumberLabel: "Numer mieszkania",
+      buildingLabel: "Budynek",
+      floorLabel: "Piętro",
+      intercomCodeLabel: "Kod od domofonu",
+      citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
+      contactTitle: "DANE KONTAKTOWE",
+      nameLabel: "Imię",
+      phoneLabel: "Telefon kontaktowy",
+      emailLabel: "Adres e-mail",
+      additionalInfoLabel: "Dodatkowa informacja do zamówienia",
+      agreement1: "Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.",
+      agreement2: "Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora",
+      locationLabel: "Lokalizacja",
+      specialistInfo: "Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.",
+      workTimeLabel: "Przybliżony czas pracy",
+      cleanersLabel: "Kilka sprzątaczy",
+      datePlaceholder: "Wybierz termin i godzinę",
+      locationCostLabel: "Dodatkowy koszt dojazdu",
+      promoPlaceholder: "Promokod",
+      applyPromo: "Zastosuj",
+      totalLabel: "Do zapłaty",
+      orderButton: "Zamawiam za",
+      todayLabel: "dziś",
+      tomorrowLabel: "jutro",
+      unavailableLabel: "niedostępny",
+      paymentSuccess: "Płatność zakończona sukcesem! Twoje zamówienie zostało złożone.",
+      paymentError: "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.",
+      paymentCanceled: "Płatność została anulowana. Spróbuj ponownie.",
+    },
+    uk: {
+      title: title || "Прибирання приватного будинку",
+      subtitle: "Виберіть параметри нижче, щоб розрахувати вартість.",
+      userTypePrivate: "Фізична особа",
+      userTypeCompany: "Компанія +23%",
+      roomsLabel: "кімната",
+      roomsLabel2: "кімнати",
+      roomsLabel5: "кімнат",
+      bathroomsLabel: "ванна кімната",
+      bathroomsLabel2: "ванні кімнати",
+      bathroomsLabel5: "ванних кімнат",
+      kitchenLabel: "Кухня",
+      kitchenAnnexLabel: "Кухонний куточок",
+      note: "* Комплексне прибирання всього будинку, включаючи кухню, туалет та ванну кімнату",
+      additionalServices: "Додаткові послуги",
+      vacuumNotice: "Для замовлення потрібен пилосос",
+      vacuumNotice2: "Ми привеземо ручний пилосос для прибирання",
+      vacuumPrice: `${vacuumCost.toFixed(2)} zł`,
+      calendarTitle: "ВИБЕРІТЬ ЗРУЧНИЙ ТЕРМІН І ЧАС ПРИБИРАННЯ",
+      timeLabel: "Година",
+      calendarFooter: "Можна почати в будь-який момент",
+      frequencyTitle: "ЧАСТОТА ПРИБИРАННЯ",
+      paidServicesTitle: "Додаткові платні послуги",
+      addressTitle: "ВВЕДІТЬ ВАШУ АДРЕСУ",
+      cityLabel: "Виберіть місто",
+      streetLabel: "Вулиця",
+      postalCodeLabel: "Поштовий індекс",
+      houseNumberLabel: "Номер будинку",
+      apartmentNumberLabel: "Номер квартири",
+      buildingLabel: "Будівля",
+      floorLabel: "Поверх",
+      intercomCodeLabel: "Код домофона",
+      citySearchPlaceholder: "Введіть назву населеного пункту...",
+      contactTitle: "КОНТАКТНІ ДАНІ",
+      nameLabel: "Ім'я",
+      phoneLabel: "Контактний телефон",
+      emailLabel: "Адреса електронної пошти",
+      additionalInfoLabel: "Додаткова інформація до замовлення",
+      agreement1: "Оформлюючи замовлення, я погоджуюсь з Правилами та Політикою конфіденційності.",
+      agreement2: "Я даю згоду на обробку моїх персональних даних адміністратором",
+      locationLabel: "Місцезнаходження",
+      specialistInfo: "Наші виконавці мають усі необхідні засоби для прибирання та обладнання.",
+      workTimeLabel: "Орієнтовний час роботи",
+      cleanersLabel: "Кілька прибиральників",
+      datePlaceholder: "Виберіть дату і час",
+      locationCostLabel: "Додаткова вартість доїзду",
+      promoPlaceholder: "Промокод",
+      applyPromo: "Застосувати",
+      totalLabel: "До сплати",
+      orderButton: "Замовляю за",
+      todayLabel: "сьогодні",
+      tomorrowLabel: "завтра",
+      unavailableLabel: "недоступно",
+      paymentSuccess: "Оплата успішна! Ваше замовлення прийнято.",
+      paymentError: "Виникла помилка під час оформлення замовлення. Спробуйте ще раз.",
+      paymentCanceled: "Оплата була скасована. Спробуйте ще раз.",
+    },
+    // Додаткові мови (ru, en) можна додати за потреби
+  };
+
+  const t = texts[lang] || texts.pl;
+
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const agreementRef = useRef(null);
@@ -214,6 +334,9 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (e.target.checked) {
       setKitchenAnnex(false);
       setKitchenCost(kitchenBaseCost);
+      console.log("Обрано прибирання кухні: так");
+    } else {
+      console.log("Обрано прибирання кухні: ні");
     }
   }
 
@@ -222,19 +345,32 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (e.target.checked) {
       setKitchen(false);
       setKitchenCost(kitchenBaseCost - 10);
+      console.log("Обрано прибирання кухонного куточка: так");
     } else {
       setKitchen(true);
       setKitchenCost(kitchenBaseCost);
+      console.log("Обрано прибирання кухонного куточка: ні");
     }
   }
 
   function handlePromoApply() {
     const promoCode = promoCodes.find((code) => code.code === promo.toUpperCase());
-    if (promoCode) setDiscount(promoCode.discount);
-    else if (promo.toLowerCase() === "weekend") setDiscount(20);
-    else if (promo.toLowerCase() === "twoweeks") setDiscount(15);
-    else if (promo.toLowerCase() === "month") setDiscount(10);
-    else setDiscount(0);
+    if (promoCode) {
+      setDiscount(promoCode.discount);
+      console.log(`Застосовано промокод ${promoCode.code}: знижка ${promoCode.discount}%`);
+    } else if (promo.toLowerCase() === "weekend") {
+      setDiscount(20);
+      console.log("Застосовано промокод WEEKEND: знижка 20%");
+    } else if (promo.toLowerCase() === "twoweeks") {
+      setDiscount(15);
+      console.log("Застосовано промокод TWOWEEKS: знижка 15%");
+    } else if (promo.toLowerCase() === "month") {
+      setDiscount(10);
+      console.log("Застосовано промокод MONTH: знижка 10%");
+    } else {
+      setDiscount(0);
+      console.log("Невірний промокод, знижка скинута до 0%");
+    }
   }
 
   function handlePrevMonth() {
@@ -242,6 +378,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     const newYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до попереднього місяця: ${months[newMonth]} ${newYear}`);
   }
 
   function handleNextMonth() {
@@ -249,6 +386,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     const newYear = currentMonth === 11 ? currentYear + 1 : currentYear;
     setCurrentMonth(newMonth);
     setCurrentYear(newYear);
+    console.log(`Перехід до наступного місяця: ${months[newMonth]} ${newYear}`);
   }
 
   function calculateBasePrice() {
@@ -266,6 +404,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     }, 0);
     total += servicesCost + (cities[selectedCity] || 0);
     if (clientType === "Firma") total *= companyMultiplier;
+    console.log(`Розрахунок базової ціни: ${total.toFixed(2)} zł (кімнати: ${rooms}, ванні: ${bathrooms}, кухня: ${kitchen ? "так" : "ні"}, куточок: ${kitchenAnnex ? "так" : "ні"}, пилосос: ${vacuumNeeded ? "так" : "ні"}, місто: ${selectedCity}, множник: ${clientType === "Firma" ? companyMultiplier : 1})`);
     return total.toFixed(2);
   }
 
@@ -280,11 +419,15 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     const freqDiscount = frequencyDiscounts[cleaningFrequency] || 0;
     appliedDiscount = Math.max(appliedDiscount, freqDiscount);
     const discountAmount = total * (appliedDiscount / 100);
-    return (total - discountAmount).toFixed(2);
+    const finalTotal = (total - discountAmount).toFixed(2);
+    console.log(`Розрахунок загальної ціни: ${finalTotal} zł (знижка: ${appliedDiscount}%, сума знижки: ${discountAmount.toFixed(2)} zł)`);
+    return finalTotal;
   }
 
   function calculateStrikethroughPrice() {
-    return (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    const strikethroughPrice = (parseFloat(calculateTotal()) * 1.25).toFixed(2);
+    console.log(`Розрахунок перекресленої ціни: ${strikethroughPrice} zł`);
+    return strikethroughPrice;
   }
 
   function calculateWorkTime() {
@@ -309,7 +452,9 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       return sum;
     }, 0);
 
-    return baseHours + roomTime + bathroomTime + additionalServiceTime;
+    const totalTime = baseHours + roomTime + bathroomTime + additionalServiceTime;
+    console.log(`Розрахунок часу роботи: ${totalTime} годин (кімнати: ${roomTime}, ванні: ${bathroomTime}, додаткові послуги: ${additionalServiceTime})`);
+    return totalTime;
   }
 
   function calculateCleanersAndTime() {
@@ -318,6 +463,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     const adjustedHours = totalHours / cleaners;
     const hours = Math.floor(adjustedHours);
     const minutes = Math.round((adjustedHours - hours) * 60);
+    console.log(`Розрахунок прибиральників: ${cleaners}, час: ${hours} год ${minutes} хв`);
     return { hours, minutes, cleaners };
   }
 
@@ -370,13 +516,18 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             ${isTomorrow ? css.tomorrow : ""}
             ${isSelectable ? css.hoverable : ""}
           `}
-          onClick={() => isSelectable && setSelectedDate(date)}
+          onClick={() => {
+            if (isSelectable) {
+              setSelectedDate(date);
+              console.log(`Обрана дата: ${formattedDate}`);
+            }
+          }}
         >
           <span className={css["day-number"]}>{day}</span>
           {discountValue > 0 && <span className={css["discount-label"]}>-{discountValue}%</span>}
-          {isToday && <span className={css["day-label"]}>dziś</span>}
-          {isTomorrow && <span className={css["day-label"]}>jutro</span>}
-          {isPast && <span className={css["day-label"]}>niedostępny</span>}
+          {isToday && <span className={css["day-label"]}>{t.todayLabel}</span>}
+          {isTomorrow && <span className={css["day-label"]}>{t.tomorrowLabel}</span>}
+          {isPast && <span className={css["day-label"]}>{t.unavailableLabel}</span>}
         </div>
       );
     }
@@ -394,40 +545,56 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
   const handleServiceToggle = (id) => {
     const service = paidServices.find((s) => s.id === id);
     if (service.type === "checkbox") {
-      setSelectedServices((prev) => ({ ...prev, [id]: !prev[id] }));
+      setSelectedServices((prev) => {
+        const newState = { ...prev, [id]: !prev[id] };
+        console.log(`Послугу "${service.name}" ${!prev[id] ? "додано" : "видалено"}`);
+        return newState;
+      });
     } else if (service.type === "quantity") {
-      setSelectedServices((prev) => ({
-        ...prev,
-        [id]: prev[id] === 0 ? 1 : 0,
-      }));
+      setSelectedServices((prev) => {
+        const newState = { ...prev, [id]: prev[id] === 0 ? 1 : 0 };
+        console.log(`Послугу "${service.name}" ${prev[id] === 0 ? "додано" : "видалено"}`);
+        return newState;
+      });
     }
   };
 
   const handleQuantityChange = (id, delta) => {
     setSelectedServices((prev) => {
       const newQty = Math.max(0, prev[id] + delta);
+      const service = paidServices.find((s) => s.id === id);
+      console.log(`Кількість послуги "${service.name}" змінено на: ${newQty}`);
       return { ...prev, [id]: newQty };
     });
   };
 
   async function handleOrder() {
+    console.log("Початок обробки замовлення...");
+
     if (!selectedDate) {
       calendarRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Дата не обрана");
+      setError("Proszę wybrać datę sprzątania.");
       return;
     }
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Час не обраний");
+      setError("Proszę wybrać godzinę sprzątania.");
       return;
     }
     if (!agreeToTerms || !agreeToMarketing) {
       agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Не погоджено з умовами або маркетингом");
+      setError("Proszę zaakceptować regulamin i zgodę na przetwarzanie danych.");
       return;
     }
 
     const orderData = {
+      order_type: "private_house", // Додаємо order_type для таблиці orders
       clientType,
       rooms,
       bathrooms,
@@ -465,9 +632,14 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         email,
         additionalInfo,
       },
+      payment_status: "pending", // Додаємо статус платежу
     };
 
+    console.log("Дані замовлення:", orderData);
+
     try {
+      // 1. Створюємо замовлення
+      console.log("Відправка запиту на створення замовлення...");
       const response = await fetch("http://localhost:3001/api/orders", {
         method: "POST",
         headers: {
@@ -476,23 +648,52 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        alert("Zamówienie złożone! Twój account został utworzony. Sprawdź SMS z kodem do logowania.");
-      } else {
-        alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      if (!response.ok) {
+        throw new Error("Не вдалося створити замовлення.");
       }
+
+      const { orderId } = await response.json();
+      console.log(`Замовлення створено з ID: ${orderId}`);
+
+      // 2. Ініціалізуємо платіж через PayU
+      const amount = parseFloat(calculateTotal());
+      console.log(`Ініціалізація платежу PayU для суми: ${amount} zł...`);
+      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          orderId,
+          amount,
+          email: orderData.clientInfo.email,
+          phone: orderData.clientInfo.phone,
+          firstName: orderData.clientInfo.name?.split(" ")[0] || "Jan",
+          lastName: orderData.clientInfo.name?.split(" ")[1] || "Kowalski",
+        }),
+      });
+
+      if (!paymentResponse.ok) {
+        throw new Error("Не вдалося ініціалізувати платіж.");
+      }
+
+      const { redirectUri } = await paymentResponse.json();
+      console.log(`Отримано URL для оплати: ${redirectUri}`);
+
+      // 3. Перенаправляємо користувача на сторінку оплати PayU
+      window.location.href = redirectUri;
+      console.log("Користувача перенаправлено на сторінку оплати PayU");
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
+      console.error("Помилка при оформленні замовлення:", error);
+      setError(error.message || t.paymentError);
     }
   }
 
   return (
     <section className={css["calc-wrap"]}>
       <div className={css.container}>
-        <h2 className={css["cacl-title"]}>{title} {selectedCity}</h2>
-        <p className={css.subtitle}>Wybierz poniższe parametry, aby obliczyć koszt.</p>
+        <h2 className={css["cacl-title"]}>{t.title} {selectedCity}</h2>
+        <p className={css.subtitle}>{t.subtitle}</p>
       </div>
 
       {error && <div className={css.error}>{error}</div>}
@@ -503,15 +704,21 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             <div className={css["user-type"]}>
               <button
                 className={clientType === "Osoba prywatna" ? css.active : ""}
-                onClick={() => setClientType("Osoba prywatna")}
+                onClick={() => {
+                  setClientType("Osoba prywatna");
+                  console.log("Обрано тип клієнта: Фізична особа");
+                }}
               >
-                Osoba prywatna
+                {t.userTypePrivate}
               </button>
               <button
                 className={clientType === "Firma" ? css.active : ""}
-                onClick={() => setClientType("Firma")}
+                onClick={() => {
+                  setClientType("Firma");
+                  console.log("Обрано тип клієнта: Компанія");
+                }}
               >
-                Firma +23%
+                {t.userTypeCompany}
               </button>
             </div>
 
@@ -519,17 +726,23 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
               <div className={css.counter}>
                 <button
                   className={css["counter-button"]}
-                  onClick={() => setRooms(Math.max(1, rooms - 1))}
+                  onClick={() => {
+                    setRooms(Math.max(1, rooms - 1));
+                    console.log(`Кількість кімнат змінена: ${Math.max(1, rooms - 1)}`);
+                  }}
                 >
                   −
                 </button>
                 <span className={css["counter-value"]}>{rooms}</span>
                 <span className={css["counter-label"]}>
-                  {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}
+                  {rooms === 1 ? t.roomsLabel : rooms >= 2 && rooms <= 4 ? t.roomsLabel2 : t.roomsLabel5}
                 </span>
                 <button
                   className={css["counter-button"]}
-                  onClick={() => setRooms(rooms + 1)}
+                  onClick={() => {
+                    setRooms(rooms + 1);
+                    console.log(`Кількість кімнат змінена: ${rooms + 1}`);
+                  }}
                 >
                   +
                 </button>
@@ -538,21 +751,27 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
               <div className={css.counter}>
                 <button
                   className={css["counter-button"]}
-                  onClick={() => setBathrooms(Math.max(1, bathrooms - 1))}
+                  onClick={() => {
+                    setBathrooms(Math.max(1, bathrooms - 1));
+                    console.log(`Кількість ванних кімнат змінена: ${Math.max(1, bathrooms - 1)}`);
+                  }}
                 >
                   −
                 </button>
                 <span className={css["counter-value"]}>{bathrooms}</span>
                 <span className={css["counter-label"]}>
                   {bathrooms === 1
-                    ? "łazienka"
+                    ? t.bathroomsLabel
                     : bathrooms >= 2 && bathrooms <= 4
-                    ? "łazienki"
-                    : "łazienek"}
+                    ? t.bathroomsLabel2
+                    : t.bathroomsLabel5}
                 </span>
                 <button
                   className={css["counter-button"]}
-                  onClick={() => setBathrooms(bathrooms + 1)}
+                  onClick={() => {
+                    setBathrooms(bathrooms + 1);
+                    console.log(`Кількість ванних кімнат змінена: ${bathrooms + 1}`);
+                  }}
                 >
                   +
                 </button>
@@ -560,11 +779,11 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <p className={css.note}>
-              * Kompleksowe sprzątanie całego domu, w tym kuchni, toalety oraz łazienki
+              {t.note}
             </p>
 
             <div className={css["additional-services"]}>
-              <h4>Dodatkowe usługi</h4>
+              <h4>{t.additionalServices}</h4>
               <div className={css["service-block"]}>
                 <div className={css["service-item"]}>
                   <label className={css["checkbox-label"]}>
@@ -580,7 +799,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                         onChange={handleKitchenChange}
                         className={css["custom-checkbox"]}
                       />
-                      Kuchnia
+                      {t.kitchenLabel}
                     </div>
                   </label>
 
@@ -598,7 +817,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                           onChange={handleKitchenAnnexChange}
                           className={css["custom-checkbox"]}
                         />
-                        Aneks kuchenny
+                        {t.kitchenAnnexLabel}
                       </div>
                     </label>
                   </div>
@@ -617,22 +836,25 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   <input
                     type="checkbox"
                     checked={vacuumNeeded}
-                    onChange={(e) => setVacuumNeeded(e.target.checked)}
+                    onChange={(e) => {
+                      setVacuumNeeded(e.target.checked);
+                      console.log(`Потрібен пилосос: ${e.target.checked}`);
+                    }}
                     className={css["custom-checkbox"]}
                   />
                 </div>
                 <div className={css["text-price-wrapper"]}>
                   <div>
-                    <p>Na zamówieniu potrzebny jest odkurzacz</p>
-                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
+                    <p>{t.vacuumNotice}</p>
+                    <p>{t.vacuumNotice2}</p>
                   </div>
-                  <button className={css["vacuum-price"]}>{vacuumCost.toFixed(2)} zł</button>
+                  <button className={css["vacuum-price"]}>{t.vacuumPrice}</button>
                 </div>
               </label>
             </div>
 
             <div className={css["calendar-section"]} ref={calendarRef}>
-              <h4>WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA</h4>
+              <h4>{t.calendarTitle}</h4>
               <div className={css["calendar-container"]}>
                 <div className={css["calendar-time-wrapper"]}>
                   <div className={css["calendar-wrapper"]}>
@@ -664,7 +886,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   </div>
 
                   <div className={css["time-wrapper"]} ref={timeSlotsRef}>
-                    <h5>Godzina</h5>
+                    <h5>{t.timeLabel}</h5>
                     <div className={css["time-slots"]}>
                       {availableTimes.map((time) => (
                         <button
@@ -672,7 +894,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                           className={`${css["time-slot"]} ${
                             selectedTime === time ? css.selected : ""
                           }`}
-                          onClick={() => setSelectedTime(time)}
+                          onClick={() => {
+                            setSelectedTime(time);
+                            console.log(`Обрано час: ${time}`);
+                          }}
                           disabled={!selectedDate}
                         >
                           {time}
@@ -683,13 +908,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </div>
 
                 <div className={css["calendar-footer"]}>
-                  <p>Można zacząć w dowolnym momencie</p>
+                  <p>{t.calendarFooter}</p>
                 </div>
               </div>
             </div>
 
             <div className={css["frequency-section"]}>
-              <h4>CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA</h4>
+              <h4>{t.frequencyTitle}</h4>
               <div className={css["frequency-options"]}>
                 {Object.entries(frequencyDiscounts).map(([freq, freqDiscount]) => {
                   const freqPrice = (
@@ -703,7 +928,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                       className={`${css["frequency-option"]} ${
                         isSelected ? css.selected : ""
                       }`}
-                      onClick={() => setCleaningFrequency(freq)}
+                      onClick={() => {
+                        setCleaningFrequency(freq);
+                        console.log(`Обрана частота прибирання: ${freq} (-${freqDiscount}%)`);
+                      }}
                     >
                       <div className={css["frequency-content"]}>
                         <p className={css["frequency-title"]}>{freq}</p>
@@ -720,7 +948,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["paid-services-section"]}>
-              <h4>Dodatkowe usługi płatne</h4>
+              <h4>{t.paidServicesTitle}</h4>
               <div className={css["paid-services-grid"]}>
                 {paidServices.map((service) => (
                   <div
@@ -791,21 +1019,24 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["address-section"]}>
-              <h4>WPROWADŹ SWÓJ ADRES</h4>
+              <h4>{t.addressTitle}</h4>
               <div className={css["city-select"]}>
                 <button
                   className={css["city-button"]}
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
-                  Wybierz miasto: {selectedCity} +{cities[selectedCity].toFixed(2)} zł ▼
+                  {t.cityLabel}: {selectedCity} +{cities[selectedCity].toFixed(2)} zł ▼
                 </button>
                 {showCityDropdown && (
                   <div className={css["city-dropdown"]}>
                     <input
                       type="text"
-                      placeholder="Wprowadź nazwę miejscowości..."
+                      placeholder={t.citySearchPlaceholder}
                       value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      onChange={(e) => {
+                        setSearchQuery(e.target.value);
+                        console.log(`Пошук міста: ${e.target.value}`);
+                      }}
                       className={css["city-search"]}
                     />
                     {filteredCities.map(([city, cost]) => (
@@ -818,6 +1049,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                           setSelectedCity(city);
                           setShowCityDropdown(false);
                           setSearchQuery("");
+                          console.log(`Обрано місто: ${city} (+${cost} zł)`);
                         }}
                       >
                         {city}
@@ -830,67 +1062,88 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
               <div className={css["address-fields"]}>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Ulica</label>
+                    <label className={css["input-label"]}>{t.streetLabel}</label>
                     <input
                       type="text"
                       value={street}
-                      onChange={(e) => setStreet(e.target.value)}
+                      onChange={(e) => {
+                        setStreet(e.target.value);
+                        console.log(`Введено вулицю: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${street ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Kod pocztowy</label>
+                    <label className={css["input-label"]}>{t.postalCodeLabel}</label>
                     <input
                       type="text"
                       value={postalCode}
-                      onChange={(e) => setPostalCode(e.target.value)}
+                      onChange={(e) => {
+                        setPostalCode(e.target.value);
+                        console.log(`Введено поштовий код: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${postalCode ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Numer domu</label>
+                    <label className={css["input-label"]}>{t.houseNumberLabel}</label>
                     <input
                       type="text"
                       value={houseNumber}
-                      onChange={(e) => setHouseNumber(e.target.value)}
+                      onChange={(e) => {
+                        setHouseNumber(e.target.value);
+                        console.log(`Введено номер будинку: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${houseNumber ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Numer mieszkania</label>
+                    <label className={css["input-label"]}>{t.apartmentNumberLabel}</label>
                     <input
                       type="text"
                       value={apartmentNumber}
-                      onChange={(e) => setApartmentNumber(e.target.value)}
+                      onChange={(e) => {
+                        setApartmentNumber(e.target.value);
+                        console.log(`Введено номер квартири: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${apartmentNumber ? css.filled : ""}`}
                     />
                   </div>
                 </div>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Budynek</label>
+                    <label className={css["input-label"]}>{t.buildingLabel}</label>
                     <input
                       type="text"
                       value={building}
-                      onChange={(e) => setBuilding(e.target.value)}
+                      onChange={(e) => {
+                        setBuilding(e.target.value);
+                        console.log(`Введено будівлю: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${building ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Piętro</label>
+                    <label className={css["input-label"]}>{t.floorLabel}</label>
                     <input
                       type="text"
                       value={floor}
-                      onChange={(e) => setFloor(e.target.value)}
+                      onChange={(e) => {
+                        setFloor(e.target.value);
+                        console.log(`Введено поверх: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${floor ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Kod od domofonu</label>
+                    <label className={css["input-label"]}>{t.intercomCodeLabel}</label>
                     <input
                       type="text"
                       value={intercomCode}
-                      onChange={(e) => setIntercomCode(e.target.value)}
+                      onChange={(e) => {
+                        setIntercomCode(e.target.value);
+                        console.log(`Введено код домофону: ${e.target.value}`);
+                      }}
                       className={`${css["address-input"]} ${intercomCode ? css.filled : ""}`}
                     />
                   </div>
@@ -899,43 +1152,55 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["contact-section"]}>
-              <h4>DANE KONTAKTOWE</h4>
+              <h4>{t.contactTitle}</h4>
               <div className={css["contact-fields"]}>
                 <div className={css["contact-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Imię</label>
+                    <label className={css["input-label"]}>{t.nameLabel}</label>
                     <input
                       type="text"
                       value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        console.log(`Введено ім'я: ${e.target.value}`);
+                      }}
                       className={`${css["contact-input"]} ${name ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Telefon kontaktowy</label>
+                    <label className={css["input-label"]}>{t.phoneLabel}</label>
                     <input
                       type="text"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => {
+                        setPhone(e.target.value);
+                        console.log(`Введено телефон: ${e.target.value}`);
+                      }}
                       className={`${css["contact-input"]} ${phone ? css.filled : ""}`}
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Adres e-mail</label>
+                    <label className={css["input-label"]}>{t.emailLabel}</label>
                     <input
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        console.log(`Введено email: ${e.target.value}`);
+                      }}
                       className={`${css["contact-input"]} ${email ? css.filled : ""}`}
                     />
                   </div>
                 </div>
                 <div className={css["contact-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Dodatkowa informacja do zamówienia</label>
+                    <label className={css["input-label"]}>{t.additionalInfoLabel}</label>
                     <textarea
                       value={additionalInfo}
-                      onChange={(e) => setAdditionalInfo(e.target.value)}
+                      onChange={(e) => {
+                        setAdditionalInfo(e.target.value);
+                        console.log(`Введено додаткову інформацію: ${e.target.value}`);
+                      }}
                       className={`${css["contact-textarea"]} ${additionalInfo ? css.filled : ""}`}
                     />
                   </div>
@@ -948,19 +1213,25 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 <input
                   type="checkbox"
                   checked={agreeToTerms}
-                  onChange={(e) => setAgreeToTerms(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToTerms(e.target.checked);
+                    console.log(`Згода з умовами: ${e.target.checked}`);
+                  }}
                   className={css["custom-checkbox"]}
                 />
-                Składając zamówienie zgadzam się z Regulaminem i Polityką prywatności.
+                {t.agreement1}
               </label>
               <label className={css["agreement-label"]}>
                 <input
                   type="checkbox"
                   checked={agreeToMarketing}
-                  onChange={(e) => setAgreeToMarketing(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreeToMarketing(e.target.checked);
+                    console.log(`Згода на маркетинг: ${e.target.checked}`);
+                  }}
                   className={css["custom-checkbox"]}
                 />
-                Wyrażam zgodę na przetwarzanie moich danych osobowych przez administratora
+                {t.agreement2}
               </label>
             </div>
           </div>
@@ -968,31 +1239,29 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
           <div className={css["calculator-right"]} ref={rightBlockRef}>
             <h2>
               Sprzątanie domu z {rooms}{" "}
-              {rooms === 1 ? "pokój" : rooms >= 2 && rooms <= 4 ? "pokoje" : "pokoi"}{" "}
+              {rooms === 1 ? t.roomsLabel : rooms >= 2 && rooms <= 4 ? t.roomsLabel2 : t.roomsLabel5}{" "}
               i {bathrooms}{" "}
               {bathrooms === 1
-                ? "łazienka"
+                ? t.bathroomsLabel
                 : bathrooms >= 2 && bathrooms <= 4
-                ? "łazienki"
-                : "łazienek"}
+                ? t.bathroomsLabel2
+                : t.bathroomsLabel5}
               {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""}, przedpokój
               <br />
               {calculateBasePrice()} zł
             </h2>
 
             <div className={css["location-info"]}>
-              <h4>Lokalizacja</h4>
+              <h4>{t.locationLabel}</h4>
               <p>{selectedCity}</p>
             </div>
 
             <div className={css["specialist-info"]}>
               <img src="/icon/bucket.svg" alt="Specialists" />
-              <p>
-                Nasi wykonawcy posiadają wszystkie niezbędne środki czystości oraz sprzęt.
-              </p>
+              <p>{t.specialistInfo}</p>
             </div>
 
-            <h4>Przybliżony czas pracy: {formatWorkTime()}</h4>
+            <h4>{t.workTimeLabel}: {formatWorkTime()}</h4>
             {calculateCleanersAndTime().cleaners > 1 && (
               <div className={css.cleaners}>
                 {Array.from({ length: calculateCleanersAndTime().cleaners }, (_, i) => (
@@ -1000,7 +1269,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     👤
                   </span>
                 ))}
-                <p>Kilka sprzątaczy: {calculateCleanersAndTime().cleaners}</p>
+                <p>{t.cleanersLabel}: {calculateCleanersAndTime().cleaners}</p>
               </div>
             )}
 
@@ -1016,7 +1285,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   )}
                 </p>
               ) : (
-                <p>Wybierz termin i godzinę</p>
+                <p>{t.datePlaceholder}</p>
               )}
             </div>
 
@@ -1032,7 +1301,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["location-cost"]}>
-              <p>Dodatkowy koszt dojazdu: +{cities[selectedCity].toFixed(2)} zł</p>
+              <p>{t.locationCostLabel}: +{cities[selectedCity].toFixed(2)} zł</p>
             </div>
 
             <div className={css["selected-services-container"]}>
@@ -1086,7 +1355,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                       alt="Vacuum"
                       className={css["selected-service-icon"]}
                     />
-                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
+                    <p>{t.vacuumNotice2}</p>
                   </div>
                   <div className={css["service-price"]}>
                     <p>{vacuumCost.toFixed(2)} zł</p>
@@ -1096,6 +1365,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     onClick={(e) => {
                       e.stopPropagation();
                       setVacuumNeeded(false);
+                      console.log("Пилосос видалено з замовлення");
                     }}
                   >
                     ×
@@ -1109,17 +1379,20 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 <FaPercentage className={css["promo-icon"]} />
                 <input
                   type="text"
-                  placeholder="Promokod"
+                  placeholder={t.promoPlaceholder}
                   value={promo}
-                  onChange={(e) => setPromo(e.target.value)}
+                  onChange={(e) => {
+                    setPromo(e.target.value);
+                    console.log(`Введено промокод: ${e.target.value}`);
+                  }}
                 />
-                <button onClick={handlePromoApply}>Zastosuj</button>
+                <button onClick={handlePromoApply}>{t.applyPromo}</button>
               </div>
             </div>
 
             <div className={css.total}>
               <p>
-                <strong>Do zapłaty:</strong> {calculateTotal()} zł{" "}
+                <strong>{t.totalLabel}:</strong> {calculateTotal()} zł{" "}
                 <del>{calculateStrikethroughPrice()} zł</del>
               </p>
 
@@ -1127,7 +1400,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : ""}`}
                 onClick={handleOrder}
               >
-                Zamawiam za {calculateTotal()} zł
+                {t.orderButton} {calculateTotal()} zł
               </button>
 
               <div className={css["payment-icons"]}>
