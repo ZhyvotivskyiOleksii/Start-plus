@@ -191,17 +191,22 @@ body {
 
 .inputGroup {
   position: relative;
-  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 250px;
+  max-width: 100%;
 }
 
 .input {
   width: 100%;
-  padding: 12px 16px 12px 40px;
-  border: 1px solid #e0e7ff;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid #dfe3fa;
   border-radius: 8px;
   font-size: 1rem;
-  background: #f9faff;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff;
+  color: #1a1a1a;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.1s ease;
 }
 
 .input:focus {
@@ -221,6 +226,7 @@ body {
   transform: translateY(-50%);
   color: #a0a9c0;
   font-size: 1.1rem;
+  pointer-events: none;
 }
 
 .loginContainer button,
@@ -619,17 +625,118 @@ body {
 
 .filters {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   margin-bottom: 16px;
   flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fafbff;
+  border-radius: 12px;
+  border: 1px solid #e8ecff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .inputLabel {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 500;
+  display: none;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 220px;
+  max-width: 100%;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #e0e7ff;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
   color: #1a1a1a;
-  margin-bottom: 8px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #5a4af4;
+  box-shadow: 0 0 0 3px rgba(90, 74, 244, 0.1);
+  background: #f9faff;
+}
+
+.input::placeholder {
+  color: #a0a9c0;
+  font-style: italic;
+}
+
+.inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #5a4af4;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.selectWrapper {
+  position: relative;
+  width: 180px;
+  max-width: 100%;
+}
+
+.selectWrapper .inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #5a4af4;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.filters select {
+  width: 100%;
+  padding: 8px 12px 8px 36px;
+  border: 1px solid #e0e7ff;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #1a1a1a;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.filters select:focus {
+  outline: none;
+  border-color: #5a4af4;
+  box-shadow: 0 0 0 3px rgba(90, 74, 244, 0.1);
+  background: #f9faff;
+}
+
+.filters input[type="date"] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dfe3fa;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #f9faff;
+  color: #1a1a1a;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filters input[type="date"]:focus {
+  outline: none;
+  border-color: #5a4af4;
+  box-shadow: 0 0 0 3px rgba(90, 74, 244, 0.1);
 }
 
 .usersList,
@@ -731,20 +838,18 @@ body {
   min-width: 150px;
 }
 
-.userInfo input,
-.userInfo select {
-  padding: 10px;
-  border: 1px solid #e0e7ff;
+.userInfo input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #dfe3fa;
   border-radius: 8px;
   font-size: 1rem;
-  background: #fff;
-  width: 100%;
-  max-width: 300px;
+  background: #f9faff;
+  color: #1a1a1a;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.userInfo input:focus,
-.userInfo select:focus {
+.userInfo input:focus {
   outline: none;
   border-color: #5a4af4;
   box-shadow: 0 0 0 3px rgba(90, 74, 244, 0.1);
@@ -781,6 +886,34 @@ body {
 
 .statsInfo p:hover {
   background: #e6efff;
+}
+
+.statsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.chartContainer {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.chartWrapper {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e0e7ff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  width: 100%;
+  flex: 1;
+  min-width: 300px;
 }
 
 @media (max-width: 991px) {
@@ -840,6 +973,13 @@ body {
   }
   .filters {
     flex-direction: column;
+    align-items: stretch;
+  }
+  .inputGroup {
+    width: 100%;
+  }
+  .selectWrapper {
+    width: 100%;
   }
   .infoRow {
     flex-direction: column;
@@ -850,6 +990,14 @@ body {
   }
   .userInfo input,
   .userInfo select {
+    max-width: 100%;
+  }
+  .chartContainer {
+    flex-direction: column;
+    align-items: center;
+  }
+  .chartWrapper {
+    padding: 16px;
     max-width: 100%;
   }
 }
@@ -903,10 +1051,28 @@ body {
     padding: 6px 8px;
     font-size: 0.8rem;
   }
+  .chartWrapper {
+    padding: 12px;
+  }
+  .selectWrapper {
+    width: 100%;
+  }
+  .filters select {
+    font-size: 0.9rem;
+    padding: 8px 12px 8px 36px;
+  }
+  .input {
+    font-size: 0.9rem;
+    padding: 8px 12px 8px 36px;
+  }
+  .inputIcon {
+    font-size: 0.95rem;
+  }
+  .selectWrapper .inputIcon {
+    font-size: 0.95rem;
+  }
 }
 
-
-/* Стилі для модального вікна */
 .modalOverlay {
   position: fixed;
   top: 0;
