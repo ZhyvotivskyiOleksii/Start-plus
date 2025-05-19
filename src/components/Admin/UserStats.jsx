@@ -11,11 +11,12 @@ import {
   Title,
   CategoryScale,
 } from "chart.js";
-import { FaCalendarAlt } from "react-icons/fa"; // Імпортуємо іконку
+import { FaCalendarAlt } from "react-icons/fa";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LineElement, PointElement, LinearScale, Title, CategoryScale);
 
 function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, isLoading }) {
+  // Дані для кругового графіка статусів користувачів
   const statusChartData = stats
     ? {
         labels: ["Aktywni użytkownicy", "Nieaktywni użytkownicy", "Zablokowani użytkownicy"],
@@ -54,6 +55,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
     },
   };
 
+  // Дані для лінійного графіка нових користувачів
   const newUsersChartData = stats
     ? {
         labels: ["Okres"],
@@ -118,6 +120,73 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
     },
   };
 
+  // Дані для графіка приблизного доходу (приклад, якщо немає даних у stats)
+  const revenueChartData = stats
+    ? {
+        labels: ["Okres"], // Можна розширити, якщо є дані за кілька періодів
+        datasets: [
+          {
+            label: "Przybliżony dochód (PLN)",
+            data: [stats.revenue || 12000], // Приклад даних
+            borderColor: "#00c4b4",
+            backgroundColor: "rgba(0, 196, 180, 0.2)",
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: "#00c4b4",
+            pointBorderColor: "#fff",
+            pointHoverBackgroundColor: "#fff",
+            pointHoverBorderColor: "#00c4b4",
+            borderWidth: 2,
+          },
+        ],
+      }
+    : null;
+
+  const revenueChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+        labels: {
+          font: { size: 14 },
+          color: "#1a1a1a",
+        },
+      },
+      title: {
+        display: true,
+        text: "Przybliżony dochód w wybranym okresie",
+ Milford: { size: 16 },
+        color: "#1a1a1a",
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: "Dochód (PLN)",
+          font: { size: 14 },
+          color: "#1a1a1a",
+        },
+        ticks: {
+          color: "#1a1a1a",
+          callback: (value) => `${value} PLN`,
+        },
+      },
+      x: {
+        title: {
+          display: true,
+          text: "Okres",
+          font: { size: 14 },
+          color: "#1a1a1a",
+        },
+        ticks: {
+          color: "#1a1a1a",
+        },
+      },
+    },
+  };
+
   return (
     <div className={css.statsSection}>
       <h4>Statystyka</h4>
@@ -155,6 +224,9 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
             </div>
             <div className={css.chartWrapper}>
               {newUsersChartData && <Line data={newUsersChartData} options={newUsersChartOptions} />}
+            </div>
+            <div className={css.chartWrapper}>
+              {revenueChartData && <Line data={revenueChartData} options={revenueChartOptions} />}
             </div>
           </div>
         </div>
