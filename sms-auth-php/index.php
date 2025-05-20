@@ -1,12 +1,4 @@
 <?php
-// Поліфіл для str_contains для сумісності зі старими версіями PHP (< 8.0)
-if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool {
-        return $needle === '' || strpos($haystack, $needle) !== false;
-    }
-}
-
-// Функція для логування подій у файл і стандартний вивід
 function logit(string $m): void {
     $dir = __DIR__ . '/logs';
     if (!is_dir($dir)) mkdir($dir, 0775, true);
@@ -15,7 +7,7 @@ function logit(string $m): void {
     error_log($line);                      
 }
 
-/* Налаштування CORS */
+/* CORS */
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 header("Access-Control-Allow-Origin: $origin");
 header('Vary: Origin');
@@ -27,14 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit; 
 }
 
-/* Завантаження змінних із .env */
+/* .env */
 foreach (file(__DIR__.'/.env', FILE_IGNORE_NEW_LINES) as $l) {
     if ($l===''||$l[0]==='#'||!str_contains($l,'=')) continue;
     [$k,$v]=explode('=',$l,2); 
     $_ENV[$k]=$v;
 }
 
-/* Підключення до бази даних через PDO */
+/* PDO */
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
@@ -85,8 +77,7 @@ function sms_send(string $phone, string $code): void {
 
 /* вхідні дані */
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-$basePath = dirname($_SERVER['SCRIPT_NAME']); // '' або '/sms-auth-php'
-$uri = preg_replace('#^'.preg_quote($basePath).'#', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)); // → /api/...
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 /* ----------- /api/login (admin) ---------------- */
@@ -293,6 +284,7 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/create-payment --------------- */
+/* ----------- /api/create-payment --------------- */
 if ($uri === '/api/create-payment' && $method === 'POST') {
     // Налаштування PayU (справжні дані для реального середовища)
     $payuConfig = [
@@ -395,6 +387,7 @@ if ($uri === '/api/create-payment' && $method === 'POST') {
         CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => json_encode($payuOrder),
         CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_FOLLOWLOCATION => false, // Не слідкувати за редиректами
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $accessToken,
@@ -404,17 +397,18 @@ if ($uri === '/api/create-payment' && $method === 'POST') {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($httpCode !== 201) {
-        logit("Помилка створення платежу в PayU: HTTP $httpCode, відповідь: $payuResponse");
+    // Перевірка відповіді PayU
+    $payuResult = json_decode($payuResponse, true);
+    if ($httpCode !== 302 || !isset($payuResult['status']['statusCode']) || $payuResult['status']['statusCode'] !== 'SUCCESS') {
+        logit("Помилка створення платежу в PayU: HTTP $httpCode, відповідь: " . json_encode($payuResult));
         http_response_code(500);
         echo json_encode(['error' => 'Не вдалося створити платіж у PayU']);
         exit;
     }
 
-    $payuResult = json_decode($payuResponse, true);
     $redirectUri = $payuResult['redirectUri'] ?? null;
     if (!$redirectUri) {
-        logit("Помилка: Не отримано redirectUri від PayU: $payuResponse");
+        logit("Помилка: Не отримано redirectUri від PayU: " . json_encode($payuResult));
         http_response_code(500);
         echo json_encode(['error' => 'Не отримано URL для оплати від PayU']);
         exit;
@@ -762,6 +756,7 @@ if ($uri === '/api/users/stats' && $method === 'GET') {
 }
 
 /* ----------- /api/orders ----------------------- */
+/* ----------- /api/orders ----------------------- */
 if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
     if ($method === 'GET' && !isset($matches[1])) {
         // Список усіх замовлень
@@ -921,7 +916,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "selected_time";
                 $values[] = $orderData["windows"];
                 $values[] = $orderData["balconies"];
-                $values[] = $orderData["client_info"]["client_type"];
+                $values[] = $clientType;
                 $values[] = $orderData["selected_date"];
                 $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
@@ -948,7 +943,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "selected_time";
                 $values[] = $orderData["area"];
                 $values[] = $orderData["windows"];
-                $values[] = $orderData["client_info"]["client_type"];
+                $values[] = $clientType;
                 $values[] = $orderData["selected_date"];
                 $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
@@ -987,7 +982,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             case "private_house":
             case "apartment":
                 // Перевірка наявності всіх необхідних полів
-                $requiredApartmentFields = ["client_info", "rooms", "bathrooms", "kitchen", "kitchen_annex", "vacuum_needed", "selected_services", "cleaning_frequency", "selected_date", "selected_time"];
+                $requiredApartmentFields = ["rooms", "bathrooms", "kitchen", "kitchen_annex", "vacuum_needed", "selected_services", "cleaning_frequency", "selected_date", "selected_time"];
                 foreach ($requiredApartmentFields as $field) {
                     if (!isset($orderData[$field])) {
                         logit("Помилка: Відсутнє обов’язкове поле для apartment/private_house: $field");
@@ -1007,7 +1002,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "cleaning_frequency";
                 $columns[] = "selected_date";
                 $columns[] = "selected_time";
-                $values[] = $orderData["client_info"]["client_type"];
+                $values[] = $clientType;
                 $values[] = $orderData["rooms"];
                 $values[] = $orderData["bathrooms"];
                 $values[] = $orderData["kitchen"] ? 1 : 0;
@@ -1033,18 +1028,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 http_response_code(400);
                 echo json_encode(["error" => "Unsupported order type"]);
                 exit;
-        }
-
-        if (isset($orderData["selected_date"])) {
-            $columns[] = "selected_date";
-            $values[] = $orderData["selected_date"];
-            $placeholders[] = "?";
-        }
-
-        if (isset($orderData["selected_time"])) {
-            $columns[] = "selected_time";
-            $values[] = $orderData["selected_time"];
-            $placeholders[] = "?";
         }
 
         // Формуємо SQL-запит
@@ -1101,7 +1084,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         exit;
     }
 }
-
 http_response_code(404);
 logit("Ендпоінт не знайдено: $uri, метод: $method");
 echo json_encode([
