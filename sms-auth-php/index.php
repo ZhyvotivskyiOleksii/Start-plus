@@ -1,10 +1,12 @@
 <?php
+// Поліфіл для str_contains для сумісності зі старими версіями PHP (< 8.0)
 if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
-    {
+    function str_contains(string $haystack, string $needle): bool {
         return $needle === '' || strpos($haystack, $needle) !== false;
     }
 }
+
+// Функція для логування подій у файл і стандартний вивід
 function logit(string $m): void {
     $dir = __DIR__ . '/logs';
     if (!is_dir($dir)) mkdir($dir, 0775, true);
@@ -13,7 +15,7 @@ function logit(string $m): void {
     error_log($line);                      
 }
 
-/* CORS */
+/* Налаштування CORS */
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
 header("Access-Control-Allow-Origin: $origin");
 header('Vary: Origin');
@@ -25,14 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit; 
 }
 
-/* .env */
+/* Завантаження змінних із .env */
 foreach (file(__DIR__.'/.env', FILE_IGNORE_NEW_LINES) as $l) {
     if ($l===''||$l[0]==='#'||!str_contains($l,'=')) continue;
     [$k,$v]=explode('=',$l,2); 
     $_ENV[$k]=$v;
 }
 
-/* PDO */
+/* Підключення до бази даних через PDO */
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
@@ -83,10 +85,8 @@ function sms_send(string $phone, string $code): void {
 
 /* вхідні дані */
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-$basePath = dirname($_SERVER['SCRIPT_NAME']);                     // '' або '/sms-auth-php'
-$uri       = preg_replace('#^'.preg_quote($basePath).'#','',
-               parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)); // → /api/...
-
+$basePath = dirname($_SERVER['SCRIPT_NAME']); // '' або '/sms-auth-php'
+$uri = preg_replace('#^'.preg_quote($basePath).'#', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)); // → /api/...
 $method = $_SERVER['REQUEST_METHOD'];
 
 /* ----------- /api/login (admin) ---------------- */
@@ -294,13 +294,13 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
 
 /* ----------- /api/create-payment --------------- */
 if ($uri === '/api/create-payment' && $method === 'POST') {
-    // Налаштування PayU (нові тестові ключі для Sandbox)
+    // Налаштування PayU (справжні дані для реального середовища)
     $payuConfig = [
-        'merchantPosId' => '300746', // Новий тестовий POS ID для Sandbox
-        'clientId' => '300746', // Новий тестовий client_id для Sandbox
-        'clientSecret' => '2ee86a66e5d97e3fadf6a3a7a53d0e5', // Новий тестовий client_secret для Sandbox
-        'md5Key' => '02fbc83aff9da2db8dfadd1bb536a043', // Залишаємо твій MD5-ключ
-        'apiUrl' => 'https://secure.snd.payu.com/api/v2_1/orders', // URL для Sandbox
+        'merchantPosId' => '4371532', // Справжній POS ID
+        'clientId' => '4371532', // Справжній client_id
+        'clientSecret' => '6d49178c5f1190f31eb18cfda7c3a726', // Справжній client_secret
+        'md5Key' => '02fbc83aff9da2db8dfadd1bb536a043', // Справжній MD5-ключ
+        'apiUrl' => 'https://secure.payu.com/api/v2_1/orders', // URL для реального середовища
     ];
 
     // Отримання даних із запиту
@@ -355,7 +355,7 @@ if ($uri === '/api/create-payment' && $method === 'POST') {
     ];
 
     // Отримання OAuth-токена
-    $tokenUrl = 'https://secure.snd.payu.com/pl/standard/user/oauth/authorize';
+    $tokenUrl = 'https://secure.payu.com/pl/standard/user/oauth/authorize'; // Реальний URL для OAuth
     $tokenData = http_build_query([
         'grant_type' => 'client_credentials',
         'client_id' => $payuConfig['clientId'],
@@ -824,6 +824,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
     if ($method === 'POST' && !isset($matches[1])) {
         // Створення нового замовлення
         $orderData = $input;
+        logit("Вхідні дані для створення замовлення: " . json_encode($orderData));
 
         // Перевірка наявності всіх необхідних даних
         $requiredFields = ["order_type", "total_price", "city", "address", "client_info", "payment_status"];
@@ -836,14 +837,83 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             }
         }
 
-        // Підготовка SQL-запиту залежно від типу замовлення
+        // Витягуємо дані про клієнта
+        if (!isset($orderData['client_info'])) {
+            logit("Помилка: client_info відсутнє у вхідних даних");
+            http_response_code(400);
+            echo json_encode(["error" => "Missing required field: client_info"]);
+            exit;
+        }
+        $clientInfo = $orderData['client_info'];
+        logit("Дані client_info: " . json_encode($clientInfo));
+        $clientName = $clientInfo['name'] ?? null;
+        $clientPhone = $clientInfo['phone'] ?? null;
+        $clientEmail = $clientInfo['email'] ?? null;
+        $clientAdditionalInfo = $clientInfo['additional_info'] ?? null;
+        $clientType = $clientInfo['client_type'] ?? null;
+        logit("Витягнуті значення: clientName=$clientName, clientPhone=$clientPhone, clientEmail=$clientEmail, clientType=$clientType");
+
+        // Перевірка, чи є клієнт із таким телефоном або email
+        $userId = null;
+        if ($clientPhone || $clientEmail) {
+            logit("Перевірка користувача: phone=$clientPhone, email=$clientEmail");
+            $query = 'SELECT id FROM users WHERE phone = ? OR email = ?';
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([$clientPhone, $clientEmail]);
+            $user = $stmt->fetch();
+
+            if ($user) {
+                // Користувач уже існує
+                $userId = $user['id'];
+                logit("Користувач із phone=$clientPhone або email=$clientEmail уже існує, user_id=$userId");
+            } else {
+                // Створюємо нового користувача
+                logit("Створюємо нового користувача...");
+                $query = 'INSERT INTO users (name, phone, email, created_at) VALUES (?, ?, ?, NOW())';
+                $stmt = $pdo->prepare($query);
+                $stmt->execute([$clientName, $clientPhone, $clientEmail]);
+                $userId = $pdo->lastInsertId();
+                logit("Створено нового користувача: user_id=$userId, phone=$clientPhone, email=$clientEmail");
+            }
+        } else {
+            logit("Телефон або email відсутні у client_info, користувач не створюється");
+        }
+
+        // Логуємо всі поля, які мають бути в замовленні
         $orderType = $orderData["order_type"];
+        logit("Тип замовлення: $orderType");
+        logit("Поля замовлення: rooms=" . ($orderData["rooms"] ?? 'null') . 
+              ", bathrooms=" . ($orderData["bathrooms"] ?? 'null') . 
+              ", kitchen=" . ($orderData["kitchen"] ?? 'null') . 
+              ", kitchen_annex=" . ($orderData["kitchen_annex"] ?? 'null') . 
+              ", vacuum_needed=" . ($orderData["vacuum_needed"] ?? 'null') . 
+              ", selected_services=" . (isset($orderData["selected_services"]) ? json_encode($orderData["selected_services"]) : 'null') . 
+              ", cleaning_frequency=" . ($orderData["cleaning_frequency"] ?? 'null') . 
+              ", selected_date=" . ($orderData["selected_date"] ?? 'null') . 
+              ", selected_time=" . ($orderData["selected_time"] ?? 'null'));
+
+        // Підготовка SQL-запиту залежно від типу замовлення
         $columns = ["order_type", "total_price", "city", "address", "client_info", "payment_status"];
         $values = [$orderType, $orderData["total_price"], $orderData["city"], json_encode($orderData["address"]), json_encode($orderData["client_info"]), $orderData["payment_status"]];
         $placeholders = array_fill(0, count($values), "?");
 
+        // Додаємо user_id до замовлення
+        $columns[] = "user_id";
+        $values[] = $userId;
+        $placeholders[] = "?";
+
         switch ($orderType) {
             case "window_cleaning":
+                // Перевірка наявності всіх необхідних полів
+                $requiredWindowFields = ["windows", "balconies", "selected_date", "selected_time"];
+                foreach ($requiredWindowFields as $field) {
+                    if (!isset($orderData[$field])) {
+                        logit("Помилка: Відсутнє обов’язкове поле для window_cleaning: $field");
+                        http_response_code(400);
+                        echo json_encode(["error" => "Missing required field for window_cleaning: $field"]);
+                        exit;
+                    }
+                }
                 $columns[] = "windows";
                 $columns[] = "balconies";
                 $columns[] = "client_type";
@@ -851,9 +921,9 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "selected_time";
                 $values[] = $orderData["windows"];
                 $values[] = $orderData["balconies"];
-                $values[] = $orderData["clientInfo"]["clientType"];
-                $values[] = $orderData["selectedDate"];
-                $values[] = $orderData["selectedTime"];
+                $values[] = $orderData["client_info"]["client_type"];
+                $values[] = $orderData["selected_date"];
+                $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
                 $placeholders[] = "?";
                 $placeholders[] = "?";
@@ -861,6 +931,16 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $placeholders[] = "?";
                 break;
             case "renovation":
+                // Перевірка наявності всіх необхідних полів
+                $requiredRenovationFields = ["area", "windows", "selected_date", "selected_time"];
+                foreach ($requiredRenovationFields as $field) {
+                    if (!isset($orderData[$field])) {
+                        logit("Помилка: Відсутнє обов’язкове поле для renovation: $field");
+                        http_response_code(400);
+                        echo json_encode(["error" => "Missing required field for renovation: $field"]);
+                        exit;
+                    }
+                }
                 $columns[] = "area";
                 $columns[] = "windows";
                 $columns[] = "client_type";
@@ -868,9 +948,9 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "selected_time";
                 $values[] = $orderData["area"];
                 $values[] = $orderData["windows"];
-                $values[] = $orderData["clientInfo"]["clientType"];
-                $values[] = $orderData["selectedDate"];
-                $values[] = $orderData["selectedTime"];
+                $values[] = $orderData["client_info"]["client_type"];
+                $values[] = $orderData["selected_date"];
+                $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
                 $placeholders[] = "?";
                 $placeholders[] = "?";
@@ -878,16 +958,26 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $placeholders[] = "?";
                 break;
             case "office":
+                // Перевірка наявності всіх необхідних полів
+                $requiredOfficeFields = ["office_area", "workspaces", "cleaning_frequency", "selected_date", "selected_time"];
+                foreach ($requiredOfficeFields as $field) {
+                    if (!isset($orderData[$field])) {
+                        logit("Помилка: Відсутнє обов’язкове поле для office: $field");
+                        http_response_code(400);
+                        echo json_encode(["error" => "Missing required field for office: $field"]);
+                        exit;
+                    }
+                }
                 $columns[] = "office_area";
                 $columns[] = "workspaces";
                 $columns[] = "cleaning_frequency";
                 $columns[] = "selected_date";
                 $columns[] = "selected_time";
-                $values[] = $orderData["officeArea"];
+                $values[] = $orderData["office_area"];
                 $values[] = $orderData["workspaces"];
-                $values[] = $orderData["cleaningFrequency"];
-                $values[] = $orderData["selectedDate"];
-                $values[] = $orderData["selectedTime"];
+                $values[] = $orderData["cleaning_frequency"];
+                $values[] = $orderData["selected_date"];
+                $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
                 $placeholders[] = "?";
                 $placeholders[] = "?";
@@ -896,6 +986,17 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 break;
             case "private_house":
             case "apartment":
+                // Перевірка наявності всіх необхідних полів
+                $requiredApartmentFields = ["client_info", "rooms", "bathrooms", "kitchen", "kitchen_annex", "vacuum_needed", "selected_services", "cleaning_frequency", "selected_date", "selected_time"];
+                foreach ($requiredApartmentFields as $field) {
+                    if (!isset($orderData[$field])) {
+                        logit("Помилка: Відсутнє обов’язкове поле для apartment/private_house: $field");
+                        http_response_code(400);
+                        echo json_encode(["error" => "Missing required field for apartment/private_house: $field"]);
+                        exit;
+                    }
+                }
+
                 $columns[] = "client_type";
                 $columns[] = "rooms";
                 $columns[] = "bathrooms";
@@ -906,16 +1007,16 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 $columns[] = "cleaning_frequency";
                 $columns[] = "selected_date";
                 $columns[] = "selected_time";
-                $values[] = $orderData["clientType"];
+                $values[] = $orderData["client_info"]["client_type"];
                 $values[] = $orderData["rooms"];
                 $values[] = $orderData["bathrooms"];
                 $values[] = $orderData["kitchen"] ? 1 : 0;
-                $values[] = $orderData["kitchenAnnex"] ? 1 : 0;
-                $values[] = $orderData["vacuumNeeded"] ? 1 : 0;
-                $values[] = json_encode($orderData["selectedServices"]);
-                $values[] = $orderData["cleaningFrequency"];
-                $values[] = $orderData["selectedDate"];
-                $values[] = $orderData["selectedTime"];
+                $values[] = $orderData["kitchen_annex"] ? 1 : 0;
+                $values[] = $orderData["vacuum_needed"] ? 1 : 0;
+                $values[] = json_encode($orderData["selected_services"]);
+                $values[] = $orderData["cleaning_frequency"];
+                $values[] = $orderData["selected_date"];
+                $values[] = $orderData["selected_time"];
                 $placeholders[] = "?";
                 $placeholders[] = "?";
                 $placeholders[] = "?";
@@ -934,15 +1035,15 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                 exit;
         }
 
-        if (isset($orderData["selectedDate"])) {
+        if (isset($orderData["selected_date"])) {
             $columns[] = "selected_date";
-            $values[] = $orderData["selectedDate"];
+            $values[] = $orderData["selected_date"];
             $placeholders[] = "?";
         }
 
-        if (isset($orderData["selectedTime"])) {
+        if (isset($orderData["selected_time"])) {
             $columns[] = "selected_time";
-            $values[] = $orderData["selectedTime"];
+            $values[] = $orderData["selected_time"];
             $placeholders[] = "?";
         }
 
@@ -950,6 +1051,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         $columnsStr = implode(", ", $columns);
         $placeholdersStr = implode(", ", $placeholders);
         $sql = "INSERT INTO orders ($columnsStr) VALUES ($placeholdersStr)";
+        logit("SQL-запит для створення замовлення: $sql");
 
         try {
             $stmt = $pdo->prepare($sql);

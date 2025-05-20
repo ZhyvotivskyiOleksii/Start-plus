@@ -424,24 +424,25 @@ export default function Calculator() {
             timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
             return;
         }
-        if (!name) {
-            setError("Proszę wprowadzić imię.");
-            nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+
+        // Перевірка та підсвітка всіх полів у DANE KONTAKTOWE
+        let contactError = false;
+        if (!name || !phone || !email) {
+            setError("Proszę wprowadzić wszystkie dane kontaktowe.");
+            if (!name) {
+                nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            if (!phone) {
+                phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            if (!email) {
+                emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            contactError = true;
             nameRef.current?.scrollIntoView({ behavior: "smooth" });
             return;
         }
-        if (!phone) {
-            setError("Proszę wprowadzić numer telefonu.");
-            phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            phoneRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
-        }
-        if (!email) {
-            setError("Proszę wprowadzić adres e-mail.");
-            emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            emailRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
-        }
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             setError("Proszę wprowadzić prawidłowy adres e-mail.");
@@ -449,24 +450,25 @@ export default function Calculator() {
             emailRef.current?.scrollIntoView({ behavior: "smooth" });
             return;
         }
-        if (!street) {
-            setError("Proszę wprowadzić ulicę.");
-            streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+
+        // Перевірка та підсвітка всіх полів у WPROWADŹ SWÓJ ADRES
+        let addressError = false;
+        if (!street || !houseNumber || !postalCode) {
+            setError("Proszę wprowadzić wszystkie dane adresowe.");
+            if (!street) {
+                streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            if (!houseNumber) {
+                houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            if (!postalCode) {
+                postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            }
+            addressError = true;
             streetRef.current?.scrollIntoView({ behavior: "smooth" });
             return;
         }
-        if (!houseNumber) {
-            setError("Proszę wprowadzić numer domu.");
-            houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            houseNumberRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
-        }
-        if (!postalCode) {
-            setError("Proszę wprowadzić kod pocztowy.");
-            postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            postalCodeRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
-        }
+
         if (!agreeToTerms || !agreeToMarketing) {
             agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
             agreementRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -474,43 +476,48 @@ export default function Calculator() {
         }
 
         const formattedDate = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`;
+        const order_type = rooms > 3 ? 'private_house' : 'apartment';
 
+        // Формуємо orderData у snake_case для всіх полів
         const orderData = {
-            order_type: "apartment",
-            total_price: parseFloat(calculateTotal()),
-            city: selectedCity,
+            order_type: order_type, // Тип замовлення: 'apartment' або 'private_house'
+            total_price: parseFloat(calculateTotal()), // Загальна ціна
+            city: selectedCity, // Місто
             address: {
-                street,
-                postal_code: postalCode,
-                house_number: houseNumber,
-                apartment_number: apartmentNumber,
-                building,
-                floor,
-                intercom_code: intercomCode,
+                street: street, // Вулиця
+                postal_code: postalCode, // Поштовий код
+                house_number: houseNumber, // Номер будинку
+                apartment_number: apartmentNumber, // Номер квартири
+                building: building, // Будівля
+                floor: floor, // Поверх
+                intercom_code: intercomCode, // Код домофона
             },
             client_info: {
-                name,
-                phone,
-                email,
-                additional_info: additionalInfo,
-                client_type: clientType,
+                name: name, // Ім'я клієнта
+                phone: phone, // Телефон
+                email: email, // Електронна пошта
+                additional_info: additionalInfo, // Додаткова інформація
+                client_type: clientType, // Тип клієнта ('Osoba prywatna' або 'Firma')
             },
-            payment_status: "pending",
-            rooms,
-            bathrooms,
-            kitchen,
-            kitchen_annex: kitchenAnnex,
-            vacuum_needed: vacuumNeeded,
+            payment_status: 'pending', // Статус платежу
+            rooms: rooms, // Кількість кімнат
+            bathrooms: bathrooms, // Кількість ванних кімнат
+            kitchen: kitchen, // Наявність кухні (true/false)
+            kitchen_annex: kitchenAnnex, // Наявність кухонного анексу (true/false)
+            vacuum_needed: vacuumNeeded, // Чи потрібен пилосос (true/false)
             selected_services: paidServices
-                .filter((s) => (s.type === "checkbox" && selectedServices[s.id]) || (s.type === "quantity" && selectedServices[s.id] > 0))
+                .filter((s) =>
+                    (s.type === 'checkbox' && selectedServices[s.id]) ||
+                    (s.type === 'quantity' && selectedServices[s.id] > 0)
+                )
                 .map((s) => ({
-                    name: s.name,
-                    price: s.price,
-                    quantity: selectedServices[s.id],
-                })),
-            selected_date: formattedDate,
-            selected_time: selectedTime,
-            cleaning_frequency: cleaningFrequency,
+                    name: s.name, // Назва послуги
+                    price: s.price, // Ціна послуги
+                    quantity: selectedServices[s.id], // Кількість
+                })), // Вибрані додаткові послуги
+            selected_date: formattedDate, // Вибрана дата
+            selected_time: selectedTime, // Вибраний час
+            cleaning_frequency: cleaningFrequency, // Частота прибирання
         };
 
         try {
@@ -551,7 +558,7 @@ export default function Calculator() {
 
             window.location.href = redirectUri;
         } catch (error) {
-            setError(error.response?.data?.error || "Wystąpił błąd podczas składания zamówienia. Spróbuj ponownie.");
+            setError(error.response?.data?.error || "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
         }
     }
 
