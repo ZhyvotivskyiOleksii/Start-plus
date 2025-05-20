@@ -733,3 +733,74 @@
 [2025-05-20 12:11:46] Замовлення створено з ID: 32
 [2025-05-20 12:11:47] Підключення до бази даних успішне!
 [2025-05-20 12:11:47] Помилка створення платежу в PayU: HTTP 302, відповідь: {"status":{"statusCode":"SUCCESS"},"redirectUri":"https://secure.payu.com/pay/?orderId=W3Z44P374V250520GUEST000P01&token=eyJhbGciOiJIUzI1NiJ9.eyJvcmRlcklkIjoiVzNaNDRQMzc0VjI1MDUyMEdVRVNUMDAwUDAxIiwicG9zSWQiOiJNWHBwekptZCIsImF1dGhvcml0aWVzIjpbIlJPTEVfQ0xJRU5UIl0sInBheWVyRW1haWwiOiJnYW1lc2Rhc2hldkBnbWFpbC5jb20iLCJleHAiOjE3NDc4Mjk1MDcsImlzcyI6IlBBWVUiLCJhdWQiOiJhcGktZ2F0ZXdheSIsInN1YiI6IlBheVUgc3ViamVjdCIsImp0aSI6IjkxZjE4M2ExLWI2ZDEtNGMzZi05ZmU3LTNjNTc5N2IyNTFjYSJ9.uWIkxcvxLM49NC20k2I6uvfMDDmjN8mdJ8OtxzGmrlo","orderId":"W3Z44P374V250520GUEST000P01","extOrderId":"32"}
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:11] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:13:11] Знайдено користувачів: 6
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:11] Отримано статистику користувачів: {"total_users":6,"status_counts":{"active":4,"inactive":1,"banned":1},"new_users":6,"avg_orders_per_user":1}
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:11] Отримуємо список замовлень: query=SELECT * FROM orders ORDER BY order_date DESC
+[2025-05-20 12:13:11] Знайдено замовлень: 6
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:11] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:13:11] Знайдено користувачів: 6
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:11] Отримуємо список замовлень: query=SELECT * FROM orders ORDER BY order_date DESC
+[2025-05-20 12:13:11] Знайдено замовлень: 6
+[2025-05-20 12:13:11] Підключення до бази даних успішне!
+[2025-05-20 12:13:12] Отримано статистику користувачів: {"total_users":6,"status_counts":{"active":4,"inactive":1,"banned":1},"new_users":6,"avg_orders_per_user":1}
+[2025-05-20 12:13:38] Підключення до бази даних успішне!
+[2025-05-20 12:13:38] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:13:38] Знайдено користувачів: 6
+[2025-05-20 12:14:22] Підключення до бази даних успішне!
+[2025-05-20 12:14:22] Перевірка користувача в базі даних...
+[2025-05-20 12:14:22] Користувач +48572245574 не знайдений
+[2025-05-20 12:14:22] Збереження коду в базі даних...
+[2025-05-20 12:14:22] Код успішно збережено
+[2025-05-20 12:14:22] Відправка SMS...
+[2025-05-20 12:14:23] SMS надіслано на +48572245574, код: 402164, userExists: false
+[2025-05-20 12:14:29] Підключення до бази даних успішне!
+[2025-05-20 12:14:29] Отримуємо знижки для type: regular
+[2025-05-20 12:14:29] Знайдено знижок: 6
+[2025-05-20 12:14:30] Підключення до бази даних успішне!
+[2025-05-20 12:14:30] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:14:30] Знайдено користувачів: 6
+[2025-05-20 12:14:30] Підключення до бази даних успішне!
+[2025-05-20 12:14:30] Отримано статистику користувачів: {"total_users":6,"status_counts":{"active":4,"inactive":1,"banned":1},"new_users":6,"avg_orders_per_user":1}
+[2025-05-20 12:14:30] Підключення до бази даних успішне!
+[2025-05-20 12:14:30] Отримуємо список замовлень: query=SELECT * FROM orders ORDER BY order_date DESC
+[2025-05-20 12:14:30] Знайдено замовлень: 6
+[2025-05-20 12:14:31] Підключення до бази даних успішне!
+[2025-05-20 12:14:31] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:14:31] Знайдено користувачів: 6
+[2025-05-20 12:14:31] Підключення до бази даних успішне!
+[2025-05-20 12:14:31] Отримуємо список замовлень: query=SELECT * FROM orders ORDER BY order_date DESC
+[2025-05-20 12:14:31] Знайдено замовлень: 6
+[2025-05-20 12:14:31] Підключення до бази даних успішне!
+[2025-05-20 12:14:31] Отримано статистику користувачів: {"total_users":6,"status_counts":{"active":4,"inactive":1,"banned":1},"new_users":6,"avg_orders_per_user":1}
+[2025-05-20 12:17:05] Підключення до бази даних успішне!
+[2025-05-20 12:17:05] Отримуємо знижки для type: regular
+[2025-05-20 12:17:05] Знайдено знижок: 6
+[2025-05-20 12:17:05] Підключення до бази даних успішне!
+[2025-05-20 12:17:05] Отримуємо промокоди, знайдено: 3
+[2025-05-20 12:17:33] Підключення до бази даних успішне!
+[2025-05-20 12:17:33] Вхідні дані для створення замовлення: {"order_type":"apartment","total_price":193.41,"city":"Warszawa","address":{"street":"Edwarda Habicha","postal_code":"02-495","house_number":"18","apartment_number":"45","building":"\u0446","floor":"\u0443\u0446\u0443","intercom_code":"\u0446"},"client_info":{"name":"\u0432\u0432\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443","phone":"845435345345","email":"myarians@wp.pl","additional_info":"\u0456\u0456\u0432","client_type":"Osoba prywatna"},"payment_status":"pending","rooms":1,"bathrooms":1,"kitchen":true,"kitchen_annex":false,"vacuum_needed":false,"selected_services":[{"name":"Mycie naczy\u0144","price":20,"quantity":true}],"selected_date":"2025-05-29","selected_time":"10:00","cleaning_frequency":"Raz w miesi\u0105cu"}
+[2025-05-20 12:17:33] Дані client_info: {"name":"\u0432\u0432\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443\u0446\u0443","phone":"845435345345","email":"myarians@wp.pl","additional_info":"\u0456\u0456\u0432","client_type":"Osoba prywatna"}
+[2025-05-20 12:17:33] Витягнуті значення: clientName=ввцуцуцуцуцуцуцу, clientPhone=845435345345, clientEmail=myarians@wp.pl, clientType=Osoba prywatna
+[2025-05-20 12:17:33] Перевірка користувача: phone=845435345345, email=myarians@wp.pl
+[2025-05-20 12:17:33] Створюємо нового користувача...
+[2025-05-20 12:17:33] Створено нового користувача: user_id=20, phone=845435345345, email=myarians@wp.pl
+[2025-05-20 12:17:33] Тип замовлення: apartment
+[2025-05-20 12:17:33] Поля замовлення: rooms=1, bathrooms=1, kitchen=1, kitchen_annex=, vacuum_needed=, selected_services=[{"name":"Mycie naczy\u0144","price":20,"quantity":true}], cleaning_frequency=Raz w miesiącu, selected_date=2025-05-29, selected_time=10:00
+[2025-05-20 12:17:33] SQL-запит для створення замовлення: INSERT INTO orders (order_type, total_price, city, address, client_info, payment_status, user_id, client_type, rooms, bathrooms, kitchen, kitchen_annex, vacuum_needed, selected_services, cleaning_frequency, selected_date, selected_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+[2025-05-20 12:17:33] Замовлення створено з ID: 33
+[2025-05-20 12:17:33] Підключення до бази даних успішне!
+[2025-05-20 12:17:33] Платіж створено, redirectUri: https://secure.payu.com/pay/?orderId=3X74SB3K9G250520GUEST000P01&token=eyJhbGciOiJIUzI1NiJ9.eyJvcmRlcklkIjoiM1g3NFNCM0s5RzI1MDUyMEdVRVNUMDAwUDAxIiwicG9zSWQiOiJNWHBwekptZCIsImF1dGhvcml0aWVzIjpbIlJPTEVfQ0xJRU5UIl0sInBheWVyRW1haWwiOiJteWFyaWFuc0B3cC5wbCIsImV4cCI6MTc0NzgyOTg1MywiaXNzIjoiUEFZVSIsImF1ZCI6ImFwaS1nYXRld2F5Iiwic3ViIjoiUGF5VSBzdWJqZWN0IiwianRpIjoiZDc0YTUxYjgtNDE2OS00YWYwLTg4OWEtN2EwNWMxMzkwZTM5In0.hqFFLQhJToa4uijpS1wFjhqNhXP2bL0RBJhZDgicvVE
+[2025-05-20 12:19:30] Підключення до бази даних успішне!
+[2025-05-20 12:19:30] Отримуємо список користувачів: query=SELECT * FROM users ORDER BY created_at DESC
+[2025-05-20 12:19:30] Знайдено користувачів: 7
+[2025-05-20 12:19:30] Підключення до бази даних успішне!
+[2025-05-20 12:19:30] Отримано статистику користувачів: {"total_users":7,"status_counts":{"active":5,"inactive":1,"banned":1},"new_users":7,"avg_orders_per_user":1}
+[2025-05-20 12:19:30] Підключення до бази даних успішне!
+[2025-05-20 12:19:30] Отримуємо список замовлень: query=SELECT * FROM orders ORDER BY order_date DESC
+[2025-05-20 12:19:30] Знайдено замовлень: 7

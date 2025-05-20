@@ -284,6 +284,7 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/create-payment --------------- */
+/* ----------- /api/create-payment --------------- */
 if ($uri === '/api/create-payment' && $method === 'POST') {
     // Налаштування PayU (справжні дані для реального середовища)
     $payuConfig = [
@@ -386,6 +387,7 @@ if ($uri === '/api/create-payment' && $method === 'POST') {
         CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => json_encode($payuOrder),
         CURLOPT_RETURNTRANSFER => 1,
+        CURLOPT_FOLLOWLOCATION => false, // Не слідкувати за редиректами
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $accessToken,
@@ -395,17 +397,18 @@ if ($uri === '/api/create-payment' && $method === 'POST') {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
-    if ($httpCode !== 201) {
-        logit("Помилка створення платежу в PayU: HTTP $httpCode, відповідь: $payuResponse");
+    // Перевірка відповіді PayU
+    $payuResult = json_decode($payuResponse, true);
+    if ($httpCode !== 302 || !isset($payuResult['status']['statusCode']) || $payuResult['status']['statusCode'] !== 'SUCCESS') {
+        logit("Помилка створення платежу в PayU: HTTP $httpCode, відповідь: " . json_encode($payuResult));
         http_response_code(500);
         echo json_encode(['error' => 'Не вдалося створити платіж у PayU']);
         exit;
     }
 
-    $payuResult = json_decode($payuResponse, true);
     $redirectUri = $payuResult['redirectUri'] ?? null;
     if (!$redirectUri) {
-        logit("Помилка: Не отримано redirectUri від PayU: $payuResponse");
+        logit("Помилка: Не отримано redirectUri від PayU: " . json_encode($payuResult));
         http_response_code(500);
         echo json_encode(['error' => 'Не отримано URL для оплати від PayU']);
         exit;
