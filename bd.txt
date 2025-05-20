@@ -6,9 +6,9 @@ ssh -o ServerAliveInterval=60 startplu@uashared37.twinservers.net -L 3306:localh
 
  57g3tE5iaG
 
+57g3tE5iaG
 
-
-
+57g3tE5iaG
 
 Nowy token
  qJtdRRdD3Rh6WeSBuDkr6P7bkUZTJrzufYBMTRle
@@ -17,13 +17,15 @@ cd server
 node server.js
 
 
-
+4
 
 cd /Users/oleksiizhyvotivskyi/Desktop/Start-plus/sms-auth-php
 php -S localhost:3001 index.php            
 
 
 
+# у корені проєкту
+php -S localhost:3001 -t dist/sms-auth-php
 
 
 

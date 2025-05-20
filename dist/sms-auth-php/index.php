@@ -1,10 +1,4 @@
 <?php
-if (!function_exists('str_contains')) {
-    function str_contains(string $haystack, string $needle): bool
-    {
-        return $needle === '' || strpos($haystack, $needle) !== false;
-    }
-}
 function logit(string $m): void {
     $dir = __DIR__ . '/logs';
     if (!is_dir($dir)) mkdir($dir, 0775, true);
@@ -83,10 +77,7 @@ function sms_send(string $phone, string $code): void {
 
 /* вхідні дані */
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-$basePath = dirname($_SERVER['SCRIPT_NAME']);                     // '' або '/sms-auth-php'
-$uri       = preg_replace('#^'.preg_quote($basePath).'#','',
-               parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)); // → /api/...
-
+$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 /* ----------- /api/login (admin) ---------------- */
