@@ -62,6 +62,7 @@ function UserOrders({
               <th>Cena</th>
               <th>Data</th>
               <th>Status</th>
+              <th>Status Płatności</th> {/* Новий стовпець */}
               <th>Szczegóły</th>
             </tr>
           </thead>
@@ -79,6 +80,11 @@ function UserOrders({
                     <option value="completed">Zrealizowane</option>
                     <option value="cancelled">Anulowane</option>
                   </select>
+                </td>
+                <td>
+                  {order.payment_status === "completed" ? "Opłacone" : 
+                   order.payment_status === "cancelled" ? "Anulowane" : 
+                   "Oczekujące na płatność"}
                 </td>
                 <td>{order.details || "Brak"}</td>
               </tr>

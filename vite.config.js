@@ -8,8 +8,12 @@ export default defineConfig({
     cp({
       targets: [
         {
-          src: 'sms-auth-php', 
+          src: 'sms-auth-php', // Копіюємо всю папку sms-auth-php
           dest: 'dist/sms-auth-php'
+        },
+        {
+          src: 'sms-auth-php/.env', // Вихідний файл
+          dest: 'dist/sms-auth-php/env' // Копіюємо як env (без крапки)
         }
       ]
     })
