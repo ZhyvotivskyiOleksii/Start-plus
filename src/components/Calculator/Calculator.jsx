@@ -414,64 +414,76 @@ export default function Calculator() {
 
     // Обробка замовлення
     async function handleOrder() {
+        // Перевірка обов'язкових полів
+        const missingFields = [];
+
         if (!selectedDate) {
             calendarRef.current?.classList.add(css["error-border"], css["shake-anim"]);
             calendarRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
+            missingFields.push("data sprzątania");
         }
+
         if (!selectedTime) {
             timeSlotsRef.current?.classList.add(css["error-border"], css["shake-anim"]);
             timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
+            missingFields.push("godzina sprzątania");
         }
 
-        // Перевірка та підсвітка всіх полів у DANE KONTAKTOWE
-        let contactError = false;
-        if (!name || !phone || !email) {
-            setError("Proszę wprowadzić wszystkie dane kontaktowe.");
-            if (!name) {
-                nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            if (!phone) {
-                phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            if (!email) {
-                emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            contactError = true;
-            nameRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
+        if (!name) {
+            nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("imię");
+        }
+
+        if (!phone) {
+            phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("telefon kontaktowy");
+        }
+
+        if (!email) {
+            emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("adres e-mail");
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (email && !emailRegex.test(email)) {
             setError("Proszę wprowadzić prawidłowy adres e-mail.");
             emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
             emailRef.current?.scrollIntoView({ behavior: "smooth" });
             return;
         }
 
-        // Перевірка та підсвітка всіх полів у WPROWADŹ SWÓJ ADRES
-        let addressError = false;
-        if (!street || !houseNumber || !postalCode) {
-            setError("Proszę wprowadzić wszystkie dane adresowe.");
-            if (!street) {
-                streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            if (!houseNumber) {
-                houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            if (!postalCode) {
-                postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            }
-            addressError = true;
-            streetRef.current?.scrollIntoView({ behavior: "smooth" });
-            return;
+        if (!street) {
+            streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("ulica");
+        }
+
+        if (!houseNumber) {
+            houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("numer domu");
+        }
+
+        if (!postalCode) {
+            postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+            missingFields.push("kod pocztowy");
         }
 
         if (!agreeToTerms || !agreeToMarketing) {
             agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-            agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+            missingFields.push("zgoda na regulamin i przetwarzanie danych");
+        }
+
+        if (missingFields.length > 0) {
+            const errorMessage = `Proszę wypełnić wszystkie wymagane pola: ${missingFields.join(", ")}.`;
+            setError(errorMessage);
+            if (missingFields.includes("data sprzątania") || missingFields.includes("godzina sprzątania")) {
+                calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+            } else if (missingFields.includes("imię") || missingFields.includes("telefon kontaktowy") || missingFields.includes("adres e-mail")) {
+                nameRef.current?.scrollIntoView({ behavior: "smooth" });
+            } else if (missingFields.includes("ulica") || missingFields.includes("numer domu") || missingFields.includes("kod pocztowy")) {
+                streetRef.current?.scrollIntoView({ behavior: "smooth" });
+            } else {
+                agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+            }
             return;
         }
 
@@ -480,47 +492,48 @@ export default function Calculator() {
 
         // Формуємо orderData у snake_case для всіх полів
         const orderData = {
-            order_type: order_type, // Тип замовлення: 'apartment' або 'private_house'
-            total_price: parseFloat(calculateTotal()), // Загальна ціна
-            city: selectedCity, // Місто
+            order_type: order_type,
+            total_price: parseFloat(calculateTotal()),
+            city: selectedCity,
             address: {
-                street: street, // Вулиця
-                postal_code: postalCode, // Поштовий код
-                house_number: houseNumber, // Номер будинку
-                apartment_number: apartmentNumber, // Номер квартири
-                building: building, // Будівля
-                floor: floor, // Поверх
-                intercom_code: intercomCode, // Код домофона
+                street: street,
+                postal_code: postalCode,
+                house_number: houseNumber,
+                apartment_number: apartmentNumber,
+                building: building,
+                floor: floor,
+                intercom_code: intercomCode,
             },
             client_info: {
-                name: name, // Ім'я клієнта
-                phone: phone, // Телефон
-                email: email, // Електронна пошта
-                additional_info: additionalInfo, // Додаткова інформація
-                client_type: clientType, // Тип клієнта ('Osoba prywatna' або 'Firma')
+                name: name,
+                phone: phone,
+                email: email,
+                additional_info: additionalInfo,
+                client_type: clientType,
             },
-            payment_status: 'pending', // Статус платежу
-            rooms: rooms, // Кількість кімнат
-            bathrooms: bathrooms, // Кількість ванних кімнат
-            kitchen: kitchen, // Наявність кухні (true/false)
-            kitchen_annex: kitchenAnnex, // Наявність кухонного анексу (true/false)
-            vacuum_needed: vacuumNeeded, // Чи потрібен пилосос (true/false)
+            payment_status: 'pending',
+            rooms: rooms,
+            bathrooms: bathrooms,
+            kitchen: kitchen,
+            kitchen_annex: kitchenAnnex,
+            vacuum_needed: vacuumNeeded,
             selected_services: paidServices
                 .filter((s) =>
                     (s.type === 'checkbox' && selectedServices[s.id]) ||
                     (s.type === 'quantity' && selectedServices[s.id] > 0)
                 )
                 .map((s) => ({
-                    name: s.name, // Назва послуги
-                    price: s.price, // Ціна послуги
-                    quantity: selectedServices[s.id], // Кількість
-                })), // Вибрані додаткові послуги
-            selected_date: formattedDate, // Вибрана дата
-            selected_time: selectedTime, // Вибраний час
-            cleaning_frequency: cleaningFrequency, // Частота прибирання
+                    name: s.name,
+                    price: s.price,
+                    quantity: selectedServices[s.id],
+                })),
+            selected_date: formattedDate,
+            selected_time: selectedTime,
+            cleaning_frequency: cleaningFrequency,
         };
 
         try {
+            console.log("Sending request to /api/orders with data:", orderData);
             const response = await api.post("/orders", orderData);
             console.log("Response from /api/orders:", response.data);
             const { orderId } = response.data;
@@ -532,32 +545,38 @@ export default function Calculator() {
 
             const amount = parseFloat(calculateTotal());
 
-            console.log("Sending request to /api/create-payment with data:", {
+            console.log("Sending request to /api/create-payu-payment with data:", {
                 order_id: orderId,
                 total_price: amount,
-                description: "Оплата за прибирання квартири",
+                description: `Sprzątanie mieszkania #${orderId}`,
                 client_email: orderData.client_info.email,
                 client_phone: orderData.client_info.phone,
                 client_info: {
-                    name: orderData.client_info.name,
+                    name: orderData.client_info.name || "Jan Kowalski",
                 },
             });
 
-            const paymentResponse = await api.post("/create-payment", {
+            const paymentResponse = await api.post("/create-payu-payment", {
                 order_id: orderId,
                 total_price: amount,
-                description: "Оплата за прибирання квартири",
+                description: `Sprzątanie mieszkania #${orderId}`,
                 client_email: orderData.client_info.email,
                 client_phone: orderData.client_info.phone,
                 client_info: {
-                    name: orderData.client_info.name,
+                    name: orderData.client_info.name || "Jan Kowalski",
                 },
             });
 
+            console.log("Response from /api/create-payu-payment:", paymentResponse.data);
             const { redirectUri } = paymentResponse.data;
+
+            if (!redirectUri) {
+                throw new Error("Не вдалося отримати redirectUri із відповіді /api/create-payu-payment");
+            }
 
             window.location.href = redirectUri;
         } catch (error) {
+            console.error("Error during order handling:", error);
             setError(error.response?.data?.error || "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.");
         }
     }

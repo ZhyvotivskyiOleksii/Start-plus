@@ -5,7 +5,7 @@ import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "reac
 
 const API = import.meta.env.VITE_API || "http://localhost:3001/api";
 
-export default function Calculator({ lang, type, title }) {
+export default function RenovationCalculator({ lang, type, title }) {
   const [area, setArea] = useState(0);
   const [windows, setWindows] = useState(0);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -20,6 +20,38 @@ export default function Calculator({ lang, type, title }) {
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState(null);
+
+  const [street, setStreet] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [houseNumber, setHouseNumber] = useState("");
+  const [apartmentNumber, setApartmentNumber] = useState("");
+  const [building, setBuilding] = useState("");
+  const [floor, setFloor] = useState("");
+  const [intercomCode, setIntercomCode] = useState("");
+  const [clientType, setClientType] = useState("private");
+  const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [nip, setNip] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [agreeToMarketing, setAgreeToMarketing] = useState(false);
+
+  // Refs для підсвітки помилок
+  const streetRef = useRef(null);
+  const postalCodeRef = useRef(null);
+  const houseNumberRef = useRef(null);
+  const nameRef = useRef(null);
+  const companyNameRef = useRef(null);
+  const nipRef = useRef(null);
+  const phoneRef = useRef(null);
+  const emailRef = useRef(null);
+  const calendarRef = useRef(null);
+  const timeSlotsRef = useRef(null);
+  const agreementRef = useRef(null);
+  const rightBlockRef = useRef(null);
+  const [isSticked, setIsSticked] = useState(true);
 
   const cities = {
     Warszawa: 0.00,
@@ -70,23 +102,6 @@ export default function Calculator({ lang, type, title }) {
   const filteredCities = Object.entries(cities).filter(([city]) =>
     city.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  const [street, setStreet] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [houseNumber, setHouseNumber] = useState("");
-  const [apartmentNumber, setApartmentNumber] = useState("");
-  const [building, setBuilding] = useState("");
-  const [floor, setFloor] = useState("");
-  const [intercomCode, setIntercomCode] = useState("");
-  const [clientType, setClientType] = useState("private");
-  const [name, setName] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [nip, setNip] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [additionalInfo, setAdditionalInfo] = useState("");
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
-  const [agreeToMarketing, setAgreeToMarketing] = useState(false);
 
   const pricePerSquareMeter = 7.0;
   const pricePerWindow = 40.0;
@@ -153,18 +168,178 @@ export default function Calculator({ lang, type, title }) {
       paymentSuccess: "Płatność zakończona sukcesem! Twoje zamówienie zostało złożone.",
       paymentError: "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie.",
       paymentCanceled: "Płatność została anulowana. Spróbuj ponownie.",
+      errorMissingFields: "Proszę wypełnić wszystkie wymagane pola: ",
+      invalidEmail: "Proszę wprowadzić prawidłowy adres e-mail.",
+      invalidPhone: "Proszę wprowadzić prawidłowy numer telefonu.",
+      invalidNip: "Proszę wprowadzić prawidłowy numer NIP.",
     },
-    // Додаткові мови можна додати за потреби
+    uk: {
+      title: title || "Квартира після ремонту",
+      areaLabel: "Площа м²",
+      windowsLabel: "Вікон",
+      areaPrice: "7.00 zł/м²",
+      windowsPrice: "40.00 zł/шт",
+      subtitle: "Виберіть параметри нижче, щоб розрахувати вартість.",
+      calendarTitle: "ВИБЕРІТЬ ЗРУЧНИЙ ТЕРМІН І ЧАС ПРИБИРАННЯ",
+      timeLabel: "Година",
+      calendarFooter: "Можна почати в будь-який момент",
+      addressTitle: "ВВЕДІТЬ ВАШУ АДРЕСУ",
+      cityLabel: "Виберіть місто",
+      streetLabel: "Вулиця",
+      postalCodeLabel: "Поштовий індекс",
+      houseNumberLabel: "Номер будинку",
+      apartmentNumberLabel: "Номер квартири",
+      buildingLabel: "Будинок",
+      floorLabel: "Поверх",
+      intercomCodeLabel: "Код домофона",
+      citySearchPlaceholder: "Введіть назву населеного пункту...",
+      contactTitle: "КОНТАКТНІ ДАНІ",
+      clientTypeLabel: "Тип клієнта",
+      privateLabel: "Фізична особа",
+      companyLabel: "Компанія",
+      nameLabel: "Ім'я",
+      companyNameLabel: "Назва компанії",
+      nipLabel: "NIP",
+      phoneLabel: "Контактний телефон",
+      emailLabel: "Адреса електронної пошти",
+      additionalInfoLabel: "Додаткова інформація до замовлення",
+      agreement1: "Оформлюючи замовлення, я погоджуюсь з Правилами та Політикою конфіденційності.",
+      agreement2: "Я даю згоду на обробку моїх персональних даних адміністратором",
+      locationLabel: "Місцезнаходження",
+      specialistInfo: "Наші виконавці мають усі необхідні засоби для прибирання та обладнання.",
+      workTimeLabel: "Орієнтовний час роботи",
+      cleanersLabel: "Кілька прибиральників",
+      datePlaceholder: "Виберіть дату і час",
+      locationCostLabel: "Додаткова вартість доїзду",
+      promoPlaceholder: "Промокод",
+      applyPromo: "Застосувати",
+      totalLabel: "До сплати",
+      orderButton: "Замовляю за",
+      todayLabel: "сьогодні",
+      tomorrowLabel: "завтра",
+      unavailableLabel: "недоступно",
+      metersLabel: "Метрів",
+      paymentSuccess: "Оплата успішна! Ваше замовлення прийнято.",
+      paymentError: "Виникла помилка під час оформлення замовлення. Спробуйте ще раз.",
+      paymentCanceled: "Оплата була скасована. Спробуйте ще раз.",
+      errorMissingFields: "Будь ласка, заповніть усі обов’язкові поля: ",
+      invalidEmail: "Будь ласка, введіть правильну адресу електронної пошти.",
+      invalidPhone: "Будь ласка, введіть правильний номер телефону.",
+      invalidNip: "Будь ласка, введіть правильний номер NIP.",
+    },
+    ru: {
+      title: title || "Квартира после ремонта",
+      areaLabel: "Площадь м²",
+      windowsLabel: "Окон",
+      areaPrice: "7.00 zł/м²",
+      windowsPrice: "40.00 zł/шт",
+      subtitle: "Выберите параметры ниже, чтобы рассчитать стоимость.",
+      calendarTitle: "ВЫБЕРИТЕ УДОБНЫЙ СРОК И ВРЕМЯ УБОРКИ",
+      timeLabel: "Время",
+      calendarFooter: "Можно начать в любой момент",
+      addressTitle: "ВВЕДИТЕ ВАШ АДРЕС",
+      cityLabel: "Выберите город",
+      streetLabel: "Улица",
+      postalCodeLabel: "Почтовый индекс",
+      houseNumberLabel: "Номер дома",
+      apartmentNumberLabel: "Номер квартиры",
+      buildingLabel: "Здание",
+      floorLabel: "Этаж",
+      intercomCodeLabel: "Код домофона",
+      citySearchPlaceholder: "Введите название населенного пункта...",
+      contactTitle: "КОНТАКТНЫЕ ДАННЫЕ",
+      clientTypeLabel: "Тип клиента",
+      privateLabel: "Частное лицо",
+      companyLabel: "Компания",
+      nameLabel: "Имя",
+      companyNameLabel: "Название компании",
+      nipLabel: "NIP",
+      phoneLabel: "Контактный телефон",
+      emailLabel: "Адрес электронной почты",
+      additionalInfoLabel: "Дополнительная информация к заказу",
+      agreement1: "Оформляя заказ, я соглашаюсь с Правилами и Политикой конфиденциальности.",
+      agreement2: "Я даю согласие на обработку моих персональных данных администратором",
+      locationLabel: "Местоположение",
+      specialistInfo: "Наши исполнители имеют все необходимые средства для уборки и оборудование.",
+      workTimeLabel: "Примерное время работы",
+      cleanersLabel: "Несколько уборщиков",
+      datePlaceholder: "Выберите дату и время",
+      locationCostLabel: "Дополнительная стоимость доставки",
+      promoPlaceholder: "Промокод",
+      applyPromo: "Применить",
+      totalLabel: "К оплате",
+      orderButton: "Заказываю за",
+      todayLabel: "сегодня",
+      tomorrowLabel: "завтра",
+      unavailableLabel: "недоступно",
+      metersLabel: "Метров",
+      paymentSuccess: "Оплата прошла успешно! Ваш заказ принят.",
+      paymentError: "Произошла ошибка при оформлении заказа. Попробуйте снова.",
+      paymentCanceled: "Оплата была отменена. Попробуйте снова.",
+      errorMissingFields: "Пожалуйста, заполните все обязательные поля: ",
+      invalidEmail: "Пожалуйста, введите правильный адрес электронной почты.",
+      invalidPhone: "Пожалуйста, введите правильный номер телефона.",
+      invalidNip: "Пожалуйста, введите правильный номер NIP.",
+    },
+    en: {
+      title: title || "Post-Renovation Cleaning",
+      areaLabel: "Area m²",
+      windowsLabel: "Windows",
+      areaPrice: "7.00 zł/m²",
+      windowsPrice: "40.00 zł/unit",
+      subtitle: "Select the parameters below to calculate the cost.",
+      calendarTitle: "CHOOSE A CONVENIENT DATE AND TIME FOR CLEANING",
+      timeLabel: "Time",
+      calendarFooter: "You can start at any time",
+      addressTitle: "ENTER YOUR ADDRESS",
+      cityLabel: "Select city",
+      streetLabel: "Street",
+      postalCodeLabel: "Postal code",
+      houseNumberLabel: "House number",
+      apartmentNumberLabel: "Apartment number",
+      buildingLabel: "Building",
+      floorLabel: "Floor",
+      intercomCodeLabel: "Intercom code",
+      citySearchPlaceholder: "Enter the name of the locality...",
+      contactTitle: "CONTACT DETAILS",
+      clientTypeLabel: "Client type",
+      privateLabel: "Private individual",
+      companyLabel: "Company",
+      nameLabel: "Name",
+      companyNameLabel: "Company name",
+      nipLabel: "NIP",
+      phoneLabel: "Contact phone",
+      emailLabel: "Email address",
+      additionalInfoLabel: "Additional order information",
+      agreement1: "By placing an order, I agree to the Terms and Privacy Policy.",
+      agreement2: "I consent to the processing of my personal data by the administrator",
+      locationLabel: "Location",
+      specialistInfo: "Our cleaners have all the necessary cleaning supplies and equipment.",
+      workTimeLabel: "Estimated work time",
+      cleanersLabel: "Multiple cleaners",
+      datePlaceholder: "Select date and time",
+      locationCostLabel: "Additional travel cost",
+      promoPlaceholder: "Promo code",
+      applyPromo: "Apply",
+      totalLabel: "Total to pay",
+      orderButton: "Order for",
+      todayLabel: "today",
+      tomorrowLabel: "tomorrow",
+      unavailableLabel: "unavailable",
+      metersLabel: "Meters",
+      paymentSuccess: "Payment successful! Your order has been placed.",
+      paymentError: "An error occurred while placing the order. Please try again.",
+      paymentCanceled: "Payment was canceled. Please try again.",
+      errorMissingFields: "Please fill in all required fields: ",
+      invalidEmail: "Please enter a valid email address.",
+      invalidPhone: "Please enter a valid phone number.",
+      invalidNip: "Please enter a valid NIP number.",
+    },
   };
 
   const t = texts[lang] || texts.pl;
 
-  const calendarRef = useRef(null);
-  const timeSlotsRef = useRef(null);
-  const agreementRef = useRef(null);
-  const rightBlockRef = useRef(null);
-  const [isSticked, setIsSticked] = useState(true);
-
+  // Очищення помилок при заповненні полів
   useEffect(() => {
     const fetchDiscounts = async () => {
       if (!type || type === "undefined") {
@@ -220,6 +395,54 @@ export default function Calculator({ lang, type, title }) {
       timeSlotsRef.current.classList.remove(css["error-border"], css["shake-anim"]);
     }
   }, [selectedTime]);
+
+  useEffect(() => {
+    if (street && streetRef.current) {
+      streetRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [street]);
+
+  useEffect(() => {
+    if (postalCode && postalCodeRef.current) {
+      postalCodeRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [postalCode]);
+
+  useEffect(() => {
+    if (houseNumber && houseNumberRef.current) {
+      houseNumberRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [houseNumber]);
+
+  useEffect(() => {
+    if (name && nameRef.current) {
+      nameRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [name]);
+
+  useEffect(() => {
+    if (companyName && companyNameRef.current) {
+      companyNameRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [companyName]);
+
+  useEffect(() => {
+    if (nip && nipRef.current) {
+      nipRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [nip]);
+
+  useEffect(() => {
+    if (phone && phoneRef.current) {
+      phoneRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [phone]);
+
+  useEffect(() => {
+    if (email && emailRef.current) {
+      emailRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [email]);
 
   useEffect(() => {
     if (agreeToTerms && agreeToMarketing && agreementRef.current) {
@@ -382,8 +605,8 @@ export default function Calculator({ lang, type, title }) {
   };
 
   const calculateWorkTime = () => {
-    const areaTime = area * (10 / 60);
-    const windowsTime = windows * 1;
+    const areaTime = area * (10 / 60); // 10 хвилин на квадратний метр
+    const windowsTime = windows * 1; // 1 година на вікно
     const totalTime = areaTime + windowsTime;
     console.log(`Розрахунок часу роботи: ${totalTime} годин (площа: ${areaTime}, вікна: ${windowsTime})`);
     return totalTime;
@@ -391,7 +614,7 @@ export default function Calculator({ lang, type, title }) {
 
   const calculateCleanersAndTime = () => {
     const totalHours = calculateWorkTime();
-    const cleaners = Math.ceil(totalHours / 9);
+    const cleaners = Math.ceil(totalHours / 9); // Один прибиральник працює до 9 годин
     const adjustedHours = totalHours / cleaners;
     const hours = Math.floor(adjustedHours);
     const minutes = Math.round((adjustedHours - hours) * 60);
@@ -423,52 +646,146 @@ export default function Calculator({ lang, type, title }) {
   const handleOrder = async () => {
     console.log("Початок обробки замовлення...");
 
+    // Перевірка обов'язкових полів
+    const missingFields = [];
+
     if (!selectedDate) {
       calendarRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log("Помилка: Дата не обрана");
-      return;
+      missingFields.push("data sprzątania");
     }
+
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log("Помилка: Час не обраний");
-      return;
+      missingFields.push("godzina sprzątania");
     }
+
+    if (!street) {
+      streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push(t.streetLabel.toLowerCase());
+    }
+
+    if (!postalCode) {
+      postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push(t.postalCodeLabel.toLowerCase());
+    }
+
+    if (!houseNumber) {
+      houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push(t.houseNumberLabel.toLowerCase());
+    }
+
+    if (clientType === "private") {
+      if (!name) {
+        nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+        missingFields.push(t.nameLabel.toLowerCase());
+      }
+    } else {
+      if (!companyName) {
+        companyNameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+        missingFields.push(t.companyNameLabel.toLowerCase());
+      }
+      if (!nip) {
+        nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+        missingFields.push(t.nipLabel.toLowerCase());
+      } else {
+        // Валідація NIP (польський формат: 10 цифр)
+        const nipRegex = /^\d{10}$/;
+        if (!nipRegex.test(nip)) {
+          nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+          setError(t.invalidNip);
+          nipRef.current?.scrollIntoView({ behavior: "smooth" });
+          return;
+        }
+      }
+    }
+
+    if (!phone) {
+      phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push(t.phoneLabel.toLowerCase());
+    } else {
+      // Валідація телефону (простий формат: 9-12 цифр)
+      const phoneRegex = /^\d{9,12}$/;
+      if (!phoneRegex.test(phone)) {
+        phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+        setError(t.invalidPhone);
+        phoneRef.current?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    if (!email) {
+      emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push(t.emailLabel.toLowerCase());
+    } else {
+      // Валідація email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+        setError(t.invalidEmail);
+        emailRef.current?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
     if (!agreeToTerms || !agreeToMarketing) {
       agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       agreementRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log("Помилка: Не погоджено з умовами або маркетингом");
+      missingFields.push("zgoda na regulamin i przetwarzanie danych");
+    }
+
+    if (missingFields.length > 0) {
+      const errorMessage = `${t.errorMissingFields} ${missingFields.join(", ")}.`;
+      console.log(`Помилка: Відсутні обов’язкові поля: ${missingFields.join(", ")}`);
+      setError(errorMessage);
+      if (missingFields.includes("data sprzątania") || missingFields.includes("godzina sprzątania")) {
+        calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else if (missingFields.includes(t.streetLabel.toLowerCase()) || missingFields.includes(t.postalCodeLabel.toLowerCase()) || missingFields.includes(t.houseNumberLabel.toLowerCase())) {
+        streetRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else if (missingFields.includes(t.nameLabel.toLowerCase()) || missingFields.includes(t.companyNameLabel.toLowerCase()) || missingFields.includes(t.nipLabel.toLowerCase()) || missingFields.includes(t.phoneLabel.toLowerCase()) || missingFields.includes(t.emailLabel.toLowerCase())) {
+        nameRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
       return;
     }
 
+    // Форматування дати у формат YYYY-MM-DD
+    const formattedDate = selectedDate
+      ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+      : null;
+
     const orderData = {
-      order_type: "renovation", // Додаємо order_type для таблиці orders
+      order_type: "renovation",
       area,
       windows,
-      totalPrice: calculateTotal(),
-      selectedDate: selectedDate.toISOString(),
-      selectedTime,
+      total_price: parseFloat(calculateTotal()),
+      selected_date: formattedDate,
+      selected_time: selectedTime,
       city: selectedCity,
       address: {
         street,
-        postalCode,
-        houseNumber,
-        apartmentNumber,
+        postal_code: postalCode,
+        house_number: houseNumber,
+        apartment_number: apartmentNumber,
         building,
         floor,
-        intercomCode,
+        intercom_code: intercomCode,
       },
-      clientInfo: {
-        clientType,
+      client_info: {
+        client_type: clientType === "private" ? "Osoba prywatna" : "Firma",
         name: clientType === "private" ? name : undefined,
-        companyName: clientType === "company" ? companyName : undefined,
+        company_name: clientType === "company" ? companyName : undefined,
         nip: clientType === "company" ? nip : undefined,
         phone,
         email,
-        additionalInfo,
+        additional_info: additionalInfo,
       },
-      payment_status: "pending", // Додаємо статус платежу
+      payment_status: "pending",
     };
 
     console.log("Дані замовлення:", orderData);
@@ -476,7 +793,7 @@ export default function Calculator({ lang, type, title }) {
     try {
       // 1. Створюємо замовлення
       console.log("Відправка запиту на створення замовлення...");
-      const response = await fetch("http://localhost:3001/api/orders", {
+      const response = await fetch(`${API}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -485,7 +802,8 @@ export default function Calculator({ lang, type, title }) {
       });
 
       if (!response.ok) {
-        throw new Error("Не вдалося створити замовлення.");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Не вдалося створити замовлення.");
       }
 
       const { orderId } = await response.json();
@@ -494,23 +812,26 @@ export default function Calculator({ lang, type, title }) {
       // 2. Ініціалізуємо платіж через PayU
       const amount = parseFloat(calculateTotal());
       console.log(`Ініціалізація платежу PayU для суми: ${amount} zł...`);
-      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+      const paymentResponse = await fetch(`${API}/create-payu-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          orderId,
-          amount,
-          email: orderData.clientInfo.email,
-          phone: orderData.clientInfo.phone,
-          firstName: clientType === "private" ? (orderData.clientInfo.name?.split(" ")[0] || "Jan") : "Firma",
-          lastName: clientType === "private" ? (orderData.clientInfo.name?.split(" ")[1] || "Kowalski") : orderData.clientInfo.companyName || "Firma",
+          order_id: orderId,
+          total_price: amount,
+          description: `Sprzątanie po remoncie #${orderId}`,
+          client_email: orderData.client_info.email,
+          client_phone: orderData.client_info.phone,
+          client_info: {
+            name: clientType === "private" ? (orderData.client_info.name || "Jan Kowalski") : orderData.client_info.company_name || "Firma",
+          },
         }),
       });
 
       if (!paymentResponse.ok) {
-        throw new Error("Не вдалося ініціалізувати платіж.");
+        const errorData = await paymentResponse.json();
+        throw new Error(errorData.error || "Не вдалося ініціалізувати платіж.");
       }
 
       const { redirectUri } = await paymentResponse.json();
@@ -728,6 +1049,7 @@ export default function Calculator({ lang, type, title }) {
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>{t.streetLabel}</label>
                     <input
+                      ref={streetRef}
                       type="text"
                       value={street}
                       onChange={(e) => {
@@ -740,6 +1062,7 @@ export default function Calculator({ lang, type, title }) {
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>{t.postalCodeLabel}</label>
                     <input
+                      ref={postalCodeRef}
                       type="text"
                       value={postalCode}
                       onChange={(e) => {
@@ -752,6 +1075,7 @@ export default function Calculator({ lang, type, title }) {
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>{t.houseNumberLabel}</label>
                     <input
+                      ref={houseNumberRef}
                       type="text"
                       value={houseNumber}
                       onChange={(e) => {
@@ -823,6 +1147,7 @@ export default function Calculator({ lang, type, title }) {
                     <div className={css["input-group"]}>
                       <label className={css["input-label"]}>{t.nameLabel}</label>
                       <input
+                        ref={nameRef}
                         type="text"
                         value={name}
                         onChange={(e) => {
@@ -837,6 +1162,7 @@ export default function Calculator({ lang, type, title }) {
                       <div className={css["input-group"]}>
                         <label className={css["input-label"]}>{t.companyNameLabel}</label>
                         <input
+                          ref={companyNameRef}
                           type="text"
                           value={companyName}
                           onChange={(e) => {
@@ -849,6 +1175,7 @@ export default function Calculator({ lang, type, title }) {
                       <div className={css["input-group"]}>
                         <label className={css["input-label"]}>{t.nipLabel}</label>
                         <input
+                          ref={nipRef}
                           type="text"
                           value={nip}
                           onChange={(e) => {
@@ -863,6 +1190,7 @@ export default function Calculator({ lang, type, title }) {
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>{t.phoneLabel}</label>
                     <input
+                      ref={phoneRef}
                       type="text"
                       value={phone}
                       onChange={(e) => {
@@ -875,6 +1203,7 @@ export default function Calculator({ lang, type, title }) {
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>{t.emailLabel}</label>
                     <input
+                      ref={emailRef}
                       type="email"
                       value={email}
                       onChange={(e) => {

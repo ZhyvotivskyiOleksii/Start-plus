@@ -17,7 +17,7 @@ cd server
 node server.js
 
 
-4
+
 
 cd /Users/oleksiizhyvotivskyi/Desktop/Start-plus/sms-auth-php
 php -S localhost:3001 index.php            

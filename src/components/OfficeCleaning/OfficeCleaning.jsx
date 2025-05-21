@@ -21,6 +21,7 @@ export default function OfficeCleaning({ lang, type, title }) {
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [bookedDates] = useState(new Set(["2025-03-15"]));
   const [discounts, setDiscounts] = useState({});
+  const [promoCodes, setPromoCodes] = useState([]);
   const [error, setError] = useState(null);
 
   const [name, setName] = useState("");
@@ -35,7 +36,6 @@ export default function OfficeCleaning({ lang, type, title }) {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [agreeToMarketing, setAgreeToMarketing] = useState(false);
 
-  // Додаємо поля для адреси, які потрібні для сумісності з таблицею orders
   const [street, setStreet] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [houseNumber, setHouseNumber] = useState("");
@@ -44,50 +44,68 @@ export default function OfficeCleaning({ lang, type, title }) {
   const [floor, setFloor] = useState("");
   const [intercomCode, setIntercomCode] = useState("");
 
+  // Refs для підсвітки помилок
+  const streetRef = useRef(null);
+  const postalCodeRef = useRef(null);
+  const houseNumberRef = useRef(null);
+  const nameRef = useRef(null);
+  const companyNameRef = useRef(null);
+  const nipRef = useRef(null);
+  const phoneRef = useRef(null);
+  const emailRef = useRef(null);
+  const vatAddressRef = useRef(null);
+  const vatCityRef = useRef(null);
+  const vatPostalCodeRef = useRef(null);
+  const calendarRef = useRef(null);
+  const timeSlotsRef = useRef(null);
+  const agreementRef = useRef(null);
+  const rightBlockRef = useRef(null);
+  const [isSticked, setIsSticked] = useState(true);
+
   const cities = {
-    "Warszawa": 0.00,
-    "Piastów": 30.00,
-    "Pruszków": 30.00,
-    "Piaseczno": 30.00,
-    "Sulejówek": 40.00,
-    "Józefów": 70.00,
-    "Kobyłka": 50.00,
+    Warszawa: 0.00,
+    Piastów: 30.00,
+    Pruszków: 30.00,
+    Piaseczno: 30.00,
+    Sulejówek: 40.00,
+    Józefów: 70.00,
+    Kobyłka: 50.00,
     "Ożarów Mazowiecki": 50.00,
-    "Otwock": 70.00,
-    "Zielonka": 40.00,
-    "Legionowo": 40.00,
-    "Józefosław": 60.00,
-    "Nieporęt": 90.00,
-    "Ząbki": 30.00,
-    "Blonie": 50.00,
+    Otwock: 70.00,
+    Zielonka: 40.00,
+    Legionowo: 40.00,
+    Józefosław: 60.00,
+    Nieporęt: 90.00,
+    Ząbki: 30.00,
+    Blonie: 50.00,
     "Stare Babice": 30.00,
-    "Brwinów": 50.00,
+    Brwinów: 50.00,
     "Grodzisk Mazowiecki": 60.00,
-    "Marki": 30.00,
-    "Raszyn": 25.00,
-    "Łomianki": 40.00,
-    "Łazy": 50.00,
+    Marki: 30.00,
+    Raszyn: 25.00,
+    Łomianki: 40.00,
+    Łazy: 50.00,
     "Nowa Iwiczna": 50.00,
-    "Wólka": 40.00,
+    Wólka: 40.00,
     "Konstancin-Jeziorna": 50.00,
-    "Jabłonna": 40.00,
+    Jabłonna: 40.00,
     "Nowy Dwór Mazowiecki": 75.00,
-    "Młociny": 60.00,
-    "Sołec": 80.00,
-    "Leszno": 80.00,
-    "Milanówek": 50.00,
-    "Izabelin": 70.00,
-    "Nadarzyn": 80.00,
-    "Żyrardów": 90.00,
+    Młociny: 60.00,
+    Sołec: 80.00,
+    Leszno: 80.00,
+    Milanówek: 50.00,
+    Izabelin: 70.00,
+    Nadarzyn: 80.00,
+    Żyrardów: 90.00,
     "Wola Krakowska": 100.00,
-    "Radzymin": 75.00,
+    Radzymin: 75.00,
     "Mińsk Mazowiecki": 80.00,
     "Nowa Wola": 60.00,
-    "Janki": 45.00,
+    Janki: 45.00,
     "Góra Kalwaria": 100.00,
-    "Mysiadło": 40.00,
-    "Władysławów": 30.00,
-    "Ustanów": 90.00,
+    Mysiadło: 40.00,
+    Władysławów: 30.00,
+    Ustanów: 90.00,
   };
 
   const filteredCities = Object.entries(cities).filter(([city]) =>
@@ -104,10 +122,6 @@ export default function OfficeCleaning({ lang, type, title }) {
   const basePrice = 246.00;
   const pricePerSquareMeter = 6.15;
   const pricePerWorkspace = 12.30;
-
-  const calendarRef = useRef(null);
-  const timeSlotsRef = useRef(null);
-  const agreementRef = useRef(null);
 
   const months = [
     "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
@@ -127,6 +141,9 @@ export default function OfficeCleaning({ lang, type, title }) {
       areaLabel: "Powierzchnia biura (m²)",
       workspacesLabel: "Liczba miejsc pracy",
       frequencyTitle: "CHĘTNOŚĆ CZĘSTOTLIWOŚCI SPRZĄTANIA",
+      calendarTitle: "WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA",
+      timeLabel: "Godzina",
+      calendarFooter: "Można zacząć w dowolnym momencie",
       cityLabel: "Wybierz miasto",
       citySearchPlaceholder: "Wprowadź nazwę miejscowości...",
       contactTitle: "DANE KONTAKTOWE",
@@ -167,11 +184,192 @@ export default function OfficeCleaning({ lang, type, title }) {
       buildingLabel: "Budynek",
       floorLabel: "Piętro",
       intercomCodeLabel: "Kod od domofonu",
+      errorMissingFields: "Proszę wypełnić wszystkie wymagane pola: ",
+      invalidEmail: "Proszę wprowadzić prawidłowy adres e-mail.",
+      invalidPhone: "Proszę wprowadzić prawidłowy numer telefonu.",
+      invalidNip: "Proszę wprowadzić prawidłowy numer NIP.",
     },
-    // Додаткові мови можна додати за потреби
+    uk: {
+      title: title || "Прибирання офісу",
+      subtitle: "Виберіть параметри, щоб розрахувати вартість прибирання офісу.",
+      areaLabel: "Площа офісу (м²)",
+      workspacesLabel: "Кількість робочих місць",
+      frequencyTitle: "ЧАСТОТА ПРИБИРАННЯ",
+      calendarTitle: "ВИБЕРІТЬ ЗРУЧНИЙ ТЕРМІН І ЧАС ПРИБИРАННЯ",
+      timeLabel: "Година",
+      calendarFooter: "Можна почати в будь-який момент",
+      cityLabel: "Виберіть місто",
+      citySearchPlaceholder: "Введіть назву населеного пункту...",
+      contactTitle: "КОНТАКТНІ ДАНІ",
+      nameLabel: "Ім'я",
+      phoneLabel: "Контактний телефон",
+      emailLabel: "Адреса електронної пошти",
+      additionalInfoLabel: "Додаткова інформація до замовлення",
+      vatTitle: "ДАНІ ДЛЯ РАХУНКУ-ФАКТУРИ VAT",
+      companyNameLabel: "Назва компанії",
+      nipLabel: "NIP",
+      vatAddressLabel: "Адреса",
+      vatCityLabel: "Місто",
+      vatPostalCodeLabel: "Поштовий індекс",
+      agreement1: "Оформлюючи замовлення, я погоджуюсь з Правилами та Політикою конфіденційності.",
+      agreement2: "Я даю згоду на обробку моїх персональних даних адміністратором",
+      locationLabel: "Місцезнаходження",
+      specialistInfo: "Наші виконавці мають усі необхідні засоби для прибирання та обладнання.",
+      workTimeLabel: "Орієнтовний час роботи",
+      cleanersLabel: "Кілька прибиральників",
+      datePlaceholder: "Виберіть дату і час",
+      locationCostLabel: "Додаткова вартість доїзду",
+      promoPlaceholder: "Промокод",
+      applyPromo: "Застосувати",
+      totalLabel: "До сплати",
+      orderButton: "Замовляю за",
+      todayLabel: "сьогодні",
+      tomorrowLabel: "завтра",
+      unavailableLabel: "недоступно",
+      vatText: "Ціна включає VAT, рахунок-фактура буде надісланий на email після завершення прибирання",
+      paymentSuccess: "Оплата успішна! Ваше замовлення прийнято.",
+      paymentError: "Виникла помилка під час оформлення замовлення. Спробуйте ще раз.",
+      paymentCanceled: "Оплата була скасована. Спробуйте ще раз.",
+      addressTitle: "ВВЕДІТЬ ВАШУ АДРЕСУ",
+      streetLabel: "Вулиця",
+      postalCodeLabel: "Поштовий індекс",
+      houseNumberLabel: "Номер будинку",
+      apartmentNumberLabel: "Номер квартири",
+      buildingLabel: "Будівля",
+      floorLabel: "Поверх",
+      intercomCodeLabel: "Код домофона",
+      errorMissingFields: "Будь ласка, заповніть усі обов’язкові поля: ",
+      invalidEmail: "Будь ласка, введіть правильну адресу електронної пошти.",
+      invalidPhone: "Будь ласка, введіть правильний номер телефону.",
+      invalidNip: "Будь ласка, введіть правильний номер NIP.",
+    },
+    ru: {
+      title: title || "Уборка офиса",
+      subtitle: "Выберите параметры, чтобы рассчитать стоимость уборки офиса.",
+      areaLabel: "Площадь офиса (м²)",
+      workspacesLabel: "Количество рабочих мест",
+      frequencyTitle: "ЧАСТОТА УБОРКИ",
+      calendarTitle: "ВЫБЕРИТЕ УДОБНЫЙ СРОК И ВРЕМЯ УБОРКИ",
+      timeLabel: "Время",
+      calendarFooter: "Можно начать в любой момент",
+      cityLabel: "Выберите город",
+      citySearchPlaceholder: "Введите название населенного пункта...",
+      contactTitle: "КОНТАКТНЫЕ ДАННЫЕ",
+      nameLabel: "Имя",
+      phoneLabel: "Контактный телефон",
+      emailLabel: "Адрес электронной почты",
+      additionalInfoLabel: "Дополнительная информация к заказу",
+      vatTitle: "ДАННЫЕ ДЛЯ СЧЕТА-ФАКТУРЫ VAT",
+      companyNameLabel: "Название компании",
+      nipLabel: "NIP",
+      vatAddressLabel: "Адрес",
+      vatCityLabel: "Город",
+      vatPostalCodeLabel: "Почтовый индекс",
+      agreement1: "Оформляя заказ, я соглашаюсь с Правилами и Политикой конфиденциальности.",
+      agreement2: "Я даю согласие на обработку моих персональных данных администратором",
+      locationLabel: "Местоположение",
+      specialistInfo: "Наши исполнители имеют все необходимые средства для уборки и оборудование.",
+      workTimeLabel: "Примерное время работы",
+      cleanersLabel: "Несколько уборщиков",
+      datePlaceholder: "Выберите дату и время",
+      locationCostLabel: "Дополнительная стоимость доставки",
+      promoPlaceholder: "Промокод",
+      applyPromo: "Применить",
+      totalLabel: "К оплате",
+      orderButton: "Заказываю за",
+      todayLabel: "сегодня",
+      tomorrowLabel: "завтра",
+      unavailableLabel: "недоступно",
+      vatText: "Цена включает VAT, счет-фактура будет отправлен на email после завершения уборки",
+      paymentSuccess: "Оплата прошла успешно! Ваш заказ принят.",
+      paymentError: "Произошла ошибка при оформлении заказа. Попробуйте снова.",
+      paymentCanceled: "Оплата была отменена. Попробуйте снова.",
+      addressTitle: "ВВЕДИТЕ ВАШ АДРЕС",
+      streetLabel: "Улица",
+      postalCodeLabel: "Почтовый индекс",
+      houseNumberLabel: "Номер дома",
+      apartmentNumberLabel: "Номер квартиры",
+      buildingLabel: "Здание",
+      floorLabel: "Этаж",
+      intercomCodeLabel: "Код домофона",
+      errorMissingFields: "Пожалуйста, заполните все обязательные поля: ",
+      invalidEmail: "Пожалуйста, введите правильный адрес электронной почты.",
+      invalidPhone: "Пожалуйста, введите правильный номер телефона.",
+      invalidNip: "Пожалуйста, введите правильный номер NIP.",
+    },
+    en: {
+      title: title || "Office Cleaning",
+      subtitle: "Select the parameters to calculate the cost of office cleaning.",
+      areaLabel: "Office area (m²)",
+      workspacesLabel: "Number of workspaces",
+      frequencyTitle: "CLEANING FREQUENCY",
+      calendarTitle: "CHOOSE A CONVENIENT DATE AND TIME FOR CLEANING",
+      timeLabel: "Time",
+      calendarFooter: "You can start at any time",
+      cityLabel: "Select city",
+      citySearchPlaceholder: "Enter the name of the locality...",
+      contactTitle: "CONTACT DETAILS",
+      nameLabel: "Name",
+      phoneLabel: "Contact phone",
+      emailLabel: "Email address",
+      additionalInfoLabel: "Additional order information",
+      vatTitle: "VAT INVOICE DETAILS",
+      companyNameLabel: "Company name",
+      nipLabel: "NIP",
+      vatAddressLabel: "Address",
+      vatCityLabel: "City",
+      vatPostalCodeLabel: "Postal code",
+      agreement1: "By placing an order, I agree to the Terms and Privacy Policy.",
+      agreement2: "I consent to the processing of my personal data by the administrator",
+      locationLabel: "Location",
+      specialistInfo: "Our cleaners have all the necessary cleaning supplies and equipment.",
+      workTimeLabel: "Estimated work time",
+      cleanersLabel: "Multiple cleaners",
+      datePlaceholder: "Select date and time",
+      locationCostLabel: "Additional travel cost",
+      promoPlaceholder: "Promo code",
+      applyPromo: "Apply",
+      totalLabel: "Total to pay",
+      orderButton: "Order for",
+      todayLabel: "today",
+      tomorrowLabel: "tomorrow",
+      unavailableLabel: "unavailable",
+      vatText: "Price includes VAT, invoice will be sent to email after cleaning",
+      paymentSuccess: "Payment successful! Your order has been placed.",
+      paymentError: "An error occurred while placing the order. Please try again.",
+      paymentCanceled: "Payment was canceled. Please try again.",
+      addressTitle: "ENTER YOUR ADDRESS",
+      streetLabel: "Street",
+      postalCodeLabel: "Postal code",
+      houseNumberLabel: "House number",
+      apartmentNumberLabel: "Apartment number",
+      buildingLabel: "Building",
+      floorLabel: "Floor",
+      intercomCodeLabel: "Intercom code",
+      errorMissingFields: "Please fill in all required fields: ",
+      invalidEmail: "Please enter a valid email address.",
+      invalidPhone: "Please enter a valid phone number.",
+      invalidNip: "Please enter a valid NIP number.",
+    },
   };
 
   const t = texts[lang] || texts.pl;
+
+  // Завантаження промокодів з API
+  useEffect(() => {
+    const fetchPromoCodes = async () => {
+      try {
+        console.log("Завантаження промокодів...");
+        const { data } = await axios.get(`${API}/promo-codes`);
+        setPromoCodes(data);
+        console.log("Промокоди завантажено:", data);
+      } catch (err) {
+        console.error("Помилка завантаження промокодів:", err);
+        setError("Не вдалося завантажити промокоди. Спробуйте ще раз.");
+      }
+    };
+    fetchPromoCodes();
+  }, []);
 
   useEffect(() => {
     const fetchDiscounts = async () => {
@@ -206,6 +404,18 @@ export default function OfficeCleaning({ lang, type, title }) {
   }, [type]);
 
   useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) setIsSticked(false);
+        else setIsSticked(true);
+      },
+      { root: null, threshold: 0.2 }
+    );
+    if (rightBlockRef.current) observer.observe(rightBlockRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
     if (selectedDate && calendarRef.current) {
       calendarRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
     }
@@ -216,6 +426,72 @@ export default function OfficeCleaning({ lang, type, title }) {
       timeSlotsRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
     }
   }, [selectedTime]);
+
+  useEffect(() => {
+    if (street && streetRef.current) {
+      streetRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [street]);
+
+  useEffect(() => {
+    if (postalCode && postalCodeRef.current) {
+      postalCodeRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [postalCode]);
+
+  useEffect(() => {
+    if (houseNumber && houseNumberRef.current) {
+      houseNumberRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [houseNumber]);
+
+  useEffect(() => {
+    if (name && nameRef.current) {
+      nameRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [name]);
+
+  useEffect(() => {
+    if (companyName && companyNameRef.current) {
+      companyNameRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [companyName]);
+
+  useEffect(() => {
+    if (nip && nipRef.current) {
+      nipRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [nip]);
+
+  useEffect(() => {
+    if (phone && phoneRef.current) {
+      phoneRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [phone]);
+
+  useEffect(() => {
+    if (email && emailRef.current) {
+      emailRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [email]);
+
+  useEffect(() => {
+    if (vatAddress && vatAddressRef.current) {
+      vatAddressRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [vatAddress]);
+
+  useEffect(() => {
+    if (vatCity && vatCityRef.current) {
+      vatCityRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [vatCity]);
+
+  useEffect(() => {
+    if (vatPostalCode && vatPostalCodeRef.current) {
+      vatPostalCodeRef.current.classList.remove(calcCss["error-border"], calcCss["shake-anim"]);
+    }
+  }, [vatPostalCode]);
 
   useEffect(() => {
     if (agreeToTerms && agreeToMarketing && agreementRef.current) {
@@ -258,11 +534,6 @@ export default function OfficeCleaning({ lang, type, title }) {
   };
 
   const handlePromoApply = () => {
-    const promoCodes = [
-      { code: "WEEKEND", discount: 20 },
-      { code: "TWOWEEKS", discount: 15 },
-      { code: "MONTH", discount: 10 },
-    ];
     const promoCode = promoCodes.find((code) => code.code === promo.toUpperCase());
     if (promoCode) {
       setDiscount(promoCode.discount);
@@ -437,72 +708,178 @@ export default function OfficeCleaning({ lang, type, title }) {
   async function handleOrder() {
     console.log("Початок обробки замовлення...");
 
-    if (!agreeToTerms || !agreeToMarketing) {
-      console.log("Помилка: Не погоджено з умовами або маркетингом");
-      setError("Proszę zaakceptować regulamin i zgodę na przetwarzanie danych.");
-      agreementRef.current?.scrollIntoView({ behavior: "smooth" });
-      return;
-    }
+    // Перевірка обов'язкових полів
+    const missingFields = [];
 
-    // Додаткові перевірки, якщо календар активний
-    /*
     if (!selectedDate) {
       calendarRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log("Помилка: Дата не обрана");
-      return;
+      missingFields.push("data sprzątania");
     }
+
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log("Помилка: Час не обраний");
+      missingFields.push("godzina sprzątania");
+    }
+
+    if (!street) {
+      streetRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.streetLabel.toLowerCase());
+    }
+
+    if (!postalCode) {
+      postalCodeRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.postalCodeLabel.toLowerCase());
+    }
+
+    if (!houseNumber) {
+      houseNumberRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.houseNumberLabel.toLowerCase());
+    }
+
+    if (!name) {
+      nameRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.nameLabel.toLowerCase());
+    }
+
+    if (!companyName) {
+      companyNameRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.companyNameLabel.toLowerCase());
+    }
+
+    if (!nip) {
+      nipRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.nipLabel.toLowerCase());
+    } else {
+      // Валідація NIP (польський формат: 10 цифр)
+      const nipRegex = /^\d{10}$/;
+      if (!nipRegex.test(nip)) {
+        nipRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+        setError(t.invalidNip);
+        nipRef.current?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    if (!phone) {
+      phoneRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.phoneLabel.toLowerCase());
+    } else {
+      // Валідація телефону (простий формат: 9-12 цифр)
+      const phoneRegex = /^\d{9,12}$/;
+      if (!phoneRegex.test(phone)) {
+        phoneRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+        setError(t.invalidPhone);
+        phoneRef.current?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    if (!email) {
+      emailRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.emailLabel.toLowerCase());
+    } else {
+      // Валідація email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        emailRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+        setError(t.invalidEmail);
+        emailRef.current?.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+
+    // Перевірка VAT полів
+    if (!vatAddress) {
+      vatAddressRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.vatAddressLabel.toLowerCase());
+    }
+
+    if (!vatCity) {
+      vatCityRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.vatCityLabel.toLowerCase());
+    }
+
+    if (!vatPostalCode) {
+      vatPostalCodeRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      missingFields.push(t.vatPostalCodeLabel.toLowerCase());
+    }
+
+    if (!agreeToTerms || !agreeToMarketing) {
+      agreementRef.current?.classList.add(calcCss["error-border"], calcCss["shake-anim"]);
+      agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+      console.log("Помилка: Не погоджено з умовами або маркетингом");
+      missingFields.push("zgoda na regulamin i przetwarzanie danych");
+    }
+
+    if (missingFields.length > 0) {
+      const errorMessage = `${t.errorMissingFields} ${missingFields.join(", ")}.`;
+      console.log(`Помилка: Відсутні обов’язкові поля: ${missingFields.join(", ")}`);
+      setError(errorMessage);
+      if (missingFields.includes("data sprzątania") || missingFields.includes("godzina sprzątania")) {
+        calendarRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else if (missingFields.includes(t.streetLabel.toLowerCase()) || missingFields.includes(t.postalCodeLabel.toLowerCase()) || missingFields.includes(t.houseNumberLabel.toLowerCase())) {
+        streetRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else if (missingFields.includes(t.nameLabel.toLowerCase()) || missingFields.includes(t.companyNameLabel.toLowerCase()) || missingFields.includes(t.nipLabel.toLowerCase()) || missingFields.includes(t.phoneLabel.toLowerCase()) || missingFields.includes(t.emailLabel.toLowerCase())) {
+        nameRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else if (missingFields.includes(t.vatAddressLabel.toLowerCase()) || missingFields.includes(t.vatCityLabel.toLowerCase()) || missingFields.includes(t.vatPostalCodeLabel.toLowerCase())) {
+        vatAddressRef.current?.scrollIntoView({ behavior: "smooth" });
+      } else {
+        agreementRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
       return;
     }
-    */
 
     const parsedOfficeArea = parseInt(officeArea, 10) || 10;
     const parsedWorkspaces = parseInt(workspaces, 10) || 0;
 
+    const formattedDate = selectedDate
+      ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+      : null;
+
     const orderData = {
-      order_type: "office", // Додаємо order_type для таблиці orders
-      officeArea: parsedOfficeArea,
+      order_type: "office",
+      office_area: parsedOfficeArea,
       workspaces: parsedWorkspaces,
-      cleaningFrequency,
-      totalPrice: calculateTotal(),
-      selectedDate: selectedDate ? selectedDate.toISOString() : null,
-      selectedTime,
+      cleaning_frequency: cleaningFrequency,
+      total_price: parseFloat(calculateTotal()),
+      selected_date: formattedDate,
+      selected_time: selectedTime,
       city: selectedCity,
       address: {
         street,
-        postalCode,
-        houseNumber,
-        apartmentNumber,
+        postal_code: postalCode,
+        house_number: houseNumber,
+        apartment_number: apartmentNumber,
         building,
         floor,
-        intercomCode,
+        intercom_code: intercomCode,
       },
-      clientInfo: {
+      client_info: {
+        client_type: "Firma",
         name,
+        company_name: companyName,
+        nip,
         phone,
         email,
-        additionalInfo,
-        vatInfo: {
-          companyName,
-          nip,
-          vatAddress,
-          vatCity,
-          vatPostalCode,
+        additional_info: additionalInfo,
+        vat_info: {
+          vat_address: vatAddress,
+          vat_city: vatCity,
+          vat_postal_code: vatPostalCode,
         },
       },
-      payment_status: "pending", // Додаємо статус платежу
+      payment_status: "pending",
     };
 
     console.log("Дані замовлення:", orderData);
 
     try {
-      // 1. Створюємо замовлення
       console.log("Відправка запиту на створення замовлення...");
-      const response = await fetch("http://localhost:3001/api/orders", {
+      const response = await fetch(`${API}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -511,38 +888,40 @@ export default function OfficeCleaning({ lang, type, title }) {
       });
 
       if (!response.ok) {
-        throw new Error("Не вдалося створити замовлення.");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Не вдалося створити замовлення.");
       }
 
       const { orderId } = await response.json();
       console.log(`Замовлення створено з ID: ${orderId}`);
 
-      // 2. Ініціалізуємо платіж через PayU
       const amount = parseFloat(calculateTotal());
       console.log(`Ініціалізація платежу PayU для суми: ${amount} zł...`);
-      const paymentResponse = await fetch("http://localhost:3001/api/create-payu-payment", {
+      const paymentResponse = await fetch(`${API}/create-payu-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          orderId,
-          amount,
-          email: orderData.clientInfo.email,
-          phone: orderData.clientInfo.phone,
-          firstName: orderData.clientInfo.name?.split(" ")[0] || "Jan",
-          lastName: orderData.clientInfo.name?.split(" ")[1] || orderData.clientInfo.vatInfo.companyName || "Kowalski",
+          order_id: orderId,
+          total_price: amount,
+          description: `Sprzątanie biura #${orderId}`,
+          client_email: orderData.client_info.email,
+          client_phone: orderData.client_info.phone,
+          client_info: {
+            name: orderData.client_info.company_name || "Firma",
+          },
         }),
       });
 
       if (!paymentResponse.ok) {
-        throw new Error("Не вдалося ініціалізувати платіж.");
+        const errorData = await paymentResponse.json();
+        throw new Error(errorData.error || "Не вдалося ініціалізувати платіж.");
       }
 
       const { redirectUri } = await paymentResponse.json();
       console.log(`Отримано URL для оплати: ${redirectUri}`);
 
-      // 3. Перенаправляємо користувача на сторінку оплати PayU
       window.location.href = redirectUri;
       console.log("Користувача перенаправлено на сторінку оплати PayU");
     } catch (error) {
@@ -669,6 +1048,66 @@ export default function OfficeCleaning({ lang, type, title }) {
               </div>
             </div>
 
+            <div className={`${officeCss["calendar-section"]} ${calcCss["calendar-section"]}`} ref={calendarRef}>
+              <h4>{t.calendarTitle}</h4>
+              <div className={`${officeCss["calendar-container"]} ${calcCss["calendar-container"]}`}>
+                <div className={`${officeCss["calendar-time-wrapper"]} ${calcCss["calendar-time-wrapper"]}`}>
+                  <div className={`${officeCss["calendar-wrapper"]} ${calcCss["calendar-wrapper"]}`}>
+                    <div className={`${officeCss["calendar-header"]} ${calcCss["calendar-header"]}`}>
+                      <button onClick={handlePrevMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
+                        <FaChevronLeft />
+                      </button>
+                      <h5>
+                        {months[currentMonth]} {currentYear}
+                      </h5>
+                      <button onClick={handleNextMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
+                        <FaChevronRight />
+                      </button>
+                    </div>
+
+                    <div className={`${officeCss["calendar-days"]} ${calcCss["calendar-days"]}`}>
+                      <div>pon</div>
+                      <div>wt</div>
+                      <div>śr</div>
+                      <div>czw</div>
+                      <div>pt</div>
+                      <div>sob</div>
+                      <div>niedz</div>
+                    </div>
+
+                    <div className={`${officeCss["calendar-grid"]} ${calcCss["calendar-grid"]}`}>
+                      {renderCalendar()}
+                    </div>
+                  </div>
+
+                  <div className={`${officeCss["time-wrapper"]} ${calcCss["time-wrapper"]}`} ref={timeSlotsRef}>
+                    <h5>{t.timeLabel}</h5>
+                    <div className={`${officeCss["time-slots"]} ${calcCss["time-slots"]}`}>
+                      {availableTimes.map((time) => (
+                        <button
+                          key={time}
+                          className={`${officeCss["time-slot"]} ${calcCss["time-slot"]} ${
+                            selectedTime === time ? calcCss.selected : ""
+                          }`}
+                          onClick={() => {
+                            setSelectedTime(time);
+                            console.log(`Обрано час: ${time}`);
+                          }}
+                          disabled={!selectedDate}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                <div className={`${officeCss["calendar-footer"]} ${calcCss["calendar-footer"]}`}>
+                  <p>{t.calendarFooter}</p>
+                </div>
+              </div>
+            </div>
+
             <div className={`${officeCss["address-section"]} ${calcCss["address-section"]}`}>
               <h4>{t.addressTitle}</h4>
               <div className={`${officeCss["city-select"]} ${calcCss["city-select"]}`}>
@@ -719,6 +1158,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.streetLabel}
                     </label>
                     <input
+                      ref={streetRef}
                       type="text"
                       value={street}
                       onChange={(e) => {
@@ -733,6 +1173,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.postalCodeLabel}
                     </label>
                     <input
+                      ref={postalCodeRef}
                       type="text"
                       value={postalCode}
                       onChange={(e) => {
@@ -747,6 +1188,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.houseNumberLabel}
                     </label>
                     <input
+                      ref={houseNumberRef}
                       type="text"
                       value={houseNumber}
                       onChange={(e) => {
@@ -818,69 +1260,6 @@ export default function OfficeCleaning({ lang, type, title }) {
               </div>
             </div>
 
-            {/* Закоментований календар для майбутнього використання */}
-            {/*
-            <div className={`${officeCss["calendar-section"]} ${calcCss["calendar-section"]}`} ref={calendarRef}>
-              <h4>WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA</h4>
-              <div className={`${officeCss["calendar-container"]} ${calcCss["calendar-container"]}`}>
-                <div className={`${officeCss["calendar-time-wrapper"]} ${calcCss["calendar-time-wrapper"]}`}>
-                  <div className={`${officeCss["calendar-wrapper"]} ${calcCss["calendar-wrapper"]}`}>
-                    <div className={`${officeCss["calendar-header"]} ${calcCss["calendar-header"]}`}>
-                      <button onClick={handlePrevMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
-                        <FaChevronLeft />
-                      </button>
-                      <h5>
-                        {months[currentMonth]} {currentYear}
-                      </h5>
-                      <button onClick={handleNextMonth} className={`${officeCss["nav-button"]} ${calcCss["nav-button"]}`}>
-                        <FaChevronRight />
-                      </button>
-                    </div>
-
-                    <div className={`${officeCss["calendar-days"]} ${calcCss["calendar-days"]}`}>
-                      <div>pon</div>
-                      <div>wt</div>
-                      <div>śr</div>
-                      <div>czw</div>
-                      <div>pt</div>
-                      <div>sob</div>
-                      <div>niedz</div>
-                    </div>
-
-                    <div className={`${officeCss["calendar-grid"]} ${calcCss["calendar-grid"]}`}>
-                      {renderCalendar()}
-                    </div>
-                  </div>
-
-                  <div className={`${officeCss["time-wrapper"]} ${calcCss["time-wrapper"]}`} ref={timeSlotsRef}>
-                    <h5>Godzina</h5>
-                    <div className={`${officeCss["time-slots"]} ${calcCss["time-slots"]}`}>
-                      {availableTimes.map((time) => (
-                        <button
-                          key={time}
-                          className={`${officeCss["time-slot"]} ${calcCss["time-slot"]} ${
-                            selectedTime === time ? calcCss.selected : ""
-                          }`}
-                          onClick={() => {
-                            setSelectedTime(time);
-                            console.log(`Обрано час: ${time}`);
-                          }}
-                          disabled={!selectedDate}
-                        >
-                          {time}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className={`${officeCss["calendar-footer"]} ${calcCss["calendar-footer"]}`}>
-                  <p>Można zacząć w dowolnym momencie</p>
-                </div>
-              </div>
-            </div>
-            */}
-
             <div className={`${officeCss["frequency-section"]} ${calcCss["frequency-section"]}`}>
               <h4>{t.frequencyTitle}</h4>
               <div className={`${officeCss["frequency-options"]} ${calcCss["frequency-options"]}`}>
@@ -927,6 +1306,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.nameLabel}
                     </label>
                     <input
+                      ref={nameRef}
                       type="text"
                       value={name}
                       onChange={(e) => {
@@ -941,6 +1321,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.phoneLabel}
                     </label>
                     <input
+                      ref={phoneRef}
                       type="text"
                       value={phone}
                       onChange={(e) => {
@@ -955,6 +1336,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.emailLabel}
                     </label>
                     <input
+                      ref={emailRef}
                       type="email"
                       value={email}
                       onChange={(e) => {
@@ -972,6 +1354,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.companyNameLabel}
                     </label>
                     <input
+                      ref={companyNameRef}
                       type="text"
                       value={companyName}
                       onChange={(e) => {
@@ -986,6 +1369,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.nipLabel}
                     </label>
                     <input
+                      ref={nipRef}
                       type="text"
                       value={nip}
                       onChange={(e) => {
@@ -1002,6 +1386,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.vatAddressLabel}
                     </label>
                     <input
+                      ref={vatAddressRef}
                       type="text"
                       value={vatAddress}
                       onChange={(e) => {
@@ -1016,6 +1401,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.vatCityLabel}
                     </label>
                     <input
+                      ref={vatCityRef}
                       type="text"
                       value={vatCity}
                       onChange={(e) => {
@@ -1030,6 +1416,7 @@ export default function OfficeCleaning({ lang, type, title }) {
                       {t.vatPostalCodeLabel}
                     </label>
                     <input
+                      ref={vatPostalCodeRef}
                       type="text"
                       value={vatPostalCode}
                       onChange={(e) => {
@@ -1086,7 +1473,7 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
           </div>
 
-          <div className={`${officeCss["calculator-right"]} ${calcCss["calculator-right"]}`}>
+          <div className={`${officeCss["calculator-right"]} ${calcCss["calculator-right"]}`} ref={rightBlockRef}>
             <div className={`${officeCss["office-image"]} ${calcCss["office-image"]}`}>
               <img src="/icon/office.svg" alt="Office" className={`${officeCss["office-icon"]} ${calcCss["office-icon"]}`} />
             </div>
@@ -1107,8 +1494,6 @@ export default function OfficeCleaning({ lang, type, title }) {
               <p>{t.specialistInfo}</p>
             </div>
 
-            {/* Закоментоване відображення дати для майбутнього використання */}
-            {/*
             <div className={`${officeCss["selected-date"]} ${calcCss["selected-date"]}`}>
               <FaCalendarAlt className={`${officeCss["calendar-icon"]} ${calcCss["calendar-icon"]}`} />
               {selectedDate && selectedTime ? (
@@ -1121,10 +1506,9 @@ export default function OfficeCleaning({ lang, type, title }) {
                   )}
                 </p>
               ) : (
-                <p>Wybierz termin i godzinę</p>
+                <p>{t.datePlaceholder}</p>
               )}
             </div>
-            */}
 
             <div className={`${officeCss["selected-frequency"]} ${calcCss["selected-frequency"]}`}>
               <p>
@@ -1142,8 +1526,18 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
 
             <div className={`${officeCss["work-time"]} ${calcCss["work-time"]}`}>
-              <p>{t.workTimeLabel}: {formatWorkTime()} godzin</p>
+              <h4>{t.workTimeLabel}: {formatWorkTime()}</h4>
             </div>
+            {calculateCleanersAndTime().cleaners > 1 && (
+              <div className={calcCss.cleaners}>
+                {Array.from({ length: calculateCleanersAndTime().cleaners }, (_, i) => (
+                  <span key={i} className={calcCss["cleaners-icon"]}>
+                    👤
+                  </span>
+                ))}
+                <p>{t.cleanersLabel}: {calculateCleanersAndTime().cleaners}</p>
+              </div>
+            )}
 
             <div className={`${officeCss["promo-code"]} ${calcCss["promo-code"]}`}>
               <div className={`${officeCss["promo-container"]} ${calcCss["promo-container"]}`}>
@@ -1175,7 +1569,7 @@ export default function OfficeCleaning({ lang, type, title }) {
               </div>
 
               <button
-                className={`${officeCss["order-button"]} ${calcCss["order-button"]}`}
+                className={`${officeCss["order-button"]} ${calcCss["sticky-order-button"]} ${isSticked ? calcCss.sticked : ""}`}
                 onClick={handleOrder}
               >
                 {t.orderButton} {calculateTotal()} zł
