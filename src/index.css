@@ -19,6 +19,21 @@ html, body {
   --font-family: "FuturaPT1", sans-serif;
 
 }
+@font-face {
+  font-family: 'Futura PT';
+  src: url('/fonts/futura_pt_bold.ttf') format('truetype');
+  font-weight: bold;
+}
+@font-face {
+  font-family: 'Futura PT';
+  src: url('/fonts/futura_pt_book.ttf') format('truetype');
+  font-weight: normal;
+}
+@font-face {
+  font-family: 'Futura PT';
+  src: url('/fonts/futura_pt_cond_extra_bold.ttf') format('truetype');
+  font-weight: 800;
+}
 
 @font-face {
     font-family: FuturaPT2;

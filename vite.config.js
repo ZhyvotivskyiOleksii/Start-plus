@@ -8,14 +8,27 @@ export default defineConfig({
     cp({
       targets: [
         {
-          src: 'sms-auth-php', // Копіюємо всю папку sms-auth-php
+          src: 'sms-auth-php',
           dest: 'dist/sms-auth-php'
         },
         {
-          src: 'sms-auth-php/.env', // Вихідний файл
-          dest: 'dist/sms-auth-php/env' // Копіюємо як env (без крапки)
+          src: 'sms-auth-php/.env',
+          dest: 'dist/sms-auth-php/env'
         }
       ]
     })
-  ]
+  ],
+  assetsInclude: ['**/*.ttf'],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          icons: ['react-icons'],
+          motion: ['framer-motion'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  }
 });
