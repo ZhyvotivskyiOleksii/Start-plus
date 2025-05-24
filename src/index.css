@@ -1,3 +1,5 @@
+
+
 *,
 *::before,
 *::after {
@@ -13,8 +15,10 @@ html, body {
   scroll-behavior: smooth;
 }
 
+:root {
+  --font-family: "FuturaPT1", sans-serif;
 
-
+}
 
 @font-face {
     font-family: FuturaPT2;
@@ -37,7 +41,7 @@ body {
   font-family: "FuturaPT1", sans-serif;
 
   line-height: 1.5;
-  background-color: white;
+  background-color: rgb(255, 255, 255) !important;
 }
 
 img, picture, video, canvas, svg {
@@ -59,6 +63,5 @@ a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-weight: bold;
   line-height: 1.2;
 }

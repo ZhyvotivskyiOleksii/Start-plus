@@ -14,7 +14,7 @@ Modal.setAppElement("#root");
 
 const API = import.meta.env.VITE_API || "http://localhost:3001/api";
 
-export default function AdminPanel() {
+export default function AdminPanel({ lang = "pl" }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
@@ -35,6 +35,55 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const api = axios.create({ baseURL: API });
 
+  const texts = {
+    pl: {
+      errorInvalidCredentials: "Nieprawidłowe dane logowania. Spróbuj ponownie.",
+      errorFillAllFields: "Proszę wypełnić wszystkie pola.",
+      errorDiscountRange: "Procent zniżki musi być między 0 a 100.",
+      errorFetchDiscounts: "Nie udało się pobrać zniżek dla",
+      errorAddDiscount: "Nie udało się dodać zniżki:",
+      errorDeleteDiscount: "Nie udało się usunąć zniżki.",
+      errorFetchPromoCodes: "Nie udało się pobrać kodów promocyjnych.",
+      errorGeneratePromoCode: "Nie udało się wygenerować kodu promocyjnego.",
+      errorDeletePromoCode: "Nie udało się usunąć kodu promocyjnego.",
+    },
+    uk: {
+      errorInvalidCredentials: "Невірні дані для входу. Спробуйте ще раз.",
+      errorFillAllFields: "Будь ласка, заповніть усі поля.",
+      errorDiscountRange: "Відсоток знижки має бути від 0 до 100.",
+      errorFetchDiscounts: "Не вдалося завантажити знижки для",
+      errorAddDiscount: "Не вдалося додати знижку:",
+      errorDeleteDiscount: "Не вдалося видалити знижку.",
+      errorFetchPromoCodes: "Не вдалося завантажити промокоди.",
+      errorGeneratePromoCode: "Не вдалося згенерувати промокод.",
+      errorDeletePromoCode: "Не вдалося видалити промокод.",
+    },
+    ru: {
+      errorInvalidCredentials: "Неверные данные для входа. Попробуйте снова.",
+      errorFillAllFields: "Пожалуйста, заполните все поля.",
+      errorDiscountRange: "Процент скидки должен быть от 0 до 100.",
+      errorFetchDiscounts: "Не удалось загрузить скидки для",
+      errorAddDiscount: "Не удалось добавить скидку:",
+      errorDeleteDiscount: "Не удалось удалить скидку.",
+      errorFetchPromoCodes: "Не удалось загрузить промокоды.",
+      errorGeneratePromoCode: "Не удалось сгенерировать промокод.",
+      errorDeletePromoCode: "Не удалось удалить промокод.",
+    },
+    en: {
+      errorInvalidCredentials: "Invalid credentials. Please try again.",
+      errorFillAllFields: "Please fill in all fields.",
+      errorDiscountRange: "Discount percentage must be between 0 and 100.",
+      errorFetchDiscounts: "Failed to fetch discounts for",
+      errorAddDiscount: "Failed to add discount:",
+      errorDeleteDiscount: "Failed to delete discount.",
+      errorFetchPromoCodes: "Failed to fetch promo codes.",
+      errorGeneratePromoCode: "Failed to generate promo code.",
+      errorDeletePromoCode: "Failed to delete promo code.",
+    },
+  };
+
+  const t = texts[lang] || texts.pl;
+
   const handleLogin = async () => {
     setIsLoading(true);
     setError("");
@@ -45,7 +94,7 @@ export default function AdminPanel() {
         localStorage.setItem("isLoggedIn", "true");
       }
     } catch {
-      setError("Invalid credentials. Please try again.");
+      setError(t.errorInvalidCredentials);
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +118,7 @@ export default function AdminPanel() {
       setError("");
     } catch (err) {
       console.error(`Error fetching discounts for ${type}:`, err);
-      setError(`Failed to fetch discounts for ${type}: ${err.message}`);
+      setError(`${t.errorFetchDiscounts} ${type}: ${err.message}`);
       setDiscounts([]);
     }
   };
@@ -79,17 +128,17 @@ export default function AdminPanel() {
       const { data } = await api.get("/promo-codes");
       setPromoCodes(data);
     } catch {
-      setError("Failed to fetch promo codes.");
+      setError(t.errorFetchPromoCodes);
     }
   };
 
   const addDiscount = async () => {
     if (!newDiscountDate || !newDiscountPercent || !currentCalculatorTab) {
-      setError("Будь ласка, заповніть усі поля.");
+      setError(t.errorFillAllFields);
       return;
     }
     if (newDiscountPercent < 0 || newDiscountPercent > 100) {
-      setError("Відсоток знижки має бути від 0 до 100.");
+      setError(t.errorDiscountRange);
       return;
     }
     setIsLoading(true);
@@ -111,7 +160,7 @@ export default function AdminPanel() {
       setError("");
     } catch (err) {
       console.error("Error adding discount:", err);
-      setError("Не вдалося додати знижку: " + (err.response?.data?.message || err.message));
+      setError(`${t.errorAddDiscount} ${err.response?.data?.message || err.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -122,17 +171,17 @@ export default function AdminPanel() {
       await api.delete(`/discounts/${id}`);
       fetchDiscounts(currentCalculatorTab);
     } catch {
-      setError("Failed to delete discount.");
+      setError(t.errorDeleteDiscount);
     }
   };
 
   const generatePromoCode = async () => {
     if (!newPromoDiscount) {
-      setError("Please enter a discount percentage.");
+      setError(t.errorFillAllFields);
       return;
     }
     if (newPromoDiscount < 0 || newPromoDiscount > 100) {
-      setError("Discount percentage must be between 0 and 100.");
+      setError(t.errorDiscountRange);
       return;
     }
     setIsLoading(true);
@@ -144,7 +193,7 @@ export default function AdminPanel() {
       setNewPromoDiscount("");
       setError("");
     } catch {
-      setError("Failed to generate promo code.");
+      setError(t.errorGeneratePromoCode);
     } finally {
       setIsLoading(false);
     }
@@ -155,7 +204,7 @@ export default function AdminPanel() {
       await api.delete(`/promo-codes/${id}`);
       fetchPromoCodes();
     } catch {
-      setError("Failed to delete promo code.");
+      setError(t.errorDeletePromoCode);
     }
   };
 
@@ -225,6 +274,7 @@ export default function AdminPanel() {
         handleLogin={handleLogin}
         isLoading={isLoading}
         error={error}
+        t={t}
       />
     );
   }
@@ -237,6 +287,7 @@ export default function AdminPanel() {
           setCurrentSection={setCurrentSection}
           isSidebarActive={isSidebarActive}
           handleLogout={handleLogout}
+          lang={lang}
         />
         <div className={`${css.main} ${isSidebarActive ? css.active : ""}`}>
           <Topbar isSidebarActive={isSidebarActive} setIsSidebarActive={setIsSidebarActive} />
@@ -259,6 +310,7 @@ export default function AdminPanel() {
                 discounts={discounts}
                 isLoading={isLoading}
                 error={error}
+                lang={lang}
               />
             )}
             {currentSection === "promocodes" && (
@@ -270,9 +322,10 @@ export default function AdminPanel() {
                 promoCodes={promoCodes}
                 deletePromoCode={deletePromoCode}
                 isLoading={isLoading}
+                lang={lang}
               />
             )}
-            {currentSection === "users" && <UsersSection api={api} />}
+            {currentSection === "users" && <UsersSection api={api} lang={lang} />}
           </div>
         </div>
       </div>

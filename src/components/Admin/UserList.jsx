@@ -1,6 +1,5 @@
-import { useEffect } from "react";
 import css from "./AdminPanel.module.css";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaEye } from "react-icons/fa";
 
 function UserList({
   users,
@@ -15,62 +14,58 @@ function UserList({
   setStatusFilter,
   searchQuery,
   setSearchQuery,
+  t,
 }) {
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
-
   return (
     <div className={css.usersList}>
-      <h4>Lista użytkowników</h4>
-      <div className={css.filters}>
-        <div className={css.inputGroup}>
-          <label className={css.inputLabel}>Status</label>
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-            <option value="">Wszystkie</option>
-            <option value="active">Aktywne</option>
-            <option value="inactive">Nieaktywne</option>
-            <option value="banned">Zablokowane</option>
-          </select>
-        </div>
-        <div className={css.inputGroup}>
-          <label className={css.inputLabel}>Szukaj</label>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Imię, telefon, email..."
-          />
-        </div>
-      </div>
+      <h4>{t.title}</h4>
       {isLoading ? (
-        <p>Ładowanie...</p>
+        <p>{t.loading}</p>
       ) : users.length === 0 ? (
-        <p>Brak użytkowników.</p>
+        <p>{t.noUsers}</p>
       ) : (
         <table className={css.userTable}>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Imię</th>
-              <th>Telefon</th>
-              <th>Email</th>
-              <th>Data rejestracji</th>
-              <th>Ostatnie logowanie</th>
-              <th>Status</th>
-              <th>Działania</th>
+              <th>{t.id}</th>
+              <th>{t.name}</th>
+              <th>{t.phone}</th>
+              <th>{t.email}</th>
+              <th>{t.totalOrders}</th>
+              <th>{t.totalSpent}</th>
+              <th>{t.registrationDate}</th>
+              <th>{t.lastLogin}</th>
+              <th>{t.status}</th>
+              <th>{t.actions}</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
               <tr key={user.id}>
                 <td>{user.id}</td>
-                <td>{user.name || "Brak"}</td>
-                <td>{user.phone}</td>
-                <td>{user.email || "Brak"}</td>
+                <td>{user.name || t.noData}</td>
+                <td>{user.phone || t.noData}</td>
+                <td>{user.email || t.noData}</td>
+                <td>{user.order_count || 0}</td>
+                <td>{user.total_spent ? `${user.total_spent} zł` : "0 zł"}</td>
                 <td>{new Date(user.created_at).toLocaleString()}</td>
-                <td>{user.last_login ? new Date(user.last_login).toLocaleString() : "Brak"}</td>
-                <td>{user.status}</td>
+                <td>{user.last_login ? new Date(user.last_login).toLocaleString() : t.noData}</td>
+                <td>
+                  <span
+                    className={css.statusBadge}
+                    style={{
+                      backgroundColor:
+                        user.status === "active" ? "#5a4af4" :
+                        user.status === "inactive" ? "#a0a9c0" : "#ff4d4f",
+                      color: "#fff",
+                      padding: "4px 8px",
+                      borderRadius: "12px",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {t[user.status] || user.status}
+                  </span>
+                </td>
                 <td>
                   <button
                     className={css.actionBtn}
@@ -79,12 +74,14 @@ function UserList({
                       setSelectedUser(user);
                       fetchUserDetails(user.id);
                     }}
+                    title={t.viewDetails}
                   >
-                    Szczegóły
+                    <FaEye />
                   </button>
                   <button
                     className={css.deleteBtn}
                     onClick={() => handleOpenDeleteModal(user.id, user.name)}
+                    title={t.deleteUser}
                   >
                     <FaTrash />
                   </button>

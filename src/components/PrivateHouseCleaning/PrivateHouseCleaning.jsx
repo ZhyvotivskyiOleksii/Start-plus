@@ -56,7 +56,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const agreementRef = useRef(null);
-  const rightBlockRef = useRef(null);
+  const sentinelRef = useRef(null);
+  const orderButtonRef = useRef(null);
   const [isSticked, setIsSticked] = useState(true);
 
   const cities = {
@@ -160,7 +161,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     { id: 8, name: "window_cleaning", price: 32.00, oldPrice: 40.00, icon: "/icon/window.png", type: "quantity", additionalTime: 20 },
     { id: 9, name: "ironing", price: 40.00, oldPrice: 50.00, icon: "/icon/iron.png", type: "quantity", additionalTime: 20 },
     { id: 10, name: "pet_tray_cleaning", price: 8.00, oldPrice: 10.00, icon: "/icon/pets.png", type: "quantity", additionalTime: 20 },
-    { id: 11, name: "extra_hours", price: 40.00, oldPrice: 50.00, icon: "/icon/time.png", type: "quantity", additionalTime: 20 },
+    { id: 11, name: "extra_hours", price: 40.00, oldPrice: 50.00, icon: "/icon/time.png", type: "quantity", additionalTime: 60 }, // Додаткові години додають 60 хвилин
     { id: 12, name: "wardrobe_cleaning", price: 44.00, oldPrice: 30.00, icon: "/icon/wardrobe.png", type: "quantity", additionalTime: 20 },
   ];
 
@@ -233,6 +234,21 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       invalidEmail: "Proszę wprowadzić prawidłowy adres e-mail.",
       invalidPhone: "Proszę wprowadzić prawidłowy numer telefonu.",
       invalidNip: "Proszę wprowadzić prawidłowy numer NIP.",
+      hallwayLabel: "przedpokój",
+      andLabel: "i",
+      agreementErrorLabel: "zgoda na regulamin i przetwarzanie danych",
+      oven_cleaning: "Mycie piekarnika",
+      hood_cleaning: "Mycie okapu",
+      kitchen_cabinets_cleaning: "Sprzątanie wnętrza szafek kuchennych",
+      dish_washing: "Mycie naczyń",
+      fridge_cleaning: "Czyszczenie lodówki",
+      microwave_cleaning: "Mycie mikrofalówki",
+      balcony_cleaning: "Sprzątanie balkonu",
+      window_cleaning: "Mycie okien (szt.)",
+      ironing: "Prasowanie",
+      pet_tray_cleaning: "Sprzątanie kuwety",
+      extra_hours: "Dodatkowe godziny",
+      wardrobe_cleaning: "Czyszczenie wnętrza szafy",
       weekdays: ["pon", "wt", "śr", "czw", "pt", "sob", "niedz"],
       logMessages: {
         loadPromo: "Ładowanie kodów promocyjnych...",
@@ -245,6 +261,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         kitchenSelected: "Wybrano sprzątanie kuchni:",
         kitchenAnnexSelected: "Wybrano sprzątanie aneksu kuchennego:",
         promoApplied: "Zastosowano kod promocyjny",
+        discount: "zniżka",
+        discountAmount: "kwota zniżki",
         promoInvalid: "Nieprawidłowy kod promocyjny, zniżka zresetowana do 0%",
         prevMonth: "Przejście do poprzedniego miesiąca:",
         nextMonth: "Przejście do następnego miesiąca:",
@@ -259,11 +277,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         serviceAdded: "dodana",
         serviceRemoved: "usunięta",
         quantityChanged: "Ilość usługi",
+        changedTo: "zmieniono na",
         orderProcessing: "Rozpoczęcie przetwarzania zamówienia...",
         dateError: "Błąd: Data nie wybrana",
         timeError: "Błąd: Godzina nie wybrana",
         termsError: "Błąd: Nie zaakceptowano regulaminu lub zgody marketingowej",
         orderData: "Dane zamówienia:",
+        orderRequest: "Wysyłanie żądania utworzenia zamówienia...",
         orderCreated: "Zamówienie utworzone z ID:",
         paymentInit: "Inicjalizacja płatności PayU dla kwoty:",
         paymentUrl: "Otrzymano URL do płatności:",
@@ -271,9 +291,19 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         orderError: "Błąd podczas składania zamówienia:",
         clientTypePrivate: "Wybrano typ klienta: Osoba prywatna",
         clientTypeCompany: "Wybrano typ klienta: Firma",
+        rooms: "pokoje",
+        bathrooms: "łazienki",
+        kitchen: "kuchnia",
+        kitchenAnnex: "aneks",
+        vacuum: "odkurzacz",
+        city: "miasto",
+        multiplier: "mnożnik",
+        hours: "godzin",
+        minutes: "minut",
         roomsChanged: "Zmieniono liczbę pokoi:",
         bathroomsChanged: "Zmieniono liczbę łazienek:",
         vacuumNeeded: "Potrzebny odkurzacz:",
+        vacuumRemoved: "Odkurzacz usunięto z zamówienia",
         citySearch: "Wyszukiwanie miasta:",
         citySelected: "Wybrane miasto:",
         streetEntered: "Wprowadzono ulicę:",
@@ -293,6 +323,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         marketingAgreed: "Zgoda na marketing:",
         frequencySelected: "Wybrana częstotliwość sprzątania:",
         promoEntered: "Wprowadzono kod promocyjny:",
+        yes: "tak",
+        no: "nie",
       },
     },
     uk: {
@@ -357,6 +389,21 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       invalidEmail: "Будь ласка, введіть правильну адресу електронної пошти.",
       invalidPhone: "Будь ласка, введіть правильний номер телефону.",
       invalidNip: "Будь ласка, введіть правильний номер NIP.",
+      hallwayLabel: "передпокій",
+      andLabel: "та",
+      agreementErrorLabel: "згода на правила і обробку даних",
+      oven_cleaning: "Миття духовки",
+      hood_cleaning: "Миття витяжки",
+      kitchen_cabinets_cleaning: "Прибирання всередині кухонних шаф",
+      dish_washing: "Миття посуду",
+      fridge_cleaning: "Чищення холодильника",
+      microwave_cleaning: "Миття мікрохвильовки",
+      balcony_cleaning: "Прибирання балкону",
+      window_cleaning: "Миття вікон (шт.)",
+      ironing: "Прасування",
+      pet_tray_cleaning: "Прибирання лотка для тварин",
+      extra_hours: "Додаткові години",
+      wardrobe_cleaning: "Чищення всередині шафи",
       weekdays: ["пн", "вт", "ср", "чт", "пт", "сб", "нд"],
       logMessages: {
         loadPromo: "Завантаження промокодів...",
@@ -369,6 +416,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         kitchenSelected: "Обрано прибирання кухні:",
         kitchenAnnexSelected: "Обрано прибирання кухонного куточка:",
         promoApplied: "Застосовано промокод",
+        discount: "знижка",
+        discountAmount: "сума знижки",
         promoInvalid: "Невірний промокод, знижка скинута до 0%",
         prevMonth: "Перехід до попереднього місяця:",
         nextMonth: "Перехід до наступного місяця:",
@@ -383,11 +432,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         serviceAdded: "додана",
         serviceRemoved: "видалена",
         quantityChanged: "Кількість послуги",
+        changedTo: "змінено на",
         orderProcessing: "Початок обробки замовлення...",
         dateError: "Помилка: Дата не обрана",
         timeError: "Помилка: Час не обраний",
         termsError: "Помилка: Не погоджено з умовами або маркетингом",
         orderData: "Дані замовлення:",
+        orderRequest: "Відправка запиту на створення замовлення...",
         orderCreated: "Замовлення створено з ID:",
         paymentInit: "Ініціалізація платежу PayU для суми:",
         paymentUrl: "Отримано URL для оплати:",
@@ -395,9 +446,19 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         orderError: "Помилка при оформленні замовлення:",
         clientTypePrivate: "Обрано тип клієнта: Фізична особа",
         clientTypeCompany: "Обрано тип клієнта: Компанія",
+        rooms: "кімнати",
+        bathrooms: "ванні",
+        kitchen: "кухня",
+        kitchenAnnex: "куточок",
+        vacuum: "пилосос",
+        city: "місто",
+        multiplier: "множник",
+        hours: "годин",
+        minutes: "хв",
         roomsChanged: "Змінено кількість кімнат:",
         bathroomsChanged: "Змінено кількість ванних кімнат:",
         vacuumNeeded: "Потрібен пилосос:",
+        vacuumRemoved: "Пилосос видалено з замовлення",
         citySearch: "Пошук міста:",
         citySelected: "Обрано місто:",
         streetEntered: "Введено вулицю:",
@@ -417,6 +478,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         marketingAgreed: "Згода на маркетинг:",
         frequencySelected: "Обрана частота прибирання:",
         promoEntered: "Введено промокод:",
+        yes: "так",
+        no: "ні",
       },
     },
     ru: {
@@ -481,6 +544,21 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       invalidEmail: "Пожалуйста, введите правильный адрес электронной почты.",
       invalidPhone: "Пожалуйста, введите правильный номер телефона.",
       invalidNip: "Пожалуйста, введите правильный номер NIP.",
+      hallwayLabel: "прихожая",
+      andLabel: "и",
+      agreementErrorLabel: "согласие на правила и обработку данных",
+      oven_cleaning: "Мойка духовки",
+      hood_cleaning: "Мойка вытяжки",
+      kitchen_cabinets_cleaning: "Уборка внутри кухонных шкафов",
+      dish_washing: "Мойка посуды",
+      fridge_cleaning: "Чистка холодильника",
+      microwave_cleaning: "Мойка микроволновки",
+      balcony_cleaning: "Уборка балкона",
+      window_cleaning: "Мойка окон (шт.)",
+      ironing: "Глажка",
+      pet_tray_cleaning: "Уборка лотка для животных",
+      extra_hours: "Дополнительные часы",
+      wardrobe_cleaning: "Чистка внутри шкафа",
       weekdays: ["пн", "вт", "ср", "чт", "пт", "сб", "вс"],
       logMessages: {
         loadPromo: "Загрузка промокодов...",
@@ -493,6 +571,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         kitchenSelected: "Выбрана уборка кухни:",
         kitchenAnnexSelected: "Выбрана уборка кухонного уголка:",
         promoApplied: "Применен промокод",
+        discount: "скидка",
+        discountAmount: "сумма скидки",
         promoInvalid: "Неверный промокод, скидка сброшена до 0%",
         prevMonth: "Переход к предыдущему месяцу:",
         nextMonth: "Переход к следующему месяцу:",
@@ -507,11 +587,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         serviceAdded: "добавлена",
         serviceRemoved: "удалена",
         quantityChanged: "Количество услуги",
+        changedTo: "изменено на",
         orderProcessing: "Начало обработки заказа...",
         dateError: "Ошибка: Дата не выбрана",
         timeError: "Ошибка: Время не выбрано",
         termsError: "Ошибка: Не согласовано с условиями или маркетингом",
         orderData: "Данные заказа:",
+        orderRequest: "Отправка запроса на создание заказа...",
         orderCreated: "Заказ создан с ID:",
         paymentInit: "Инициализация платежа PayU для суммы:",
         paymentUrl: "Получен URL для оплаты:",
@@ -519,9 +601,19 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         orderError: "Ошибка при оформлении заказа:",
         clientTypePrivate: "Выбран тип клиента: Частное лицо",
         clientTypeCompany: "Выбран тип клиента: Компания",
+        rooms: "комнаты",
+        bathrooms: "ванные",
+        kitchen: "кухня",
+        kitchenAnnex: "уголок",
+        vacuum: "пылесос",
+        city: "город",
+        multiplier: "множитель",
+        hours: "часов",
+        minutes: "мин",
         roomsChanged: "Изменено количество комнат:",
         bathroomsChanged: "Изменено количество ванных комнат:",
         vacuumNeeded: "Нужен пылесос:",
+        vacuumRemoved: "Пылесос удален из заказа",
         citySearch: "Поиск города:",
         citySelected: "Выбран город:",
         streetEntered: "Введена улица:",
@@ -541,6 +633,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         marketingAgreed: "Согласие на маркетинг:",
         frequencySelected: "Выбрана частота уборки:",
         promoEntered: "Введен промокод:",
+        yes: "да",
+        no: "нет",
       },
     },
     en: {
@@ -605,6 +699,21 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       invalidEmail: "Please enter a valid email address.",
       invalidPhone: "Please enter a valid phone number.",
       invalidNip: "Please enter a valid NIP number.",
+      hallwayLabel: "hallway",
+      andLabel: "and",
+      agreementErrorLabel: "consent to terms and data processing",
+      oven_cleaning: "Oven cleaning",
+      hood_cleaning: "Hood cleaning",
+      kitchen_cabinets_cleaning: "Cleaning inside kitchen cabinets",
+      dish_washing: "Dish washing",
+      fridge_cleaning: "Fridge cleaning",
+      microwave_cleaning: "Microwave cleaning",
+      balcony_cleaning: "Balcony cleaning",
+      window_cleaning: "Window cleaning (unit)",
+      ironing: "Ironing",
+      pet_tray_cleaning: "Pet tray cleaning",
+      extra_hours: "Extra hours",
+      wardrobe_cleaning: "Cleaning inside wardrobe",
       weekdays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
       logMessages: {
         loadPromo: "Loading promo codes...",
@@ -617,6 +726,8 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         kitchenSelected: "Kitchen cleaning selected:",
         kitchenAnnexSelected: "Kitchen annex cleaning selected:",
         promoApplied: "Applied promo code",
+        discount: "discount",
+        discountAmount: "discount amount",
         promoInvalid: "Invalid promo code, discount reset to 0%",
         prevMonth: "Switch to previous month:",
         nextMonth: "Switch to next month:",
@@ -631,11 +742,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         serviceAdded: "added",
         serviceRemoved: "removed",
         quantityChanged: "Service quantity",
+        changedTo: "changed to",
         orderProcessing: "Starting order processing...",
         dateError: "Error: Date not selected",
         timeError: "Error: Time not selected",
         termsError: "Error: Terms or marketing consent not agreed",
         orderData: "Order data:",
+        orderRequest: "Sending request to create order...",
         orderCreated: "Order created with ID:",
         paymentInit: "Initializing PayU payment for amount:",
         paymentUrl: "Received payment URL:",
@@ -643,9 +756,19 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         orderError: "Error during order processing:",
         clientTypePrivate: "Selected client type: Private individual",
         clientTypeCompany: "Selected client type: Company",
+        rooms: "rooms",
+        bathrooms: "bathrooms",
+        kitchen: "kitchen",
+        kitchenAnnex: "annex",
+        vacuum: "vacuum",
+        city: "city",
+        multiplier: "multiplier",
+        hours: "hours",
+        minutes: "min",
         roomsChanged: "Changed number of rooms:",
         bathroomsChanged: "Changed number of bathrooms:",
         vacuumNeeded: "Vacuum cleaner needed:",
+        vacuumRemoved: "Vacuum cleaner removed from order",
         citySearch: "City search:",
         citySelected: "Selected city:",
         streetEntered: "Entered street:",
@@ -665,10 +788,11 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         marketingAgreed: "Marketing consent:",
         frequencySelected: "Selected cleaning frequency:",
         promoEntered: "Entered promo code:",
+        yes: "yes",
+        no: "no",
       },
     },
   };
-
   const t = texts[lang] || texts.pl;
   // Завантаження промокодів з API
   useEffect(() => {
@@ -680,7 +804,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         console.log(texts[lang].logMessages.promoLoaded, data);
       } catch (err) {
         console.error(texts[lang].logMessages.promoError, err);
-        setError("Не вдалося завантажити промокоди. Спробуйте ще раз.");
+        setError("Failed to load promo codes. Please try again.");
       }
     };
     fetchPromoCodes();
@@ -689,7 +813,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
   useEffect(() => {
     const fetchDiscounts = async () => {
       if (!type || type === "undefined") {
-        console.log(`Помилка: type є ${type}, пропускаємо запит до API`);
+        console.log(`Error: type is ${type}, skipping API request`);
         return;
       }
 
@@ -712,21 +836,48 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         setError(null);
       } catch (err) {
         console.error(`${texts[lang].logMessages.discountsError} ${type}:`, err);
-        setError(`Не вдалося завантажити знижки для ${type}. Спробуйте ще раз.`);
+        setError(`Failed to load discounts for ${type}. Please try again.`);
       }
     };
     fetchDiscounts();
   }, [type]);
 
   useEffect(() => {
+    if (window.innerWidth > 760) {
+      setIsSticked(false);
+      return;
+    }
+
+    const marker = sentinelRef.current;
+    const button = orderButtonRef.current;
+    if (!marker || !button) {
+      console.warn("Refs not found:", { marker, button });
+      return;
+    }
+
+    const stick = () => {
+      button.classList.add(css.sticked);
+      button.classList.remove(css.inPlace);
+      setIsSticked(true);
+    };
+    const unstick = () => {
+      button.classList.remove(css.sticked);
+      button.classList.add(css.inPlace);
+      setIsSticked(false);
+    };
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) setIsSticked(false);
-        else setIsSticked(true);
+      ([entry]) => {
+        entry.isIntersecting ? unstick() : stick();
       },
-      { root: null, threshold: 0.2 }
+      {
+        root: null,
+        threshold: 0,
+        rootMargin: `0px 0px -${button.offsetHeight || 60}px 0px`,
+      }
     );
-    if (rightBlockRef.current) observer.observe(rightBlockRef.current);
+
+    observer.observe(marker);
     return () => observer.disconnect();
   }, []);
 
@@ -801,9 +952,9 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (e.target.checked) {
       setKitchenAnnex(false);
       setKitchenCost(kitchenBaseCost);
-      console.log(`${texts[lang].logMessages.kitchenSelected} ${texts[lang].logMessages.yes || "так"}`);
+      console.log(`${texts[lang].logMessages.kitchenSelected} ${texts[lang].logMessages.yes || "yes"}`);
     } else {
-      console.log(`${texts[lang].logMessages.kitchenSelected} ${texts[lang].logMessages.no || "ні"}`);
+      console.log(`${texts[lang].logMessages.kitchenSelected} ${texts[lang].logMessages.no || "no"}`);
     }
   }
 
@@ -812,11 +963,11 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (e.target.checked) {
       setKitchen(false);
       setKitchenCost(kitchenBaseCost - 10);
-      console.log(`${texts[lang].logMessages.kitchenAnnexSelected} ${texts[lang].logMessages.yes || "так"}`);
+      console.log(`${texts[lang].logMessages.kitchenAnnexSelected} ${texts[lang].logMessages.yes || "yes"}`);
     } else {
       setKitchen(true);
       setKitchenCost(kitchenBaseCost);
-      console.log(`${texts[lang].logMessages.kitchenAnnexSelected} ${texts[lang].logMessages.no || "ні"}`);
+      console.log(`${texts[lang].logMessages.kitchenAnnexSelected} ${texts[lang].logMessages.no || "no"}`);
     }
   }
 
@@ -871,7 +1022,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     }, 0);
     total += servicesCost + (cities[selectedCity] || 0);
     if (clientType === "Firma") total *= companyMultiplier;
-    console.log(`${texts[lang].logMessages.basePriceCalc} ${total.toFixed(2)} zł (${texts[lang].logMessages.rooms}: ${rooms}, ${texts[lang].logMessages.bathrooms}: ${bathrooms}, ${texts[lang].logMessages.kitchen}: ${kitchen ? texts[lang].logMessages.yes || "так" : texts[lang].logMessages.no || "ні"}, ${texts[lang].logMessages.kitchenAnnex}: ${kitchenAnnex ? texts[lang].logMessages.yes || "так" : texts[lang].logMessages.no || "ні"}, ${texts[lang].logMessages.vacuum}: ${vacuumNeeded ? texts[lang].logMessages.yes || "так" : texts[lang].logMessages.no || "ні"}, ${texts[lang].logMessages.city}: ${selectedCity}, ${texts[lang].logMessages.multiplier}: ${clientType === "Firma" ? companyMultiplier : 1})`);
+    console.log(`${texts[lang].logMessages.basePriceCalc} ${total.toFixed(2)} zł (${texts[lang].logMessages.rooms}: ${rooms}, ${texts[lang].logMessages.bathrooms}: ${bathrooms}, ${texts[lang].logMessages.kitchen}: ${kitchen ? texts[lang].logMessages.yes || "yes" : texts[lang].logMessages.no || "no"}, ${texts[lang].logMessages.kitchenAnnex}: ${kitchenAnnex ? texts[lang].logMessages.yes || "yes" : texts[lang].logMessages.no || "no"}, ${texts[lang].logMessages.vacuum}: ${vacuumNeeded ? texts[lang].logMessages.yes || "yes" : texts[lang].logMessages.no || "no"}, ${texts[lang].logMessages.city}: ${selectedCity}, ${texts[lang].logMessages.multiplier}: ${clientType === "Firma" ? companyMultiplier : 1})`);
     return total.toFixed(2);
   }
 
@@ -898,16 +1049,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
   }
 
   function calculateWorkTime() {
-    let baseHours = 4.33;
-    const hasAdditionalServices = paidServices.some((service) => {
-      const qty = selectedServices[service.id];
-      return (service.type === "checkbox" && qty) || (service.type === "quantity" && qty > 0);
-    });
-
-    if (hasAdditionalServices) {
-      baseHours = 0;
-    }
-
+    let baseHours = 4.33; // Базовий час не скидається до 0
     const additionalRooms = Math.max(0, rooms - 1);
     const roomTime = additionalRooms * 0.5;
     const additionalBathrooms = Math.max(0, bathrooms - 1);
@@ -920,7 +1062,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     }, 0);
 
     const totalTime = baseHours + roomTime + bathroomTime + additionalServiceTime;
-    console.log(`${texts[lang].logMessages.workTimeCalc} ${totalTime} ${texts[lang].logMessages.hours || "годин"} (${texts[lang].logMessages.rooms}: ${roomTime}, ${texts[lang].logMessages.bathrooms}: ${bathroomTime}, ${texts[lang].logMessages.additionalServices}: ${additionalServiceTime})`);
+    console.log(`${texts[lang].logMessages.workTimeCalc} ${totalTime} ${texts[lang].logMessages.hours || "hours"} (${texts[lang].logMessages.rooms}: ${roomTime}, ${texts[lang].logMessages.bathrooms}: ${bathroomTime}, ${texts[lang].logMessages.additionalServices}: ${additionalServiceTime})`);
     return totalTime;
   }
 
@@ -930,13 +1072,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     const adjustedHours = totalHours / cleaners;
     const hours = Math.floor(adjustedHours);
     const minutes = Math.round((adjustedHours - hours) * 60);
-    console.log(`${texts[lang].logMessages.cleanersCalc} ${cleaners}, ${texts[lang].logMessages.time}: ${hours} ${texts[lang].logMessages.hours || "год"} ${minutes} ${texts[lang].logMessages.minutes || "хв"}`);
+    console.log(`${texts[lang].logMessages.cleanersCalc} ${cleaners}, ${texts[lang].logMessages.time}: ${hours} ${texts[lang].logMessages.hours || "hours"} ${minutes} ${texts[lang].logMessages.minutes || "minutes"}`);
     return { hours, minutes, cleaners };
   }
 
   function formatWorkTime() {
     const { hours, minutes } = calculateCleanersAndTime();
-    return minutes > 0 ? `${hours} ${texts[lang].logMessages.hours || "godzin"} ${minutes} ${texts[lang].logMessages.minutes || "minut"}` : `${hours} ${texts[lang].logMessages.hours || "godziny"}`;
+    return minutes > 0 ? `${hours} ${texts[lang].logMessages.hours || "hours"} ${minutes} ${texts[lang].logMessages.minutes || "minutes"}` : `${hours} ${texts[lang].logMessages.hours || "hours"}`;
   }
 
   function renderCalendar() {
@@ -989,9 +1131,9 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         >
           <span className={css["day-number"]}>{day}</span>
           {discountValue > 0 && <span className={css["discount-label"]}>-{discountValue}%</span>}
-          {isToday && <span className={css["day-label"]}>{t.todayLabel}</span>}
-          {isTomorrow && <span className={css["day-label"]}>{t.tomorrowLabel}</span>}
-          {isPast && <span className={css["day-label"]}>{t.unavailableLabel}</span>}
+          {isToday && <span className={css["day-label"]}>{texts[lang].todayLabel}</span>}
+          {isTomorrow && <span className={css["day-label"]}>{texts[lang].tomorrowLabel}</span>}
+          {isPast && <span className={css["day-label"]}>{texts[lang].unavailableLabel}</span>}
         </div>
       );
     }
@@ -1027,7 +1169,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     setSelectedServices((prev) => {
       const newQty = Math.max(0, prev[id] + delta);
       const service = paidServices.find((s) => s.id === id);
-      console.log(`${texts[lang].logMessages.quantityChanged} "${service.name}" ${texts[lang].logMessages.changedTo || "змінено на"}: ${newQty}`);
+      console.log(`${texts[lang].logMessages.quantityChanged} "${service.name}" ${texts[lang].logMessages.changedTo || "changed to"}: ${newQty}`);
       return { ...prev, [id]: newQty };
     });
   };
@@ -1042,56 +1184,56 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       calendarRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log(texts[lang].logMessages.dateError);
-      missingFields.push(t.datePlaceholder.toLowerCase());
+      missingFields.push(texts[lang].datePlaceholder.toLowerCase());
     }
 
     if (!selectedTime) {
       timeSlotsRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log(texts[lang].logMessages.timeError);
-      missingFields.push(t.timeLabel.toLowerCase());
+      missingFields.push(texts[lang].timeLabel.toLowerCase());
     }
 
     if (!street) {
       streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       streetRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push(t.streetLabel.toLowerCase());
+      missingFields.push(texts[lang].streetLabel.toLowerCase());
     }
 
     if (!postalCode) {
       postalCodeRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       postalCodeRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push(t.postalCodeLabel.toLowerCase());
+      missingFields.push(texts[lang].postalCodeLabel.toLowerCase());
     }
 
     if (!houseNumber) {
       houseNumberRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       houseNumberRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push(t.houseNumberLabel.toLowerCase());
+      missingFields.push(texts[lang].houseNumberLabel.toLowerCase());
     }
 
     if (clientType === "Osoba prywatna") {
       if (!name) {
         nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
         nameRef.current?.scrollIntoView({ behavior: "smooth" });
-        missingFields.push(t.nameLabel.toLowerCase());
+        missingFields.push(texts[lang].nameLabel.toLowerCase());
       }
     } else {
       if (!companyName) {
         companyNameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
         companyNameRef.current?.scrollIntoView({ behavior: "smooth" });
-        missingFields.push(t.companyNameLabel.toLowerCase());
+        missingFields.push(texts[lang].companyNameLabel.toLowerCase());
       }
       if (!nip) {
         nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
         nipRef.current?.scrollIntoView({ behavior: "smooth" });
-        missingFields.push(t.nipLabel.toLowerCase());
+        missingFields.push(texts[lang].nipLabel.toLowerCase());
       } else {
         const nipRegex = /^\d{10}$/;
         if (!nipRegex.test(nip)) {
           nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
           nipRef.current?.scrollIntoView({ behavior: "smooth" });
-          setError(t.invalidNip);
+          setError(texts[lang].invalidNip);
           return;
         }
       }
@@ -1100,13 +1242,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (!phone) {
       phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       phoneRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push(t.phoneLabel.toLowerCase());
+      missingFields.push(texts[lang].phoneLabel.toLowerCase());
     } else {
       const phoneRegex = /^\d{9,12}$/;
       if (!phoneRegex.test(phone)) {
         phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
         phoneRef.current?.scrollIntoView({ behavior: "smooth" });
-        setError(t.invalidPhone);
+        setError(texts[lang].invalidPhone);
         return;
       }
     }
@@ -1114,13 +1256,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     if (!email) {
       emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       emailRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push(t.emailLabel.toLowerCase());
+      missingFields.push(texts[lang].emailLabel.toLowerCase());
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
         emailRef.current?.scrollIntoView({ behavior: "smooth" });
-        setError(t.invalidEmail);
+        setError(texts[lang].invalidEmail);
         return;
       }
     }
@@ -1129,12 +1271,12 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       agreementRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       agreementRef.current?.scrollIntoView({ behavior: "smooth" });
       console.log(texts[lang].logMessages.termsError);
-      missingFields.push("згода на правила і обробку даних");
+      missingFields.push(texts[lang].agreementErrorLabel);
     }
 
     if (missingFields.length > 0) {
-      const errorMessage = `${t.errorMissingFields} ${missingFields.join(", ")}.`;
-      console.log(`Помилка: Відсутні обов’язкові поля: ${missingFields.join(", ")}`);
+      const errorMessage = `${texts[lang].errorMissingFields} ${missingFields.join(", ")}.`;
+      console.log(`Error: Missing required fields: ${missingFields.join(", ")}`);
       setError(errorMessage);
       return;
     }
@@ -1201,7 +1343,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Не вдалося створити замовлення.");
+        throw new Error(errorData.error || "Failed to create order.");
       }
 
       const { orderId } = await response.json();
@@ -1217,7 +1359,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
         body: JSON.stringify({
           order_id: orderId,
           total_price: amount,
-          description: `Sprzątanie domu prywatnego #${orderId}`,
+          description: `Private house cleaning #${orderId}`,
           client_email: orderData.client_info.email,
           client_phone: orderData.client_info.phone,
           client_info: {
@@ -1228,7 +1370,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
 
       if (!paymentResponse.ok) {
         const errorData = await paymentResponse.json();
-        throw new Error(errorData.error || "Не вдалося ініціалізувати платіж.");
+        throw new Error(errorData.error || "Failed to initialize payment.");
       }
 
       const { redirectUri } = await paymentResponse.json();
@@ -1238,15 +1380,15 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
       console.log(texts[lang].logMessages.paymentRedirect);
     } catch (error) {
       console.error(texts[lang].logMessages.orderError, error);
-      setError(error.message || t.paymentError);
+      setError(error.message || texts[lang].paymentError);
     }
   }
 
   return (
     <section className={css["calc-wrap"]}>
       <div className={css.container}>
-        <h2 className={css["cacl-title"]}>{t.title} {selectedCity}</h2>
-        <p className={css.subtitle}>{t.subtitle}</p>
+        <h2 className={css["cacl-title"]}>{texts[lang].title} {selectedCity}</h2>
+        <p className={css.subtitle}>{texts[lang].subtitle}</p>
       </div>
 
       {error && <div className={css.error}>{error}</div>}
@@ -1262,7 +1404,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   console.log(texts[lang].logMessages.clientTypePrivate);
                 }}
               >
-                {t.userTypePrivate}
+                {texts[lang].userTypePrivate}
               </button>
               <button
                 className={clientType === "Firma" ? css.active : ""}
@@ -1271,7 +1413,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   console.log(texts[lang].logMessages.clientTypeCompany);
                 }}
               >
-                {t.userTypeCompany}
+                {texts[lang].userTypeCompany}
               </button>
             </div>
 
@@ -1288,7 +1430,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </button>
                 <span className={css["counter-value"]}>{rooms}</span>
                 <span className={css["counter-label"]}>
-                  {rooms === 1 ? t.roomsLabel : rooms >= 2 && rooms <= 4 ? t.roomsLabel2 : t.roomsLabel5}
+                  {rooms === 1 ? texts[lang].roomsLabel : rooms >= 2 && rooms <= 4 ? texts[lang].roomsLabel2 : texts[lang].roomsLabel5}
                 </span>
                 <button
                   className={css["counter-button"]}
@@ -1314,10 +1456,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 <span className={css["counter-value"]}>{bathrooms}</span>
                 <span className={css["counter-label"]}>
                   {bathrooms === 1
-                    ? t.bathroomsLabel
+                    ? texts[lang].bathroomsLabel
                     : bathrooms >= 2 && bathrooms <= 4
-                    ? t.bathroomsLabel2
-                    : t.bathroomsLabel5}
+                    ? texts[lang].bathroomsLabel2
+                    : texts[lang].bathroomsLabel5}
                 </span>
                 <button
                   className={css["counter-button"]}
@@ -1331,10 +1473,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
               </div>
             </div>
 
-            <p className={css.note}>{t.note}</p>
+            <p className={css.note}>{texts[lang].note}</p>
 
             <div className={css["additional-services"]}>
-              <h4>{t.additionalServices}</h4>
+              <h4>{texts[lang].additionalServices}</h4>
               <div className={css["service-block"]}>
                 <div className={css["service-item"]}>
                   <label className={css["checkbox-label"]}>
@@ -1350,7 +1492,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                         onChange={handleKitchenChange}
                         className={css["custom-checkbox"]}
                       />
-                      {t.kitchenLabel}
+                      {texts[lang].kitchenLabel}
                     </div>
                   </label>
 
@@ -1368,7 +1510,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                           onChange={handleKitchenAnnexChange}
                           className={css["custom-checkbox"]}
                         />
-                        {t.kitchenAnnexLabel}
+                        {texts[lang].kitchenAnnexLabel}
                       </div>
                     </label>
                   </div>
@@ -1396,16 +1538,16 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </div>
                 <div className={css["text-price-wrapper"]}>
                   <div>
-                    <p>{t.vacuumNotice}</p>
-                    <p>{t.vacuumNotice2}</p>
+                    <p>{texts[lang].vacuumNotice}</p>
+                    <p>{texts[lang].vacuumNotice2}</p>
                   </div>
-                  <button className={css["vacuum-price"]}>{t.vacuumPrice}</button>
+                  <button className={css["vacuum-price"]}>{texts[lang].vacuumPrice}</button>
                 </div>
               </label>
             </div>
 
             <div className={css["calendar-section"]} ref={calendarRef}>
-              <h4>{t.calendarTitle}</h4>
+              <h4>{texts[lang].calendarTitle}</h4>
               <div className={css["calendar-container"]}>
                 <div className={css["calendar-time-wrapper"]}>
                   <div className={css["calendar-wrapper"]}>
@@ -1431,7 +1573,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   </div>
 
                   <div className={css["time-wrapper"]} ref={timeSlotsRef}>
-                    <h5>{t.timeLabel}</h5>
+                    <h5>{texts[lang].timeLabel}</h5>
                     <div className={css["time-slots"]}>
                       {availableTimes.map((time) => (
                         <button
@@ -1453,13 +1595,13 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </div>
 
                 <div className={css["calendar-footer"]}>
-                  <p>{t.calendarFooter}</p>
+                  <p>{texts[lang].calendarFooter}</p>
                 </div>
               </div>
             </div>
 
             <div className={css["frequency-section"]}>
-              <h4>{t.frequencyTitle}</h4>
+              <h4>{texts[lang].frequencyTitle}</h4>
               <div className={css["frequency-options"]}>
                 {Object.entries(frequencyDiscounts).map(([freq, freqDiscount]) => {
                   const freqPrice = (
@@ -1493,7 +1635,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["paid-services-section"]}>
-              <h4>{t.paidServicesTitle}</h4>
+              <h4>{texts[lang].paidServicesTitle}</h4>
               <div className={css["paid-services-grid"]}>
                 {paidServices.map((service) => (
                   <div
@@ -1511,7 +1653,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                       alt={service.name}
                       className={css["service-icon"]}
                     />
-                    <p>{t[service.name]}</p>
+                    <p>{texts[lang][service.name]}</p>
                     <div className={css["price-wrapper"]}>
                       <span className={css["price-new"]}>
                         {service.price.toFixed(2)} zł
@@ -1564,19 +1706,19 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["address-section"]}>
-              <h4>{t.addressTitle}</h4>
+              <h4>{texts[lang].addressTitle}</h4>
               <div className={css["city-select"]}>
                 <button
                   className={css["city-button"]}
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
-                  {t.cityLabel}: {selectedCity} +{cities[selectedCity].toFixed(2)} zł ▼
+                  {texts[lang].cityLabel}: {selectedCity} +{cities[selectedCity].toFixed(2)} zł ▼
                 </button>
                 {showCityDropdown && (
                   <div className={css["city-dropdown"]}>
                     <input
                       type="text"
-                      placeholder={t.citySearchPlaceholder}
+                      placeholder={texts[lang].citySearchPlaceholder}
                       value={searchQuery}
                       onChange={(e) => {
                         setSearchQuery(e.target.value);
@@ -1607,7 +1749,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
               <div className={css["address-fields"]}>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.streetLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].streetLabel}</label>
                     <input
                       ref={streetRef}
                       type="text"
@@ -1620,7 +1762,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.postalCodeLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].postalCodeLabel}</label>
                     <input
                       ref={postalCodeRef}
                       type="text"
@@ -1633,7 +1775,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.houseNumberLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].houseNumberLabel}</label>
                     <input
                       ref={houseNumberRef}
                       type="text"
@@ -1646,7 +1788,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.apartmentNumberLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].apartmentNumberLabel}</label>
                     <input
                       type="text"
                       value={apartmentNumber}
@@ -1660,7 +1802,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </div>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.buildingLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].buildingLabel}</label>
                     <input
                       type="text"
                       value={building}
@@ -1672,7 +1814,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.floorLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].floorLabel}</label>
                     <input
                       type="text"
                       value={floor}
@@ -1684,7 +1826,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.intercomCodeLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].intercomCodeLabel}</label>
                     <input
                       type="text"
                       value={intercomCode}
@@ -1700,12 +1842,12 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["contact-section"]}>
-              <h4>{t.contactTitle}</h4>
+              <h4>{texts[lang].contactTitle}</h4>
               <div className={css["contact-fields"]}>
                 <div className={css["contact-row"]}>
                   {clientType === "Osoba prywatna" ? (
                     <div className={css["input-group"]}>
-                      <label className={css["input-label"]}>{t.nameLabel}</label>
+                      <label className={css["input-label"]}>{texts[lang].nameLabel}</label>
                       <input
                         ref={nameRef}
                         type="text"
@@ -1720,7 +1862,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   ) : (
                     <>
                       <div className={css["input-group"]}>
-                        <label className={css["input-label"]}>{t.companyNameLabel}</label>
+                        <label className={css["input-label"]}>{texts[lang].companyNameLabel}</label>
                         <input
                           ref={companyNameRef}
                           type="text"
@@ -1733,7 +1875,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                         />
                       </div>
                       <div className={css["input-group"]}>
-                        <label className={css["input-label"]}>{t.nipLabel}</label>
+                        <label className={css["input-label"]}>{texts[lang].nipLabel}</label>
                         <input
                           ref={nipRef}
                           type="text"
@@ -1748,7 +1890,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     </>
                   )}
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.phoneLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].phoneLabel}</label>
                     <input
                       ref={phoneRef}
                       type="text"
@@ -1761,7 +1903,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.emailLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].emailLabel}</label>
                     <input
                       ref={emailRef}
                       type="email"
@@ -1776,7 +1918,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 </div>
                 <div className={css["contact-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>{t.additionalInfoLabel}</label>
+                    <label className={css["input-label"]}>{texts[lang].additionalInfoLabel}</label>
                     <textarea
                       value={additionalInfo}
                       onChange={(e) => {
@@ -1801,7 +1943,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   }}
                   className={css["custom-checkbox"]}
                 />
-                {t.agreement1}
+                {texts[lang].agreement1}
               </label>
               <label className={css["agreement-label"]}>
                 <input
@@ -1813,37 +1955,40 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   }}
                   className={css["custom-checkbox"]}
                 />
-                {t.agreement2}
+                {texts[lang].agreement2}
               </label>
             </div>
           </div>
 
-          <div className={css["calculator-right"]} ref={rightBlockRef}>
+          <div className={css["calculator-right"]}>
             <h2>
-              {t.title} {rooms}{" "}
-              {rooms === 1 ? t.roomsLabel : rooms >= 2 && rooms <= 4 ? t.roomsLabel2 : t.roomsLabel5}{" "}
-              {t.andLabel || "i"} {bathrooms}{" "}
+              {texts[lang].title} {rooms}{" "}
+              {rooms === 1 ? texts[lang].roomsLabel : rooms >= 2 && rooms <= 4 ? texts[lang].roomsLabel2 : texts[lang].roomsLabel5}{" "}
+              {texts[lang].andLabel || "and"} {bathrooms}{" "}
               {bathrooms === 1
-                ? t.bathroomsLabel
+                ? texts[lang].bathroomsLabel
                 : bathrooms >= 2 && bathrooms <= 4
-                ? t.bathroomsLabel2
-                : t.bathroomsLabel5}
-              {kitchen ? `, ${t.kitchenLabel.toLowerCase()}` : kitchenAnnex ? `, ${t.kitchenAnnexLabel.toLowerCase()}` : ""}, {t.hallwayLabel || "przedpokój"}
+                ? texts[lang].bathroomsLabel2
+                : texts[lang].bathroomsLabel5}
+              {kitchen ? `, ${texts[lang].kitchenLabel.toLowerCase()}` : kitchenAnnex ? `, ${texts[lang].kitchenAnnexLabel.toLowerCase()}` : ""}, {texts[lang].hallwayLabel || "hallway"}
               <br />
               {calculateBasePrice()} zł
             </h2>
 
             <div className={css["location-info"]}>
-              <h4>{t.locationLabel}</h4>
+              <h4>{texts[lang].locationLabel}</h4>
               <p>{selectedCity}</p>
             </div>
 
             <div className={css["specialist-info"]}>
-              <img src="/icon/bucket.svg" alt="Specialists" />
-              <p>{t.specialistInfo}</p>
+              <img src="/icon/bucket.png" alt="Specialists" />
+              <p>{texts[lang].specialistInfo}</p>
             </div>
 
-            <h4>{t.workTimeLabel}: {formatWorkTime()}</h4>
+            <h4>
+              {texts[lang].workTimeLabel}:{" "}
+              <span className={css["bold-text"]}>{formatWorkTime()}</span>
+            </h4>
             {calculateCleanersAndTime().cleaners > 1 && (
               <div className={css.cleaners}>
                 {Array.from({ length: calculateCleanersAndTime().cleaners }, (_, i) => (
@@ -1851,7 +1996,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     👤
                   </span>
                 ))}
-                <p>{t.cleanersLabel}: {calculateCleanersAndTime().cleaners}</p>
+                <p>{texts[lang].cleanersLabel}: {calculateCleanersAndTime().cleaners}</p>
               </div>
             )}
 
@@ -1867,7 +2012,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                   )}
                 </p>
               ) : (
-                <p>{t.datePlaceholder}</p>
+                <p>{texts[lang].datePlaceholder}</p>
               )}
             </div>
 
@@ -1883,7 +2028,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
             </div>
 
             <div className={css["location-cost"]}>
-              <p>{t.locationCostLabel}: +{cities[selectedCity].toFixed(2)} zł</p>
+              <p>
+                {texts[lang].locationCostLabel}:{" "}
+                <span className={css["bold-text"]}>+{cities[selectedCity].toFixed(2)} zł</span>
+              </p>
             </div>
 
             <div className={css["selected-services-container"]}>
@@ -1898,10 +2046,10 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                         className={css["selected-service-icon"]}
                       />
                       <p>
-                        {t[service.name]}
+                        {texts[lang][service.name]}
                         {service.type === "quantity" &&
                           ` (${selectedServices[service.id]}${
-                            service.id === 9 || service.id === 11 ? ` ${texts[lang].logMessages.hours || "god"}` : "x"
+                            service.id === 9 || service.id === 11 ? ` ${texts[lang].logMessages.hours || "hours"}` : "x"
                           })`}
                       </p>
                     </div>
@@ -1937,7 +2085,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                       alt="Vacuum"
                       className={css["selected-service-icon"]}
                     />
-                    <p>{t.vacuumNotice2}</p>
+                    <p>{texts[lang].vacuumNotice2}</p>
                   </div>
                   <div className={css["service-price"]}>
                     <p>{vacuumCost.toFixed(2)} zł</p>
@@ -1947,7 +2095,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                     onClick={(e) => {
                       e.stopPropagation();
                       setVacuumNeeded(false);
-                      console.log(texts[lang].logMessages.vacuumRemoved || "Пилосос видалено з замовлення");
+                      console.log(texts[lang].logMessages.vacuumRemoved || "Vacuum removed from order");
                     }}
                   >
                     ×
@@ -1961,25 +2109,27 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
                 <FaPercentage className={css["promo-icon"]} />
                 <input
                   type="text"
-                  placeholder={t.promoPlaceholder}
+                  placeholder={texts[lang].promoPlaceholder}
                   value={promo}
                   onChange={(e) => {
                     setPromo(e.target.value);
                     console.log(`${texts[lang].logMessages.promoEntered} ${e.target.value}`);
                   }}
                 />
-                <button onClick={handlePromoApply}>{t.applyPromo}</button>
+                <button onClick={handlePromoApply}>{texts[lang].applyPromo}</button>
               </div>
             </div>
 
             <div className={css.total}>
               <p>
-                <strong>{t.totalLabel}:</strong> {calculateTotal()} zł{" "}
+                <strong>{texts[lang].totalLabel}:</strong> {calculateTotal()} zł{" "}
                 <del>{calculateStrikethroughPrice()} zł</del>
               </p>
 
+              <div ref={sentinelRef} />
               <button
-                className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : ""}`}
+                ref={orderButtonRef}
+                className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : css.inPlace}`}
                 onClick={handleOrder}
               >
                 {t.orderButton} {calculateTotal()} zł

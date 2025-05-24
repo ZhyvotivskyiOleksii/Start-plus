@@ -50,7 +50,8 @@ export default function RenovationCalculator({ lang, type, title }) {
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const agreementRef = useRef(null);
-  const rightBlockRef = useRef(null);
+  const sentinelRef = useRef(null);
+  const orderButtonRef = useRef(null);
   const [isSticked, setIsSticked] = useState(true);
 
   const cities = {
@@ -373,14 +374,41 @@ export default function RenovationCalculator({ lang, type, title }) {
   }, [type]);
 
   useEffect(() => {
+    if (window.innerWidth > 760) {
+      setIsSticked(false);
+      return;
+    }
+
+    const marker = sentinelRef.current;
+    const button = orderButtonRef.current;
+    if (!marker || !button) {
+      console.warn("Refs not found:", { marker, button });
+      return;
+    }
+
+    const stick = () => {
+      button.classList.add(css.sticked);
+      button.classList.remove(css.inPlace);
+      setIsSticked(true);
+    };
+    const unstick = () => {
+      button.classList.remove(css.sticked);
+      button.classList.add(css.inPlace);
+      setIsSticked(false);
+    };
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) setIsSticked(false);
-        else setIsSticked(true);
+      ([entry]) => {
+        entry.isIntersecting ? unstick() : stick();
       },
-      { root: null, threshold: 0.2 }
+      {
+        root: null,
+        threshold: 0,
+        rootMargin: `0px 0px -${button.offsetHeight || 60}px 0px`,
+      }
     );
-    if (rightBlockRef.current) observer.observe(rightBlockRef.current);
+
+    observer.observe(marker);
     return () => observer.disconnect();
   }, []);
 
@@ -1258,9 +1286,11 @@ export default function RenovationCalculator({ lang, type, title }) {
             </div>
           </div>
 
-          <div className={css["calculator-right"]} ref={rightBlockRef}>
+          <div className={css["calculator-right"]}>
             <h2>
-              {t.metersLabel}: {area} m², {t.windowsLabel}: {windows},
+              {t.metersLabel}:{" "}
+              <span className={css["bold-text"]}>{area} m²</span>, {t.windowsLabel}:{" "}
+              <span className={css["bold-text"]}>{windows}</span>,
               <br />
               {calculateBasePrice()} zł
             </h2>
@@ -1271,11 +1301,14 @@ export default function RenovationCalculator({ lang, type, title }) {
             </div>
 
             <div className={css["specialist-info"]}>
-              <img src="/icon/bucket.svg" alt="Specialists" />
+              <img src="/icon/bucket.png" alt="Specialists" />
               <p>{t.specialistInfo}</p>
             </div>
 
-            <h4>{t.workTimeLabel}: {formatWorkTime()}</h4>
+            <h4>
+              {t.workTimeLabel}:{" "}
+              <span className={css["bold-text"]}>{formatWorkTime()}</span>
+            </h4>
             {calculateCleanersAndTime().cleaners > 1 && (
               <div className={css.cleaners}>
                 {Array.from({ length: calculateCleanersAndTime().cleaners }, (_, i) => (
@@ -1292,9 +1325,22 @@ export default function RenovationCalculator({ lang, type, title }) {
               {selectedDate && selectedTime ? (
                 <p>
                   {formatSelectedDate()}, {selectedTime}{" "}
-                  {discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`] && (
+                  {discounts[
+                    `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(
+                      2,
+                      "0"
+                    )}-${String(selectedDate.getDate()).padStart(2, "0")}`
+                  ] && (
                     <span className={css["discount-inline"]}>
-                      -{discounts[`${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`]}%
+                      -
+                      {
+                        discounts[
+                          `${selectedDate.getFullYear()}-${String(
+                            selectedDate.getMonth() + 1
+                          ).padStart(2, "0")}-${String(selectedDate.getDate()).padStart(2, "0")}`
+                        ]
+                      }
+                      %
                     </span>
                   )}
                 </p>
@@ -1304,12 +1350,21 @@ export default function RenovationCalculator({ lang, type, title }) {
             </div>
 
             <div className={css["area-windows-info"]}>
-              <p>{t.areaLabel}: {area} m²</p>
-              <p>{t.windowsLabel}: {windows}</p>
+              <p>
+                {t.areaLabel}:{" "}
+                <span className={css["bold-text"]}>{area} m²</span>
+              </p>
+              <p>
+                {t.windowsLabel}:{" "}
+                <span className={css["bold-text"]}>{windows}</span>
+              </p>
             </div>
 
             <div className={css["location-cost"]}>
-              <p>{t.locationCostLabel}: +{cities[selectedCity].toFixed(2)} zł</p>
+              <p>
+                {t.locationCostLabel}:{" "}
+                <span className={css["bold-text"]}>+{cities[selectedCity].toFixed(2)} zł</span>
+              </p>
             </div>
 
             <div className={css["promo-code"]}>
@@ -1333,14 +1388,14 @@ export default function RenovationCalculator({ lang, type, title }) {
                 <strong>{t.totalLabel}:</strong> {calculateTotal()} zł{" "}
                 <del>{calculateStrikethroughPrice()} zł</del>
               </p>
-
+              <div ref={sentinelRef} />
               <button
-                className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : ""}`}
+                ref={orderButtonRef}
+                className={`${css["sticky-order-button"]} ${isSticked ? css.sticked : css.inPlace}`}
                 onClick={handleOrder}
               >
                 {t.orderButton} {calculateTotal()} zł
               </button>
-
               <div className={css["payment-icons"]}>
                 <img src="/icon/visa.svg" alt="Visa" />
                 <img src="/icon/money.svg" alt="MasterCard" />

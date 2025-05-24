@@ -1,49 +1,4 @@
-:root {
-    --background-color: #f5f3fa;
-    --text-color: #333333;
-    --text-secondary-color: #666666;
-    --accent-color: #7c5dc9;
-    --discount-color: #4caf50;
-    --button-bg-start: #a084e8;
-    --button-bg-end: #6c47b6;
-    --button-text-color: #FFFFFF;
-    --button-shadow: 0 4px 12px rgba(124, 93, 201, 0.13);
-    --button-shadow-hover: 0 6px 16px rgba(124, 93, 201, 0.22);
-    --button-border-light: rgba(255, 255, 255, 0.2);
-    --button-border-dark: rgba(124, 93, 201, 0.18);
-    --service-bg: #f7f4fb;
-    --service-shadow: 0 2px 8px rgba(124, 93, 201, 0.09);
-    --service-shadow-hover: 0 4px 12px rgba(124, 93, 201, 0.15);
-    --secondary-bg: #f5f3fa;
-    --tertiary-bg: #e6e0f3;
-    --disabled-bg: rgba(200, 200, 200, 0.5);
-    --button-bg-hover-start: #7c5dc9;
-    --button-bg-hover-end: #6c47b6;
-    --button-bg-selected-start: #a084e8;
-    --button-bg-selected-end: #6c47b6;
-    --discount-bg-start: rgba(76, 175, 80, 0.1);
-    --discount-bg-end: rgba(56, 142, 60, 0.1);
-    --discount-bg-hover-start: rgba(76, 175, 80, 0.2);
-    --discount-bg-hover-end: rgba(56, 142, 60, 0.2);
-    --today-bg-start: rgba(160, 132, 232, 0.13);
-    --today-bg-end: rgba(108, 71, 182, 0.10);
-    --disabled-text-color: #999;
-    --disabled-text-color-light: #99999970;
-    --remove-bg-start: rgba(255, 99, 97, 0.8);
-    --remove-bg-end: rgba(200, 50, 50, 0.8);
-    --remove-bg-hover-start: rgba(255, 120, 120, 1);
-    --remove-bg-hover-end: rgba(220, 70, 70, 0.8);
-    --highlight-color: #ede7f6;
-    --highlight-contrast-color: #a084e8;
-    --light-overlay: rgba(124, 93, 201, 0.04);
-    --light-border: rgba(124, 93, 201, 0.10);
-    --error-color: #ff4f4f;
-    --error-shadow: rgba(255, 0, 0, 0.2);
-    --dot-bg: rgba(124, 93, 201, 0.18);
-    --popular-shadow: rgba(160, 132, 232, 0.22);
-    --new-shadow: rgba(76, 175, 80, 0.25);
-  }
-  
+
   .calc-wrap,
   .container,
   .calculator-impuls,
@@ -204,7 +159,7 @@
     cursor: pointer;
     margin-top: 12px;
     box-shadow: var(--button-shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transition: all 0.3s ease;
     border-top: 1px solid var(--button-border-light);
     border-left: 1px solid var(--button-border-light);
     border-bottom: 1px solid var(--button-border-dark);
@@ -224,32 +179,48 @@
   
   .sticky-order-button.sticked {
     position: fixed;
-    bottom: 16px;
-    left: 16px;
-    right: 16px;
+    inset-block-end: 16px;
+    inset-inline: 16px;
     width: auto;
-    transform: none;
     max-width: none;
     z-index: 1000;
     padding: 12px;
     font-size: 1rem;
   }
   
+
+  .sticky-order-button.inPlace {
+    position: static;
+    width: 100%;
+    margin-top: 12px;
+  }
+
+
   @media (max-width: 760px) {
+   .sticky-order-button {
+    position: fixed;
+    inset-block-end: 16px;
+    inset-inline: 16px;
+    width: auto;
+    max-width: none;
+    z-index: 1000;
+    padding: 12px;
+    font-size: 1rem;
+  }
+  }
+  @media (min-width: 761px) {
     .sticky-order-button {
-      position: fixed;
-      bottom: 16px;
-      left: 16px;
-      right: 16px;
-      width: auto;
-      transform: none;
+      position: static;
+      width: 100%;
       max-width: none;
-      z-index: 1000;
-      padding: 12px;
-      font-size: 1rem;
+    }
+    .sticky-order-button.sticked,
+    .sticky-order-button.inPlace {
+      position: static;
+      width: 100%;
+      max-width: none;
     }
   }
-  
   .user-type {
     display: flex;
     gap: clamp(8px, 1vw, 10px);
@@ -433,7 +404,7 @@
   
   .cacl-title {
     font-size: clamp(1.8rem, 4vmin, 2.2rem);
-    font-weight: 800;
+    font-family: "FuturaPT2", sans-serif;
     margin-bottom: 6px;
     color: var(--text-color);
     letter-spacing: 0.3px;
@@ -452,11 +423,11 @@
   }
   
   .calendar-section h4 {
-    font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
-    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
     margin-bottom: 10px;
-    letter-spacing: 0.3px;
-    font-weight: 700;
+    color: #0000007b;
+    font-family: "FuturaPT2", sans-serif;
   }
   
   .calendar-container {
@@ -896,11 +867,11 @@
   
   .address-section h4,
   .contact-section h4 {
-    font-size: clamp(1.2rem, 2.5vmin, 1.4rem);
-    color: var(--text-color);
+    text-transform: uppercase;
+    font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
     margin-bottom: 10px;
-    letter-spacing: 0.3px;
-    font-weight: 700;
+    color: #0000007b;
+    font-family: "FuturaPT2", sans-serif;
   }
   
   .address-fields,
@@ -1032,12 +1003,12 @@
   }
   
   .calculator-right h2 {
-    font-size: clamp(1.1rem, 2vmin, 1.3rem);
+    font-size: clamp(1.4rem, 2vmin, 1.3rem);
+    font-family: "FuturaPT2", sans-serif;
     color: var(--text-color);
     margin-bottom: 10px;
     line-height: 1.4;
     letter-spacing: 0.3px;
-    font-weight: 700;
   }
   
   .location-info {
@@ -1060,26 +1031,26 @@
   }
   
   .specialist-info {
-    background: var(--secondary-bg);
+    background: #2dfcb3;
     padding: clamp(6px, 1vw, 10px);
     border-radius: 8px;
     margin-bottom: 12px;
     display: flex;
     gap: 8px;
     align-items: center;
-    border: 1px solid var(--tertiary-bg);
   }
   
   .specialist-info img {
-    width: clamp(24px, 3vw, 28px);
-    height: clamp(24px, 3vw, 28px);
+    width: clamp(54px, 3vw, 28px);
+    height: clamp(54px, 3vw, 28px);
   }
   
   .specialist-info p {
     font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
     margin: 0;
-    color: var(--text-secondary-color);
+    color: #000000;
     font-weight: 600;
+    font-family: "FuturaPT1", sans-serif;
   }
   
   .calculator-right h4 {
@@ -1133,9 +1104,10 @@
   }
   
   .discount-inline {
-    font-size: clamp(0.6rem, 0.9vmin, 0.7rem);
+    font-size: clamp(0.9rem, 0.9vmin, 0.7rem);
     color: var(--discount-color);
     margin-left: 4px;
+    font-family: "FuturaPT2", sans-serif;
   }
   
   .area-windows-info {
@@ -1221,7 +1193,10 @@
     transform: translateY(1px);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+  .bold-text {
+    font-family: "FuturaPT2", sans-serif;
+
+  }
   .total {
     text-align: center;
     margin-top: 10px;
@@ -1232,7 +1207,7 @@
   
   .total p {
     font-size: clamp(1.2rem, 2.2vmin, 1.4rem);
-    font-weight: 800;
+    font-family: "FuturaPT2", sans-serif;
     margin-bottom: 8px;
     color: var(--text-color);
   }
@@ -1255,8 +1230,8 @@
   }
   
   .payment-icons img {
-    width: clamp(26px, 3vw, 32px);
-    height: clamp(26px, 3vw, 32px);
+    width: clamp(46px, 3vw, 32px);
+    height: clamp(46px, 3vw, 32px);
     filter: grayscale(0%);
     transition: filter 0.3s ease;
   }

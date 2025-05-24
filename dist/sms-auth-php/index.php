@@ -591,54 +591,25 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $stmt->execute($params);
             $users = $stmt->fetchAll();
             logit("Знайдено користувачів: " . count($users));
+
+            // Додаємо статистику для кожного користувача
+            foreach ($users as &$user) {
+                // Кількість замовлень
+                $orderStmt = $pdo->prepare('SELECT COUNT(*) as order_count FROM orders WHERE user_id = ?');
+                $orderStmt->execute([$user['id']]);
+                $user['order_count'] = (int)$orderStmt->fetch()['order_count'];
+
+                // Загальна сума витрат
+                $spentStmt = $pdo->prepare('SELECT SUM(total_price) as total_spent FROM orders WHERE user_id = ?');
+                $spentStmt->execute([$user['id']]);
+                $user['total_spent'] = (float)($spentStmt->fetch()['total_spent'] ?? 0);
+            }
+
             echo json_encode($users);
         } catch (PDOException $e) {
             logit("Помилка при отриманні користувачів: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['message' => 'Помилка при отриманні користувачів: ' . $e->getMessage()]);
-        }
-        exit;
-    }
-
-    /* ----------- /api/users/stats ------------------ */
-    if ($uri === '/api/users/stats' && $method === 'GET') {
-        $period = $_GET['period'] ?? '7d'; // Період: 7d, 30d, 90d тощо
-        $days = 7;
-        if ($period === '30d') $days = 30;
-        elseif ($period === '90d') $days = 90;
-
-        try {
-            // Загальна кількість користувачів
-            $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM users');
-            $totalUsers = $totalStmt->fetch()['total'];
-
-            // Кількість користувачів за статусами
-            $statusStmt = $pdo->query('SELECT status, COUNT(*) as count FROM users GROUP BY status');
-            $statusCounts = $statusStmt->fetchAll(PDO::FETCH_KEY_PAIR);
-
-            // Кількість нових користувачів за період
-            $newStmt = $pdo->prepare('SELECT COUNT(*) as new_users FROM users WHERE created_at >= ?');
-            $newStmt->execute([date('Y-m-d H:i:s', strtotime("-$days days"))]);
-            $newUsers = $newStmt->fetch()['new_users'];
-
-            // Середня кількість замовлень на користувача
-            $ordersStmt = $pdo->query('SELECT COUNT(*) as total_orders FROM orders');
-            $totalOrders = $ordersStmt->fetch()['total_orders'];
-            $avgOrdersPerUser = $totalUsers > 0 ? $totalOrders / $totalUsers : 0;
-
-            $stats = [
-                'total_users' => (int)$totalUsers,
-                'status_counts' => $statusCounts,
-                'new_users' => (int)$newUsers,
-                'avg_orders_per_user' => round($avgOrdersPerUser, 2),
-            ];
-
-            logit("Отримано статистику користувачів: " . json_encode($stats));
-            echo json_encode($stats);
-        } catch (PDOException $e) {
-            logit("Помилка при отриманні статистики користувачів: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['message' => 'Помилка при отриманні статистики користувачів']);
         }
         exit;
     }
@@ -661,6 +632,93 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $stmt = $pdo->prepare('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC');
             $stmt->execute([$id]);
             $orders = $stmt->fetchAll();
+
+            // Додаємо деталі замовлення
+            foreach ($orders as &$order) {
+                $orderDetails = [];
+
+                // Декодируем client_info
+                if ($order['client_info']) {
+                    $clientInfo = json_decode($order['client_info'], true);
+                    if (is_array($clientInfo)) {
+                        $order['client_info'] = $clientInfo;
+                        // Если в client_info нет additional_info, но есть details, используем его
+                        if (!isset($clientInfo['additional_info']) && $order['details']) {
+                            $order['client_info']['additional_info'] = $order['details'];
+                        }
+                    } else {
+                        $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                    }
+                } else {
+                    $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                }
+
+                // Декодируем address
+                if ($order['address']) {
+                    $address = json_decode($order['address'], true);
+                    if (is_array($address)) {
+                        $order['address'] = [
+                            'street' => $address['street'] ?? 'N/A',
+                            'house_number' => $address['house_number'] ?? 'N/A',
+                            'apartment_number' => $address['apartment_number'] ?? '',
+                        ];
+                    } else {
+                        $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                    }
+                } else {
+                    $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                }
+
+                // Город берём из колонки city
+                $order['city'] = $order['city'] ?? 'N/A';
+
+                switch ($order['order_type']) {
+                    case 'window_cleaning':
+                        $orderDetails['windows'] = $order['windows'] ?? 'N/A';
+                        $orderDetails['balconies'] = $order['balconies'] ?? 'N/A';
+                        break;
+                    case 'renovation':
+                        $orderDetails['area'] = $order['area'] ?? 'N/A';
+                        $orderDetails['windows'] = $order['windows'] ?? 'N/A';
+                        break;
+                    case 'office':
+                        $orderDetails['office_area'] = $order['office_area'] ?? 'N/A';
+                        $orderDetails['workspaces'] = $order['workspaces'] ?? 'N/A';
+                        $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
+                        break;
+                    case 'private_house':
+                    case 'apartment':
+                    case 'standard':
+                    case 'general':
+                        $orderDetails['rooms'] = $order['rooms'] ?? 'N/A';
+                        $orderDetails['bathrooms'] = $order['bathrooms'] ?? 'N/A';
+                        $orderDetails['kitchen'] = $order['kitchen'] ? 'Tak' : 'Nie';
+                        $orderDetails['kitchen_annex'] = $order['kitchen_annex'] ? 'Tak' : 'Nie';
+                        $orderDetails['vacuum_needed'] = $order['vacuum_needed'] ? 'Tak' : 'Nie';
+                        $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
+                        if ($order['selected_services']) {
+                            $services = json_decode($order['selected_services'], true);
+                            if (is_array($services)) {
+                                $orderDetails['selected_services'] = array_map(function ($service) {
+                                    return [
+                                        'name' => $service['name'] ?? 'N/A',
+                                        'price' => $service['price'] ?? 'N/A',
+                                        'quantity' => $service['quantity'] ?? 'N/A'
+                                    ];
+                                }, $services);
+                            } else {
+                                $orderDetails['selected_services'] = 'Brak';
+                            }
+                        } else {
+                            $orderDetails['selected_services'] = 'Brak';
+                        }
+                        break;
+                    default:
+                        $orderDetails['info'] = 'Невідомий тип замовлення';
+                }
+
+                $order['order_details'] = $orderDetails;
+            }
 
             $user['orders'] = $orders;
             logit("Знайдено замовлень для користувача $id: " . count($orders));
@@ -759,11 +817,78 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
     }
 }
 
+/* ----------- /api/users/stats ------------------ */
+if ($uri === '/api/users/stats' && $method === 'GET') {
+    $period = $_GET['period'] ?? '30d'; // Період: 7d, 30d, 1y тощо
+    $dateFrom = null;
+    switch ($period) {
+        case '7d':
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-7 days'));
+            break;
+        case '1y':
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-1 year'));
+            break;
+        case '30d':
+        default:
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-30 days'));
+            break;
+    }
+
+    try {
+        // Загальна кількість користувачів
+        $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM users');
+        $totalUsers = $totalStmt->fetch()['total'];
+
+        // Кількість користувачів за статусами
+        $statusStmt = $pdo->query('SELECT status, COUNT(*) as count FROM users GROUP BY status');
+        $statusCountsRaw = $statusStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $statusCounts = [
+            'active' => (int)($statusCountsRaw['active'] ?? 0),
+            'inactive' => (int)($statusCountsRaw['inactive'] ?? 0),
+            'banned' => (int)($statusCountsRaw['banned'] ?? 0),
+        ];
+
+        // Кількість нових користувачів за період
+        $newStmt = $pdo->prepare('SELECT COUNT(*) as new_users FROM users WHERE created_at >= ?');
+        $newStmt->execute([$dateFrom]);
+        $newUsers = $newStmt->fetch()['new_users'];
+
+        // Загальна кількість замовлень
+        $ordersStmt = $pdo->query('SELECT COUNT(*) as total_orders FROM orders');
+        $totalOrders = $ordersStmt->fetch()['total_orders'];
+
+        // Середня кількість замовлень на користувача
+        $avgOrdersPerUser = $totalUsers > 0 ? $totalOrders / $totalUsers : 0;
+
+        // Приблизний дохід за період
+        $revenueStmt = $pdo->prepare('SELECT SUM(total_price) as revenue FROM orders WHERE created_at >= ?');
+        $revenueStmt->execute([$dateFrom]);
+        $revenue = $revenueStmt->fetch()['revenue'] ?? 0;
+
+        $stats = [
+            'total_users' => (int)$totalUsers,
+            'status_counts' => $statusCounts,
+            'new_users' => (int)$newUsers,
+            'avg_orders_per_user' => round($avgOrdersPerUser, 2),
+            'total_orders' => (int)$totalOrders,
+            'revenue' => (float)$revenue,
+        ];
+
+        logit("Отримано статистику користувачів: " . json_encode($stats));
+        echo json_encode($stats);
+    } catch (PDOException $e) {
+        logit("Помилка при отриманні статистики користувачів: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['message' => 'Помилка при отриманні статистики користувачів']);
+    }
+    exit;
+}
+
 /* ----------- /api/orders ----------------------- */
 if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
     if ($method === 'GET' && !isset($matches[1])) {
         $userId = $_GET['user_id'] ?? null;
-        $orderType = $_GET['order_type'] ?? null;
+        $serviceType = $_GET['service_type'] ?? null;
         $status = $_GET['status'] ?? null;
         $dateFrom = $_GET['date_from'] ?? null;
         $dateTo = $_GET['date_to'] ?? null;
@@ -777,9 +902,22 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $params[] = $userId;
         }
 
-        if ($orderType) {
+        if ($serviceType) {
             $conditions[] = 'order_type = ?';
-            $params[] = $orderType;
+            $mappedServiceType = $serviceType;
+            $serviceTypeMapping = [
+                'office-cleaning' => 'office',
+                'private-house' => 'private_house',
+                'window-cleaning' => 'window_cleaning',
+                'post-renovation' => 'renovation',
+                'regular' => 'apartment',
+                'standard' => 'standard',
+                'general' => 'general',
+            ];
+            if (isset($serviceTypeMapping[$serviceType])) {
+                $mappedServiceType = $serviceTypeMapping[$serviceType];
+            }
+            $params[] = $mappedServiceType;
         }
 
         if ($status) {
@@ -810,9 +948,43 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $orders = $stmt->fetchAll();
             logit("Знайдено замовлень: " . count($orders));
 
-            // Додаємо поля для відображення деталей замовлення
             foreach ($orders as &$order) {
                 $orderDetails = [];
+
+                // Декодируем client_info
+                if ($order['client_info']) {
+                    $clientInfo = json_decode($order['client_info'], true);
+                    if (is_array($clientInfo)) {
+                        $order['client_info'] = $clientInfo;
+                        // Если в client_info нет additional_info, но есть details, используем его
+                        if (!isset($clientInfo['additional_info']) && $order['details']) {
+                            $order['client_info']['additional_info'] = $order['details'];
+                        }
+                    } else {
+                        $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                    }
+                } else {
+                    $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                }
+
+                // Декодируем address
+                if ($order['address']) {
+                    $address = json_decode($order['address'], true);
+                    if (is_array($address)) {
+                        $order['address'] = [
+                            'street' => $address['street'] ?? 'N/A',
+                            'house_number' => $address['house_number'] ?? 'N/A',
+                            'apartment_number' => $address['apartment_number'] ?? '',
+                        ];
+                    } else {
+                        $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                    }
+                } else {
+                    $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                }
+
+                // Город берём из колонки city
+                $order['city'] = $order['city'] ?? 'N/A';
 
                 switch ($order['order_type']) {
                     case 'window_cleaning':
@@ -829,7 +1001,9 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                         $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
                         break;
                     case 'private_house':
-                    case 'apartment': // Додано коментар: apartment обробляється так само, як private_house
+                    case 'apartment':
+                    case 'standard':
+                    case 'general':
                         $orderDetails['rooms'] = $order['rooms'] ?? 'N/A';
                         $orderDetails['bathrooms'] = $order['bathrooms'] ?? 'N/A';
                         $orderDetails['kitchen'] = $order['kitchen'] ? 'Tak' : 'Nie';
@@ -857,6 +1031,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                         $orderDetails['info'] = 'Невідомий тип замовлення';
                 }
 
+                $order['service_type'] = $order['order_type'];
                 $order['order_details'] = $orderDetails;
             }
 
@@ -981,7 +1156,12 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             logit("Телефон або email відсутні у client_info, користувач не створюється");
         }
 
-        $orderType = $orderData["order_type"];
+        // Використовуємо cleaning_category як order_type, якщо order_type є quick_order
+        if ($orderData["order_type"] === "quick_order") {
+            $orderType = $orderData["cleaning_category"] ?? "standard"; // Якщо cleaning_category відсутнє, за замовчуванням "standard"
+        } else {
+            $orderType = $orderData["order_type"];
+        }
         logit("Тип замовлення: $orderType");
         logit("Поля замовлення: rooms=" . ($orderData["rooms"] ?? 'null') . 
               ", bathrooms=" . ($orderData["bathrooms"] ?? 'null') . 
@@ -1033,123 +1213,149 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $placeholders[] = "?";
         }
 
-        switch ($orderType) {
-            case "window_cleaning":
-                $requiredWindowFields = ["windows", "balconies", "selected_date", "selected_time"];
-                foreach ($requiredWindowFields as $field) {
-                    if (!isset($orderData[$field])) {
-                        logit("Помилка: Відсутнє обов’язкове поле для window_cleaning: $field");
-                        http_response_code(400);
-                        echo json_encode(["error" => "Missing required field for window_cleaning: $field"]);
-                        exit;
-                    }
+        // Додаємо специфічні поля для standard і general (аналогічно apartment/private_house)
+        if (in_array($orderType, ["standard", "general"])) {
+            $requiredFields = ["rooms", "bathrooms", "selected_date", "selected_time"];
+            foreach ($requiredFields as $field) {
+                if (!isset($orderData[$field])) {
+                    logit("Помилка: Відсутнє обов’язкове поле для $orderType: $field");
+                    http_response_code(400);
+                    echo json_encode(["error" => "Missing required field for $orderType: $field"]);
+                    exit;
                 }
-                $columns[] = "windows";
-                $columns[] = "balconies";
-                $columns[] = "selected_date";
-                $columns[] = "selected_time";
-                $values[] = $orderData["windows"];
-                $values[] = $orderData["balconies"];
-                $values[] = $orderData["selected_date"];
-                $values[] = $orderData["selected_time"];
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                break;
-            case "renovation":
-                $requiredRenovationFields = ["area", "windows", "selected_date", "selected_time"];
-                foreach ($requiredRenovationFields as $field) {
-                    if (!isset($orderData[$field])) {
-                        logit("Помилка: Відсутнє обов’язкове поле для renovation: $field");
-                        http_response_code(400);
-                        echo json_encode(["error" => "Missing required field for renovation: $field"]);
-                        exit;
+            }
+            $columns[] = "rooms";
+            $columns[] = "bathrooms";
+            $columns[] = "selected_date";
+            $columns[] = "selected_time";
+            $values[] = $orderData["rooms"];
+            $values[] = $orderData["bathrooms"];
+            $values[] = $orderData["selected_date"];
+            $values[] = $orderData["selected_time"];
+            $placeholders[] = "?";
+            $placeholders[] = "?";
+            $placeholders[] = "?";
+            $placeholders[] = "?";
+        } else {
+            // Обробка інших типів замовлень (window_cleaning, renovation, office, private_house, apartment)
+            switch ($orderType) {
+                case "window_cleaning":
+                    $requiredWindowFields = ["windows", "balconies", "selected_date", "selected_time"];
+                    foreach ($requiredWindowFields as $field) {
+                        if (!isset($orderData[$field])) {
+                            logit("Помилка: Відсутнє обов’язкове поле для window_cleaning: $field");
+                            http_response_code(400);
+                            echo json_encode(["error" => "Missing required field for window_cleaning: $field"]);
+                            exit;
+                        }
                     }
-                }
-                $columns[] = "area";
-                $columns[] = "windows";
-                $columns[] = "selected_date";
-                $columns[] = "selected_time";
-                $values[] = $orderData["area"];
-                $values[] = $orderData["windows"];
-                $values[] = $orderData["selected_date"];
-                $values[] = $orderData["selected_time"];
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                break;
-            case "office":
-                $requiredOfficeFields = ["office_area", "workspaces", "cleaning_frequency", "selected_date", "selected_time"];
-                foreach ($requiredOfficeFields as $field) {
-                    if (!isset($orderData[$field])) {
-                        logit("Помилка: Відсутнє обов’язкове поле для office: $field");
-                        http_response_code(400);
-                        echo json_encode(["error" => "Missing required field for office: $field"]);
-                        exit;
+                    $columns[] = "windows";
+                    $columns[] = "balconies";
+                    $columns[] = "selected_date";
+                    $columns[] = "selected_time";
+                    $values[] = $orderData["windows"];
+                    $values[] = $orderData["balconies"];
+                    $values[] = $orderData["selected_date"];
+                    $values[] = $orderData["selected_time"];
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    break;
+                case "renovation":
+                    $requiredRenovationFields = ["area", "windows", "selected_date", "selected_time"];
+                    foreach ($requiredRenovationFields as $field) {
+                        if (!isset($orderData[$field])) {
+                            logit("Помилка: Відсутнє обов’язкове поле для renovation: $field");
+                            http_response_code(400);
+                            echo json_encode(["error" => "Missing required field for renovation: $field"]);
+                            exit;
+                        }
                     }
-                }
-                $columns[] = "office_area";
-                $columns[] = "workspaces";
-                $columns[] = "cleaning_frequency";
-                $columns[] = "selected_date";
-                $columns[] = "selected_time";
-                $values[] = $orderData["office_area"];
-                $values[] = $orderData["workspaces"];
-                $values[] = $orderData["cleaning_frequency"];
-                $values[] = $orderData["selected_date"];
-                $values[] = $orderData["selected_time"];
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                break;
-            case "private_house":
-            case "apartment": // Додано коментар: apartment обробляється так само, як private_house
-                $requiredApartmentFields = ["rooms", "bathrooms", "kitchen", "kitchen_annex", "vacuum_needed", "selected_services", "cleaning_frequency", "selected_date", "selected_time"];
-                foreach ($requiredApartmentFields as $field) {
-                    if (!isset($orderData[$field])) {
-                        logit("Помилка: Відсутнє обов’язкове поле для apartment/private_house: $field");
-                        http_response_code(400);
-                        echo json_encode(["error" => "Missing required field for apartment/private_house: $field"]);
-                        exit;
+                    $columns[] = "area";
+                    $columns[] = "windows";
+                    $columns[] = "selected_date";
+                    $columns[] = "selected_time";
+                    $values[] = $orderData["area"];
+                    $values[] = $orderData["windows"];
+                    $values[] = $orderData["selected_date"];
+                    $values[] = $orderData["selected_time"];
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    break;
+                case "office":
+                    $requiredOfficeFields = ["office_area", "workspaces", "cleaning_frequency", "selected_date", "selected_time"];
+                    foreach ($requiredOfficeFields as $field) {
+                        if (!isset($orderData[$field])) {
+                            logit("Помилка: Відсутнє обов’язкове поле для office: $field");
+                            http_response_code(400);
+                            echo json_encode(["error" => "Missing required field for office: $field"]);
+                            exit;
+                        }
                     }
-                }
-                $columns[] = "rooms";
-                $columns[] = "bathrooms";
-                $columns[] = "kitchen";
-                $columns[] = "kitchen_annex";
-                $columns[] = "vacuum_needed";
-                $columns[] = "selected_services";
-                $columns[] = "cleaning_frequency";
-                $columns[] = "selected_date";
-                $columns[] = "selected_time";
-                $values[] = $orderData["rooms"];
-                $values[] = $orderData["bathrooms"];
-                $values[] = $orderData["kitchen"] ? 1 : 0;
-                $values[] = $orderData["kitchen_annex"] ? 1 : 0;
-                $values[] = $orderData["vacuum_needed"] ? 1 : 0;
-                $values[] = json_encode($orderData["selected_services"]);
-                $values[] = $orderData["cleaning_frequency"];
-                $values[] = $orderData["selected_date"];
-                $values[] = $orderData["selected_time"];
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                $placeholders[] = "?";
-                break;
-            default:
-                logit("Помилка: Непідтримуваний тип замовлення: $orderType");
-                http_response_code(400);
-                echo json_encode(["error" => "Unsupported order type"]);
-                exit;
+                    $columns[] = "office_area";
+                    $columns[] = "workspaces";
+                    $columns[] = "cleaning_frequency";
+                    $columns[] = "selected_date";
+                    $columns[] = "selected_time";
+                    $values[] = $orderData["office_area"];
+                    $values[] = $orderData["workspaces"];
+                    $values[] = $orderData["cleaning_frequency"];
+                    $values[] = $orderData["selected_date"];
+                    $values[] = $orderData["selected_time"];
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    break;
+                case "private_house":
+                case "apartment":
+                    $requiredApartmentFields = ["rooms", "bathrooms", "kitchen", "kitchen_annex", "vacuum_needed", "selected_services", "cleaning_frequency", "selected_date", "selected_time"];
+                    foreach ($requiredApartmentFields as $field) {
+                        if (!isset($orderData[$field])) {
+                            logit("Помилка: Відсутнє обов’язкове поле для apartment/private_house: $field");
+                            http_response_code(400);
+                            echo json_encode(["error" => "Missing required field for apartment/private_house: $field"]);
+                            exit;
+                        }
+                    }
+                    $columns[] = "rooms";
+                    $columns[] = "bathrooms";
+                    $columns[] = "kitchen";
+                    $columns[] = "kitchen_annex";
+                    $columns[] = "vacuum_needed";
+                    $columns[] = "selected_services";
+                    $columns[] = "cleaning_frequency";
+                    $columns[] = "selected_date";
+                    $columns[] = "selected_time";
+                    $values[] = $orderData["rooms"];
+                    $values[] = $orderData["bathrooms"];
+                    $values[] = $orderData["kitchen"] ? 1 : 0;
+                    $values[] = $orderData["kitchen_annex"] ? 1 : 0;
+                    $values[] = $orderData["vacuum_needed"] ? 1 : 0;
+                    $values[] = json_encode($orderData["selected_services"]);
+                    $values[] = $orderData["cleaning_frequency"];
+                    $values[] = $orderData["selected_date"];
+                    $values[] = $orderData["selected_time"];
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    $placeholders[] = "?";
+                    break;
+                default:
+                    logit("Помилка: Непідтримуваний тип замовлення: $orderType");
+                    http_response_code(400);
+                    echo json_encode(["error" => "Unsupported order type"]);
+                    exit;
+            }
         }
 
         $columnsStr = implode(", ", $columns);
@@ -1202,6 +1408,57 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         }
         exit;
     }
+}
+
+/* ----------- /api/save-consent ----------------- */
+if ($uri === '/api/save-consent' && $method === 'POST') {
+    try {
+        $consent = $input['consent'] ?? null;
+        $userId = $input['userId'] ?? null;
+
+        if (!$consent) {
+            logit("Помилка: Відсутні дані згоди в /api/save-consent");
+            http_response_code(400);
+            echo json_encode(['message' => 'Дані згоди обов’язкові']);
+            exit;
+        }
+
+        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+        $ipHash = hash('sha256', $ip);
+        $userAgentHash = hash('sha256', $userAgent);
+        $consentId = sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff)
+        );
+
+        $stmt = $pdo->prepare('
+            INSERT INTO cookie_consents (consent_id, ip_hash, user_agent_hash, user_id, necessary, preferences, statistics, marketing)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ');
+        $stmt->execute([
+            $consentId,
+            $ipHash,
+            $userAgentHash,
+            $userId,
+            1, // necessary завжди true
+            $consent['preferences'] ? 1 : 0,
+            $consent['statistics'] ? 1 : 0,
+            $consent['marketing'] ? 1 : 0,
+        ]);
+
+        logit("Згоду збережено для IP (хеш): $ipHash, user_id: " . ($userId ?? 'немає'));
+        echo json_encode(['message' => 'Згода успішно збережена', 'consent_id' => $consentId]);
+    } catch (Throwable $e) {
+        logit("Помилка в /api/save-consent: " . $e->getMessage());
+        http_response_code(500);
+        echo json_encode(['message' => 'Помилка збереження згоди: ' . $e->getMessage()]);
+    }
+    exit;
 }
 
 http_response_code(404);

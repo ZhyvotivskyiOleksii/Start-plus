@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import css from "./Login.module.css";
-
 export default function Login({ lang, handleLogin }) {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +19,7 @@ export default function Login({ lang, handleLogin }) {
       description:
         "Konto jest powiązane z Twoim numerem telefonu. Za każdym razem otrzymasz unikalny kod, który musisz wpisać, aby zalogować się do strony. Gdy wpiszesz swój numer po raz pierwszy, przejdziesz do strony rejestracji. Za każdym kolejnym razem zalogujesz się do swojego konta.",
       agree: "Zgadzam się z Regulaminem",
-      error: "Nieprawidłowy номер телефону",
+      error: "Nieprawidłowy номер telefonu",
       verifyPlaceholder: "Wprowadź kod SMS",
       verifyButton: "Potwierdź",
     },

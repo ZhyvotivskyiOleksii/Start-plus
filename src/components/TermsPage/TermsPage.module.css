@@ -1,0 +1,180 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 160px 20px;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: "FuturaPT1", sans-serif;
+}
+
+.title {
+  font-family: "FuturaPT2", sans-serif;
+  font-weight: 600;
+  font-size: 2.5rem;
+  color: #000000;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.title::after {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 3px;
+  background-color: #9966cc;
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.version {
+  font-size: 1rem;
+  color: #666666;
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.section {
+  margin-bottom: 60px;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.sectionTitle {
+  font-family: "FuturaPT2", sans-serif;
+  font-weight: 600;
+  font-size: 1.8rem;
+  color: #000000;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background-color: #9966cc;
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+}
+
+.subTitle {
+  font-family: "FuturaPT2", sans-serif;
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.sectionContent {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.listItem {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #000000;
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.listItem:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #9966cc;
+}
+
+.backButton {
+  display: block;
+  margin: 40px auto 0;
+  padding: 12px 30px;
+  background: #663399;
+  color: #ffffff;
+  border: none;
+  border-radius: 20px;
+  font-family: "FuturaPT1", sans-serif;
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease;
+}
+
+.backButton:hover {
+  background: #552b80;
+  transform: translateY(-2px);
+}
+
+.backButton:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 40px 15px;
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .version {
+    font-size: 0.9rem;
+  }
+
+  .sectionContent,
+  .listItem {
+    font-size: 1rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.6rem;
+  }
+
+  .subTitle {
+    font-size: 1.3rem;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .backButton {
+    font-size: 1rem;
+    padding: 10px 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.8rem;
+  }
+
+  .sectionContent,
+  .listItem {
+    font-size: 0.95rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.4rem;
+  }
+
+  .subTitle {
+    font-size: 1.2rem;
+  }
+}

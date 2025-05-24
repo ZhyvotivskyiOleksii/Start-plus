@@ -11,11 +11,22 @@ import OfficeCleaning from "./components/OfficeCleaning/OfficeCleaning";
 import AdminPanel from "./components/Admin/AdminPanel";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/dashboard/Dashboard";
+import CookieBanner from "./components/CookieBanner/CookieBanner";
+import Footer from "./components/Footer/Footer";
+import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage";
+import TermsPage from "./components/TermsPage/TermsPage";
+import QuickOrder from "./components/QuickOrder/QuickOrder"; // Додаємо імпорт нового компонента
 
 function AppContent() {
+  /* --------------------------------------------
+     GLOBAL LANGUAGE STATE
+  ---------------------------------------------*/
   const [lang, setLang] = useState(localStorage.getItem("lang") || "pl");
   useEffect(() => localStorage.setItem("lang", lang), [lang]);
 
+  /* --------------------------------------------
+     AUTH STATE
+  ---------------------------------------------*/
   const [userToken, setUserToken] = useState(localStorage.getItem("token"));
   const isUserAuth = !!userToken;
 
@@ -23,6 +34,9 @@ function AppContent() {
   const location = useLocation();
   const hideAppBar = location.pathname.startsWith("/admin");
 
+  /* --------------------------------------------
+     HANDLERS
+  ---------------------------------------------*/
   const handleLogin = (token, phone) => {
     localStorage.setItem("token", token);
     if (phone) localStorage.setItem("phone", phone);
@@ -37,20 +51,29 @@ function AppContent() {
     navigate("/", { replace: true });
   };
 
+  const handleLanguageChange = (newLang) => {
+    setLang(newLang);
+  };
+
+  /* --------------------------------------------
+     RENDER
+  ---------------------------------------------*/
   return (
     <>
+      {/* Top navigation bar */}
       {!hideAppBar && (
         <AppBar
           lang={lang}
-          setLang={setLang}
+          setLang={handleLanguageChange}
           isAuthenticated={isUserAuth}
           handleLogin={handleLogin}
           handleLogout={handleLogout}
         />
       )}
 
+      {/* App routes */}
       <Routes>
-        {/* публічні сторінки */}
+        {/* public pages */}
         <Route path="/" element={<HeroSection lang={lang} />} />
         <Route
           path="/calculator"
@@ -72,11 +95,16 @@ function AppContent() {
           path="/office-cleaning"
           element={<OfficeCleaning lang={lang} type="office-cleaning" title="Sprzątanie biura" />}
         />
+        <Route path="/privacy-policy" element={<PrivacyPolicyPage lang={lang} />} />
+        <Route path="/terms-of-service" element={<TermsPage lang={lang} />} />
+        
+        {/* Новий маршрут для швидкого замовлення */}
+        <Route path="/quick-order" element={<QuickOrder lang={lang} />} />
 
-        {/* адмін‑панель */}
+        {/* admin panel */}
         <Route path="/admin/*" element={<AdminPanel lang={lang} />} />
 
-        {/* SMS‑авторизація клієнта */}
+        {/* SMS auth */}
         <Route
           path="/login"
           element={
@@ -101,6 +129,20 @@ function AppContent() {
         {/* catch‑all */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      {/* Cookie consent banner present on all pages */}
+      <CookieBanner
+        lang={lang}
+        onAcceptAll={() => localStorage.setItem("cookiesAccepted", "true")}
+        onAcceptSelection={(selection) => {
+          localStorage.setItem("cookiesAccepted", "true");
+          localStorage.setItem("cookieSelection", JSON.stringify(selection));
+        }}
+        onDecline={() => localStorage.setItem("cookiesAccepted", "false")}
+      />
+
+      {/* Footer present on all pages */}
+      {!hideAppBar && <Footer lang={lang} />}
     </>
   );
 }

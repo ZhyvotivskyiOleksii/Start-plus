@@ -59,7 +59,8 @@ export default function OfficeCleaning({ lang, type, title }) {
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const agreementRef = useRef(null);
-  const rightBlockRef = useRef(null);
+  const sentinelRef = useRef(null);
+  const orderButtonRef = useRef(null);
   const [isSticked, setIsSticked] = useState(true);
 
   const cities = {
@@ -404,14 +405,41 @@ export default function OfficeCleaning({ lang, type, title }) {
   }, [type]);
 
   useEffect(() => {
+    if (window.innerWidth > 760) {
+      setIsSticked(false);
+      return;
+    }
+
+    const marker = sentinelRef.current;
+    const button = orderButtonRef.current;
+    if (!marker || !button) {
+      console.warn("Refs not found:", { marker, button });
+      return;
+    }
+
+    const stick = () => {
+      button.classList.add(calcCss.sticked);
+      button.classList.remove(calcCss.inPlace);
+      setIsSticked(true);
+    };
+    const unstick = () => {
+      button.classList.remove(calcCss.sticked);
+      button.classList.add(calcCss.inPlace);
+      setIsSticked(false);
+    };
+
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) setIsSticked(false);
-        else setIsSticked(true);
+      ([entry]) => {
+        entry.isIntersecting ? unstick() : stick();
       },
-      { root: null, threshold: 0.2 }
+      {
+        root: null,
+        threshold: 0,
+        rootMargin: `0px 0px -${button.offsetHeight || 60}px 0px`,
+      }
     );
-    if (rightBlockRef.current) observer.observe(rightBlockRef.current);
+
+    observer.observe(marker);
     return () => observer.disconnect();
   }, []);
 
@@ -1473,8 +1501,8 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
           </div>
 
-          <div className={`${officeCss["calculator-right"]} ${calcCss["calculator-right"]}`} ref={rightBlockRef}>
-            <div className={`${officeCss["office-image"]} ${calcCss["office-image"]}`}>
+          <div className={`${officeCss["calculator-right"]} ${calcCss["calculator-right"]}`}>       
+                 <div className={`${officeCss["office-image"]} ${calcCss["office-image"]}`}>
               <img src="/icon/office.svg" alt="Office" className={`${officeCss["office-icon"]} ${calcCss["office-icon"]}`} />
             </div>
             <h2>
@@ -1490,7 +1518,7 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
 
             <div className={`${officeCss["specialist-info"]} ${calcCss["specialist-info"]}`}>
-              <img src="/icon/bucket.svg" alt="Specialists" />
+              <img src="/icon/bucket.png" alt="Specialists" />
               <p>{t.specialistInfo}</p>
             </div>
 
@@ -1522,11 +1550,15 @@ export default function OfficeCleaning({ lang, type, title }) {
             </div>
 
             <div className={`${officeCss["location-cost"]} ${calcCss["location-cost"]}`}>
-              <p>{t.locationCostLabel}: +{cities[selectedCity].toFixed(2)} zł</p>
+              <p>
+                {t.locationCostLabel}: <span className={calcCss["bold-text"]}>+{cities[selectedCity].toFixed(2)} zł</span>
+              </p>
             </div>
 
             <div className={`${officeCss["work-time"]} ${calcCss["work-time"]}`}>
-              <h4>{t.workTimeLabel}: {formatWorkTime()}</h4>
+              <h4>
+                {t.workTimeLabel}: <span className={calcCss["bold-text"]}>{formatWorkTime()}</span>
+              </h4>
             </div>
             {calculateCleanersAndTime().cleaners > 1 && (
               <div className={calcCss.cleaners}>
@@ -1568,8 +1600,10 @@ export default function OfficeCleaning({ lang, type, title }) {
                 </span>
               </div>
 
+              <div ref={sentinelRef} />
               <button
-                className={`${officeCss["order-button"]} ${calcCss["sticky-order-button"]} ${isSticked ? calcCss.sticked : ""}`}
+                ref={orderButtonRef}
+                className={`${officeCss["order-button"]} ${calcCss["sticky-order-button"]} ${isSticked ? calcCss.sticked : calcCss.inPlace}`}
                 onClick={handleOrder}
               >
                 {t.orderButton} {calculateTotal()} zł

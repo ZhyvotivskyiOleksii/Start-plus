@@ -1,120 +1,153 @@
+import { useState } from "react";
 import css from "./AdminPanel.module.css";
-import { FaUser, FaPhone, FaEnvelope, FaCalendarAlt, FaLock } from "react-icons/fa";
+import { FaUser, FaPhone, FaEnvelope, FaHome, FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 
-function UserDetails({ selectedUser, setSelectedUser, updateUser, updateOrder, isLoading }) {
+function UserDetails({ selectedUser, setSelectedUser, updateUser, updateOrder, isLoading, t }) {
+  const [editUser, setEditUser] = useState({
+    name: selectedUser.name || "",
+    phone: selectedUser.phone || "",
+    email: selectedUser.email || "",
+    status: selectedUser.status || "active",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditUser((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = () => {
+    updateUser(selectedUser.id, editUser);
+  };
+
   return (
     <div className={css.userDetails}>
-      <h4>Szczegóły użytkownika</h4>
+      <h4>{t.userDetails}</h4>
       <div className={css.userInfo}>
         <div className={css.infoRow}>
           <FaUser className={css.infoIcon} />
           <p>
-            <strong>ID:</strong> {selectedUser.id}
+            <strong>{t.id}</strong>
+            <span>{selectedUser.id}</span>
           </p>
         </div>
         <div className={css.infoRow}>
           <FaUser className={css.infoIcon} />
           <p>
-            <strong>Imię:</strong>
+            <strong>{t.name}</strong>
             <input
               type="text"
-              value={selectedUser.name || ""}
-              onChange={(e) => setSelectedUser({ ...selectedUser, name: e.target.value })}
+              name="name"
+              value={editUser.name}
+              onChange={handleChange}
+              placeholder={t.noData}
             />
           </p>
         </div>
         <div className={css.infoRow}>
           <FaPhone className={css.infoIcon} />
           <p>
-            <strong>Telefon:</strong> {selectedUser.phone}
+            <strong>{t.phone}</strong>
+            <input
+              type="text"
+              name="phone"
+              value={editUser.phone}
+              onChange={handleChange}
+              placeholder={t.noData}
+            />
           </p>
         </div>
         <div className={css.infoRow}>
           <FaEnvelope className={css.infoIcon} />
           <p>
-            <strong>Email:</strong>
+            <strong>{t.email}</strong>
             <input
               type="email"
-              value={selectedUser.email || ""}
-              onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
+              name="email"
+              value={editUser.email}
+              onChange={handleChange}
+              placeholder={t.noData}
             />
           </p>
         </div>
         <div className={css.infoRow}>
-          <FaCalendarAlt className={css.infoIcon} />
+          <FaHome className={css.infoIcon} />
           <p>
-            <strong>Data rejestracji:</strong> {new Date(selectedUser.created_at).toLocaleString()}
+            <strong>{t.clientType}</strong>
+            <span>{selectedUser.client_type || t.noData}</span>
           </p>
         </div>
         <div className={css.infoRow}>
           <FaCalendarAlt className={css.infoIcon} />
           <p>
-            <strong>Ostatnie logowanie:</strong>{" "}
-            {selectedUser.last_login ? new Date(selectedUser.last_login).toLocaleString() : "Brak"}
+            <strong>{t.registrationDate}</strong>
+            <span>{new Date(selectedUser.created_at).toLocaleString()}</span>
           </p>
         </div>
         <div className={css.infoRow}>
-          <FaLock className={css.infoIcon} />
+          <FaMoneyBillWave className={css.infoIcon} />
           <p>
-            <strong>Status:</strong>
-            <select
-              value={selectedUser.status}
-              onChange={(e) => setSelectedUser({ ...selectedUser, status: e.target.value })}
-            >
-              <option value="active">Aktywne</option>
-              <option value="inactive">Nieaktywne</option>
-              <option value="banned">Zablokowane</option>
-            </select>
+            <strong>{t.totalSpent}</strong>
+            <span>{selectedUser.total_spent ? `${selectedUser.total_spent} zł` : "0 zł"}</span>
           </p>
         </div>
-        <button
-          className={css.saveBtn}
-          onClick={() =>
-            updateUser(selectedUser.id, {
-              name: selectedUser.name,
-              email: selectedUser.email,
-              status: selectedUser.status,
-            })
-          }
-          disabled={isLoading}
-        >
-          {isLoading ? "Zapisywanie..." : "Zapisz zmiany"}
+        <div className={css.infoRow}>
+          <strong>{t.status}</strong>
+          <select name="status" value={editUser.status} onChange={handleChange}>
+            <option value="active">{t.active}</option>
+            <option value="inactive">{t.inactive}</option>
+            <option value="banned">{t.banned}</option>
+          </select>
+        </div>
+        <button className={css.saveBtn} onClick={handleSave} disabled={isLoading}>
+          {t.save}
         </button>
       </div>
-      <h5>Zamówienia użytkownika</h5>
-      {Array.isArray(selectedUser.orders) && selectedUser.orders.length > 0 ? (
+
+      <h4>{t.orderHistory}</h4>
+      {selectedUser.orders && selectedUser.orders.length > 0 ? (
         <table className={css.orderTable}>
           <thead>
-            <tr>
-              <th>ID</th>
-              <th>Typ usługi</th>
-              <th>Cena</th>
-              <th>Data</th>
-              <th>Status</th>
-              <th>Szczegóły</th>
-            </tr>
+            <tr><th>{t.id}</th><th>{t.serviceType}</th><th>{t.price}</th><th>{t.date}</th><th>{t.status}</th><th>{t.paymentStatus}</th><th>{t.details}</th></tr>
           </thead>
           <tbody>
             {selectedUser.orders.map((order) => (
               <tr key={order.id}>
                 <td>{order.id}</td>
-                <td>{order.service_type}</td>
+                <td>{t[order.service_type] || order.service_type || t.noData}</td>
                 <td>{order.total_price} zł</td>
-                <td>{new Date(order.order_date).toLocaleString()}</td>
+                <td>{order.order_date ? new Date(order.order_date).toLocaleString() : t.noData}</td>
                 <td>
                   <select value={order.status} onChange={(e) => updateOrder(order.id, e.target.value)}>
-                    <option value="pending">Oczekujące</option>
-                    <option value="completed">Zrealizowane</option>
-                    <option value="cancelled">Anulowane</option>
+                    <option value="pending">{t.pending}</option>
+                    <option value="completed">{t.completed}</option>
+                    <option value="cancelled">{t.cancelled}</option>
                   </select>
                 </td>
-                <td>{order.details || "Brak"}</td>
+                <td>
+                  <span
+                    className={css.statusBadge}
+                    style={{
+                      backgroundColor:
+                        order.payment_status === "completed" ? "#5a4af4" :
+                        order.payment_status === "cancelled" ? "#ff4d4f" : "#a0a9c0",
+                      color: "#fff",
+                      padding: "4px 8px",
+                      borderRadius: "12px",
+                      fontSize: "0.9rem",
+                    }}
+                  >
+                    {order.payment_status === "completed" ? t.paid :
+                     order.payment_status === "cancelled" ? t.cancelled :
+                     t.pendingPayment}
+                  </span>
+                </td>
+                <td>{order.details || t.noData}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>Brak zamówień.</p>
+        <p>{t.noOrders}</p>
       )}
     </div>
   );

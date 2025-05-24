@@ -15,14 +15,13 @@ import { FaCalendarAlt } from "react-icons/fa";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LineElement, PointElement, LinearScale, Title, CategoryScale);
 
-function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, isLoading }) {
-  // Дані для кругового графіка статусів користувачів
+function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, isLoading, t }) {
   const statusChartData = stats
     ? {
-        labels: ["Aktywni użytkownicy", "Nieaktywni użytkownicy", "Zablokowani użytkownicy"],
+        labels: [t.activeUsers, t.inactiveUsers, t.bannedUsers],
         datasets: [
           {
-            label: "Status użytkowników",
+            label: t.userStatus,
             data: [
               stats.status_counts?.active || 0,
               stats.status_counts?.inactive || 0,
@@ -48,20 +47,19 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       },
       title: {
         display: true,
-        text: "Rozkład statusów użytkowników",
+        text: t.userStatusDistribution,
         font: { size: 16 },
         color: "#1a1a1a",
       },
     },
   };
 
-  // Дані для лінійного графіка нових користувачів
   const newUsersChartData = stats
     ? {
-        labels: ["Okres"],
+        labels: [t.period],
         datasets: [
           {
-            label: "Nowi użytkownicy (okres)",
+            label: t.newUsersPeriod,
             data: [stats.new_users],
             borderColor: "#5a4af4",
             backgroundColor: "rgba(90, 74, 244, 0.2)",
@@ -88,7 +86,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       },
       title: {
         display: true,
-        text: "Nowi użytkownicy w wybranym okresie",
+        text: t.newUsersInPeriod,
         font: { size: 16 },
         color: "#1a1a1a",
       },
@@ -98,7 +96,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
         beginAtZero: true,
         title: {
           display: true,
-          text: "Liczba nowych użytkowników",
+          text: t.numberOfNewUsers,
           font: { size: 14 },
           color: "#1a1a1a",
         },
@@ -109,7 +107,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       x: {
         title: {
           display: true,
-          text: "Okres",
+          text: t.period,
           font: { size: 14 },
           color: "#1a1a1a",
         },
@@ -120,14 +118,13 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
     },
   };
 
-  // Дані для графіка приблизного доходу (використовуємо 0, якщо stats.revenue відсутнє)
   const revenueChartData = stats
     ? {
-        labels: ["Okres"],
+        labels: [t.period],
         datasets: [
           {
-            label: "Przybliżony dochód (PLN)",
-            data: [stats.revenue || 0], // Використовуємо 0, якщо revenue не передано
+            label: t.estimatedRevenue,
+            data: [stats.revenue || 0],
             borderColor: "#00c4b4",
             backgroundColor: "rgba(0, 196, 180, 0.2)",
             fill: true,
@@ -154,7 +151,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       },
       title: {
         display: true,
-        text: "Przybliżony dochód w wybranym okresie",
+        text: t.estimatedRevenueInPeriod,
         font: { size: 16 },
         color: "#1a1a1a",
       },
@@ -164,7 +161,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
         beginAtZero: true,
         title: {
           display: true,
-          text: "Dochód (PLN)",
+          text: t.revenue,
           font: { size: 14 },
           color: "#1a1a1a",
         },
@@ -176,7 +173,7 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       x: {
         title: {
           display: true,
-          text: "Okres",
+          text: t.period,
           font: { size: 14 },
           color: "#1a1a1a",
         },
@@ -189,32 +186,38 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
 
   return (
     <div className={css.statsSection}>
-      <h4>Statystyka</h4>
+      <h4>{t.title}</h4>
       <div className={css.filters}>
         <div className={css.inputGroup}>
-          <label className={css.inputLabel}>Okres</label>
+          <label className={css.inputLabel}>{t.period}</label>
           <div className={css.selectWrapper}>
             <FaCalendarAlt className={css.inputIcon} />
             <select value={statsPeriod} onChange={(e) => setStatsPeriod(e.target.value)}>
-              <option value="7d">Ostatnie 7 dni</option>
-              <option value="30d">Ostatnie 30 dni</option>
-              <option value="1y">Ostatni rok</option>
+              <option value="7d">{t.last7Days}</option>
+              <option value="30d">{t.last30Days}</option>
+              <option value="1y">{t.lastYear}</option>
             </select>
           </div>
         </div>
       </div>
       {isLoading ? (
-        <p>Ładowanie...</p>
+        <p>{t.loading}</p>
       ) : !stats ? (
-        <p>Brak danych statystycznych.</p>
+        <p>{t.noStatsData}</p>
       ) : (
         <div className={css.statsContainer}>
           <div className={css.statsInfo}>
             <p>
-              <strong>Liczba użytkowników:</strong> {stats.total_users}
+              <strong>{t.totalUsers}</strong> {stats.total_users}
             </p>
             <p>
-              <strong>Średnia liczba zamówień na użytkownika:</strong> {stats.avg_orders_per_user}
+              <strong>{t.avgOrdersPerUser}</strong> {stats.avg_orders_per_user}
+            </p>
+            <p>
+              <strong>{t.totalOrders}</strong> {stats.total_orders || 0}
+            </p>
+            <p>
+              <strong>{t.totalRevenue}</strong> {stats.revenue || 0} PLN
             </p>
           </div>
 

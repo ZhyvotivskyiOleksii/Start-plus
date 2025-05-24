@@ -1,0 +1,779 @@
+.cookieBannerScope {
+    --cookie-primary-color: #663399;
+    --cookie-background-color: #ffffff;
+    --cookie-accent-color: #9966CC;
+    --cookie-modal-background-color: #FFFFFF;
+    --cookie-text-color: #40364D;
+    --cookie-muted-text-color: #5f5a6f;
+    --cookie-border-color: #E0D8E8;
+    --cookie-button-text-color: #FFFFFF;
+    --cookie-switch-off-bg: #D1D5DB;
+  }
+  
+  .cookieBannerScope .bannerWrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+  }
+  
+  .cookieBannerScope .bannerWrap.show {
+    max-height: 500px;
+    opacity: 1;
+  }
+  
+  .cookieBannerScope .bannerWrap.hide {
+    max-height: 0;
+    opacity: 0;
+  }
+  
+  .cookieBannerScope .modalContainer {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  
+  .cookieBannerScope .modalContainer.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .cookieBannerScope .modalContainer.hide {
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .cookieBannerScope .bannerWrap {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    background: var(--cookie-background-color);
+    border-top: 1px solid var(--cookie-border-color);
+    padding: clamp(20px, 3vw, 25px) clamp(30px, 5vw, 40px);
+    z-index: 40;
+    font-family: "FuturaPT1", sans-serif;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+  }
+  
+  .cookieBannerScope .shadow {
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cookieBannerScope .bannerContent {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: stretch;
+  }
+  
+  .cookieBannerScope .logoCol {
+    flex: 0 0 auto;
+  }
+  
+  .cookieBannerScope .logoPlaceholder {
+    width: 100px;
+    height: 40px;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .cookieBannerScope .textCol {
+    flex: 1 1 auto;
+  }
+  
+  .cookieBannerScope .footer {
+    flex: 0 0 auto;
+  }
+  
+  .cookieBannerScope .h2 {
+    font-family: "FuturaPT2", "FuturaPT1", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.2rem, 1.8vw, 1.4rem);
+    color: var(--cookie-text-color);
+    text-align: left;
+    margin-bottom: 8px;
+  }
+  
+  .cookieBannerScope .desc {
+    margin-top: 0;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    line-height: 1.55;
+    color: var(--cookie-text-color);
+    text-align: left;
+    margin-bottom: 15px;
+  }
+  
+  .cookieBannerScope .switchRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px 25px;
+    margin-top: 15px;
+  }
+  
+  .cookieBannerScope .consentSwitches {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--cookie-border-color);
+  }
+  
+  .cookieBannerScope .switchItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .cookieBannerScope .switchLabel {
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.5vw, 0.95rem);
+    color: var(--cookie-text-color);
+  }
+  
+  .cookieBannerScope .switchBtn {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    border-radius: 9999px;
+    background: var(--cookie-switch-off-bg);
+    border: none;
+    transition: background-color 0.25s ease;
+    cursor: pointer;
+  }
+  
+  .cookieBannerScope .switchBtnOn {
+    background: var(--cookie-primary-color);
+  }
+  
+  .cookieBannerScope .switchBtnDis {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+  
+  .cookieBannerScope .switchBtn:hover:not(.switchBtnDis) {
+    background: #c0c4cc;
+  }
+  
+  .cookieBannerScope .switchBtnOn:hover:not(.switchBtnDis) {
+    background: #552b80;
+  }
+  
+  .cookieBannerScope .switchCircle {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.25s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .cookieBannerScope .switchBtnOn .switchCircle {
+    transform: translateX(20px);
+  }
+  
+  .cookieBannerScope .detailsLink {
+    background: none !important;
+    border: none !important;
+    color: var(--cookie-accent-color) !important;
+    font-family: "FuturaPT1", sans-serif !important;
+    font-weight: 500 !important;
+    font-size: clamp(0.9rem, 1.5vw, 0.95rem) !important;
+    cursor: pointer !important;
+    text-decoration: underline !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    transition: color 0.2s ease !important;
+  }
+  
+  .cookieBannerScope .detailsLink:hover {
+    color: var(--cookie-primary-color) !important;
+  }
+  
+  .cookieBannerScope .footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .cookieBannerScope .btnCol {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+  }
+  
+  .cookieBannerScope .primary {
+    padding: 12px 0;
+    background: var(--cookie-primary-color);
+    color: var(--cookie-button-text-color);
+    border: none;
+    border-radius: 6px;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    flex: 1;
+    text-align: center;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+  
+  .cookieBannerScope .primary:hover {
+    background: #552b80;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.07);
+  }
+  
+  .cookieBannerScope .primary:active {
+    transform: translateY(0px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  
+  .cookieBannerScope .backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 50;
+    transition: opacity 0.5s ease;
+  }
+  
+  .cookieBannerScope .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 51;
+    width: 90vw;
+    max-width: 640px;
+    max-height: 85vh;
+    display: flex;
+    overflow: hidden;
+    font-family: "FuturaPT1", sans-serif;
+    border-radius: 16px;
+  }
+  
+  .cookieBannerScope .modalDialog {
+    width: 100%;
+    background-color: var(--cookie-modal-background-color);
+    border-radius: 16px;
+    outline: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  
+  .cookieBannerScope .modalContent {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0;
+  }
+  
+  .cookieBannerScope .modalHeader {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--cookie-border-color);
+    position: sticky;
+    top: 0;
+    background: var(--cookie-modal-background-color);
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .cookieBannerScope .modalTitle {
+    margin: 0;
+    font-family: "FuturaPT2", "FuturaPT1", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.1rem, 1.6vw, 1.25rem);
+    color: var(--cookie-text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .cookieBannerScope .titleChevron {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--cookie-accent-color);
+  }
+  
+  .cookieBannerScope .closeButton {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cookieBannerScope .closeButton:hover {
+    background-color: var(--cookie-background-color);
+  }
+  
+  .cookieBannerScope .closeIcon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    position: relative;
+  }
+  
+  .cookieBannerScope .closeIcon::before,
+  .cookieBannerScope .closeIcon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
+    background: var(--cookie-text-color);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  
+  .cookieBannerScope .closeIcon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+  
+  .cookieBannerScope .modalBody {
+    padding: 0;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    max-height: 60vh;
+    color: var(--cookie-text-color);
+  }
+  
+  .cookieBannerScope .modalBody::-webkit-scrollbar {
+    width: 0;
+    background: transparent;
+  }
+  
+  .cookieBannerScope .modalBody::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .cookieBannerScope .modalBody::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+  
+  .cookieBannerScope .modalFooter {
+    padding: 16px 24px;
+    border-top: 1px solid var(--cookie-border-color);
+    position: sticky;
+    bottom: 0;
+    background: var(--cookie-modal-background-color);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .cookieBannerScope .footerText {
+    font-size: 0.8em;
+    color: #555;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .cookieBannerScope .footerButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    justify-content: center;
+  }
+  
+  .cookieBannerScope .tabs {
+    display: flex;
+    border-bottom: 1px solid var(--cookie-border-color);
+    background: var(--cookie-modal-background-color);
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+  }
+  
+  .cookieBannerScope .tabBtn {
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.5vw, 0.95rem);
+    color: var(--cookie-text-color);
+    transition: color 0.2s ease, border-color 0.2s ease;
+    margin-bottom: -1px;
+  }
+  
+  .cookieBannerScope .tabBtn:hover {
+    color: var(--cookie-primary-color);
+  }
+  
+  .cookieBannerScope .tabActive {
+    color: var(--cookie-primary-color);
+    border-bottom-color: var(--cookie-primary-color);
+    font-weight: 600;
+  }
+  
+  .cookieBannerScope .panel {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .cookieBannerScope .panel p {
+    margin-bottom: 1em;
+    line-height: 1.6;
+    color: var(--cookie-text-color);
+    font-family: "FuturaPT1", sans-serif;
+  }
+  
+  .cookieBannerScope .panel p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .cookieBannerScope .catBlock {
+    border: 1px solid var(--cookie-border-color);
+    border-radius: 6px;
+    background-color: var(--cookie-background-color);
+  }
+  
+  .cookieBannerScope .catBlock > summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  .cookieBannerScope .catHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 500;
+    font-size: clamp(1rem, 1.5vw, 1.05rem);
+    color: var(--cookie-text-color);
+    list-style: none;
+    padding: 16px;
+    border-radius: 6px 6px 0 0;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cookieBannerScope .catHeader:hover {
+    background-color: #E8E8F0;
+  }
+  
+  .cookieBannerScope .catBlock[open] .catHeader {
+    border-bottom: 1px solid var(--cookie-border-color);
+  }
+  
+  .cookieBannerScope .catTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .cookieBannerScope .catHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .cookieBannerScope .catDesc {
+    margin: 0;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.85rem, 1.2vw, 0.9rem);
+    color: var(--cookie-muted-text-color);
+    line-height: 1.5;
+    padding: 12px 16px;
+  }
+  
+  .cookieBannerScope .catContent {
+    padding: 0 16px 16px;
+  }
+  
+  .cookieBannerScope .cookieCard {
+    background: var(--cookie-modal-background-color);
+    border: 1px solid #E8E4EC;
+    border-radius: 6px;
+    padding: 0;
+    margin-top: 12px;
+  }
+  
+  .cookieBannerScope .cookieCard > summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  .cookieBannerScope .cookieCard[open] .cookieSummary {
+    border-bottom: 1px solid #E8E4EC;
+  }
+  
+  .cookieBannerScope .cookieSummary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    list-style: none;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.9rem, 1.2vw, 0.95rem);
+    color: var(--cookie-text-color);
+    padding: 12px 16px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cookieBannerScope .cookieSummary:hover {
+    background-color: var(--cookie-background-color);
+  }
+  
+  .cookieBannerScope .cookieSummary i {
+    font-size: 0.9em;
+    font-style: italic;
+    color: var(--cookie-muted-text-color);
+  }
+  
+  .cookieBannerScope .accordionChevron {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid var(--cookie-muted-text-color);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .cookieBannerScope details[open] > summary .accordionChevron {
+    transform: rotate(180deg);
+  }
+  
+  .cookieBannerScope .cookieContent {
+    padding: 0 16px 16px;
+  }
+  
+  .cookieBannerScope .cookiePurpose {
+    margin: 0;
+    padding: 12px 0;
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.8rem, 1.1vw, 0.85rem);
+    color: var(--cookie-muted-text-color);
+    line-height: 1.45;
+  }
+  
+  .cookieBannerScope .cookieMeta {
+    font-family: "FuturaPT1", sans-serif;
+    font-weight: 400;
+    font-size: clamp(0.75rem, 1vw, 0.8rem);
+    color: var(--cookie-text-color);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px 16px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #E8E4EC;
+  }
+  
+  @media (min-width: 400px) {
+    .cookieBannerScope .cookieMeta {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+  
+  @media (min-width: 768px) {
+    .cookieBannerScope .bannerContent {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .cookieBannerScope .logoCol {
+      flex: 0 0 auto;
+    }
+    .cookieBannerScope .textCol {
+      flex: 1 1 auto;
+      margin-right: 20px;
+    }
+    .cookieBannerScope .desc {
+      margin-bottom: 0;
+    }
+    .cookieBannerScope .footer {
+      flex: 0 0 auto;
+    }
+    .cookieBannerScope .btnCol {
+      flex-direction: row;
+      flex: 0 0 auto;
+      width: auto;
+    }
+    .cookieBannerScope .modalFooter {
+      flex-direction: row;
+      align-items: center;
+    }
+    .cookieBannerScope .footerButtons {
+      flex-direction: row;
+      justify-content: flex-end;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cookieBannerScope .bannerWrap {
+      padding: 12px;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    .cookieBannerScope .bannerContent {
+      gap: 25px;
+    }
+    .cookieBannerScope .logoCol {
+      flex: 0 0 auto;
+    }
+    .cookieBannerScope .textCol {
+      flex: 1 1 auto;
+    }
+    .cookieBannerScope .footer {
+      flex: 0 0 auto;
+    }
+    .cookieBannerScope .h2 {
+      font-size: 1rem;
+    }
+    .cookieBannerScope .desc,
+    .cookieBannerScope .switchLabel,
+    .cookieBannerScope .detailsLink {
+      font-size: 0.8rem;
+    }
+    .cookieBannerScope .switchRow {
+      gap: 10px 15px;
+    }
+    .cookieBannerScope .switchItem {
+      gap: 8px;
+    }
+    .cookieBannerScope .switchBtn {
+      width: 36px;
+      height: 18px;
+    }
+    .cookieBannerScope .switchCircle {
+      width: 14px;
+      height: 14px;
+      top: 2px;
+      left: 2px;
+    }
+    .cookieBannerScope .switchBtnOn .switchCircle {
+      transform: translateX(18px);
+    }
+    .cookieBannerScope .btnCol {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cookieBannerScope .primary {
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+    .cookieBannerScope .modal {
+      width: 95vw;
+      max-height: 90vh;
+      border-radius: 12px;
+    }
+    .cookieBannerScope .modalHeader,
+    .cookieBannerScope .modalFooter,
+    .cookieBannerScope .panel {
+      padding: 12px;
+    }
+    .cookieBannerScope .modalTitle {
+      font-size: 1rem;
+    }
+    .cookieBannerScope .titleChevron {
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid var(--cookie-accent-color);
+    }
+    .cookieBannerScope .closeButton {
+      width: 20px;
+      height: 20px;
+    }
+    .cookieBannerScope .closeIcon::before,
+    .cookieBannerScope .closeIcon::after {
+      width: 14px;
+    }
+    .cookieBannerScope .tabs {
+      padding: 0 8px;
+    }
+    .cookieBannerScope .tabBtn {
+      font-size: 0.8rem;
+      padding: 8px 10px;
+    }
+    .cookieBannerScope .modalBody {
+      max-height: 50vh;
+    }
+    .cookieBannerScope .catHeader {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+    .cookieBannerScope .catTitle {
+      gap: 6px;
+    }
+    .cookieBannerScope .catHeaderActions {
+      gap: 8px;
+    }
+    .cookieBannerScope .catDesc {
+      font-size: 0.75rem;
+      padding: 10px;
+      padding-top: 6px;
+    }
+    .cookieBannerScope .catContent {
+      padding: 0 10px 10px;
+    }
+    .cookieBannerScope .cookieCard {
+      margin-top: 8px;
+    }
+    .cookieBannerScope .cookieSummary {
+      font-size: 0.8rem;
+      padding: 8px 10px;
+    }
+    .cookieBannerScope .cookiePurpose,
+    .cookieBannerScope .cookieMeta {
+      font-size: 0.7rem;
+      padding: 8px 10px 10px;
+    }
+    .cookieBannerScope .cookieContent {
+      padding: 0 10px 10px;
+    }
+    .cookieBannerScope .modalFooter {
+      padding: 12px;
+      gap: 8px;
+    }
+    .cookieBannerScope .footerText {
+      font-size: 0.65rem;
+      text-align: center;
+    }
+    .cookieBannerScope .footerButtons {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cookieBannerScope .modalFooter .primary {
+      padding: 8px 0;
+      font-size: 0.85rem;
+    }
+  }
