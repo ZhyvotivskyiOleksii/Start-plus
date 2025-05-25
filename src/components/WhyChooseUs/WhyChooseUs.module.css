@@ -39,8 +39,11 @@
         #6e4bdc 100%
     );
     -webkit-background-clip: text;
+    background-clip: text; 
     -webkit-text-fill-color: transparent;
+    color: transparent; 
 }
+
 
 .subheading {
     font-family: "FuturaPT2", sans-serif;
