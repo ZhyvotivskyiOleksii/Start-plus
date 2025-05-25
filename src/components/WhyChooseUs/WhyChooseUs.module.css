@@ -1,6 +1,11 @@
+.pageWrapper {
+    position: relative;
+    width: 100%;
+}
+
 .whyChooseUs {
     background: #ffffff;
-    padding: clamp(60px, 10vw, 100px) clamp(15px, 3vw, 20px);
+    padding: clamp(0px, 10vw, 80px) clamp(15px, 3vw, 20px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,11 +44,10 @@
         #6e4bdc 100%
     );
     -webkit-background-clip: text;
-    background-clip: text; 
+    background-clip: text;
     -webkit-text-fill-color: transparent;
-    color: transparent; 
+    color: transparent;
 }
-
 
 .subheading {
     font-family: "FuturaPT2", sans-serif;
@@ -80,6 +84,36 @@
     z-index: 1;
     border-radius: 10px;
 }
+
+
+.backgroundIcon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 25%;
+    height: 25%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    /* filter: brightness(0.9);  */
+    z-index: 0;
+}
+
+/* .cardBackground0 .backgroundIcon {
+    background-image: url(/icon/3.svg);
+}
+
+.cardBackground1 .backgroundIcon {
+    background-image: url(/icon/2.svg);
+}
+
+.cardBackground2 .backgroundIcon {
+    background-image: url(/icon/4.svg);
+}
+
+.cardBackground3 .backgroundIcon {
+    background-image: url(/icon/1.svg);
+} */
 
 .icon {
     position: absolute;
@@ -176,6 +210,11 @@
 
     .advantageDescription {
         font-size: clamp(0.75rem, 1.4vw, 0.85rem);
+    }
+
+    .backgroundIcon {
+        width: 25%;
+        height: 25%;
     }
 }
 

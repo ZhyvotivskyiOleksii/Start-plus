@@ -1,0 +1,66 @@
+.pageWrapper {
+    position: relative;
+    width: 100%;
+}
+
+
+
+.insuranceStrip {
+    position: absolute;
+    width: 100vw;
+    height: 80px;
+    background: #ffffff;
+    text-align: center;
+    z-index: 2;
+}
+
+.insuranceContent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #ffffff;
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.shieldIcon {
+    width: 24px;
+    height: 24px;
+}
+
+.insuranceContent span {
+    font-family: "FuturaPT2", sans-serif;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: #030303;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .insuranceStrip {
+        height: 60px;
+    }
+
+    .insuranceContent {
+        padding: 8px 16px;
+    }
+
+    .shieldIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .insuranceContent span {
+        font-size: clamp(0.9rem, 1.4vw, 1rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .insuranceStrip {
+        height: 50px;
+    }
+}

@@ -14,31 +14,35 @@ const translations = {
     heading: "Dlaczego wybierają nas?",
     headingPart1: "Dlaczego wybierają",
     headingPart2: "nas?",
-    subheading: "Sprzątanie łatwe, szybkie i wysokiej якості!",
+    subheading: "Sprzątanie łatwe, szybkie i wysokiej jakości!",
     advantages: [
       {
         title: "Jakość",
-        description: "Profesjonalne sprzątanie z gwarancją czystości.",
+        description: "Sprzątanie z gwarancją.",
         icon: <img src={QualityIcon} alt="Quality Icon" className={css.iconImage} />,
         iconColor: "#a78bfa",
+        backgroundClass: "cardBackground0",
       },
       {
         title: "Szybkość",
-        description: "Realizujemy zamówienia w najkrótszym czasie.",
+        description: "Zlecenia realizujemy w krótkim czasie.",
         icon: <img src={SpeedIcon} alt="Speed Icon" className={css.iconImage} />,
         iconColor: "#7c3aed",
+        backgroundClass: "cardBackground1",
       },
       {
         title: "Ekologia",
-        description: "Używamy bezpiecznych środków do sprzątania.",
+        description: "Środki bezpieczne dla domu i natury.",
         icon: <img src={EcoIcon} alt="Eco Icon" className={css.iconImage} />,
         iconColor: "#c084fc",
+        backgroundClass: "cardBackground2",
       },
       {
         title: "Dostępność",
-        description: "Ceny, które pasują każdemu.",
+        description: "Ceny odpowiednie dla każdego klienta.",
         icon: <img src={AffordabilityIcon} alt="Affordability Icon" className={css.iconImage} />,
         iconColor: "#e879f9",
+        backgroundClass: "cardBackground3",
       },
     ],
   },
@@ -50,27 +54,31 @@ const translations = {
     advantages: [
       {
         title: "Якість",
-        description: "Професійне прибирання з гарантією чистоти.",
+        description: "Прибирання з гарантією якості завжди.",
         icon: <img src={QualityIcon} alt="Quality Icon" className={css.iconImage} />,
         iconColor: "#a78bfa",
+        backgroundClass: "cardBackground0",
       },
       {
         title: "Швидкість",
-        description: "Виконуємо замовлення у найкоротші терміни.",
+        description: "Виконуємо замовлення швидко та чітко.",
         icon: <img src={SpeedIcon} alt="Speed Icon" className={css.iconImage} />,
         iconColor: "#7c3aed",
+        backgroundClass: "cardBackground1",
       },
       {
         title: "Екологічність",
-        description: "Використовуємо безпечні засоби для прибирання.",
+        description: "Засоби безпечні для дому та природи.",
         icon: <img src={EcoIcon} alt="Eco Icon" className={css.iconImage} />,
         iconColor: "#c084fc",
+        backgroundClass: "cardBackground2",
       },
       {
         title: "Доступність",
-        description: "Ціни, які підходять кожному.",
+        description: "Ціни, що підходять кожному замовнику.",
         icon: <img src={AffordabilityIcon} alt="Affordability Icon" className={css.iconImage} />,
         iconColor: "#e879f9",
+        backgroundClass: "cardBackground3",
       },
     ],
   },
@@ -82,27 +90,31 @@ const translations = {
     advantages: [
       {
         title: "Качество",
-        description: "Профессиональная уборка с гарантией чистоты.",
+        description: "Уборка с гарантией качества и чистоты.",
         icon: <img src={QualityIcon} alt="Quality Icon" className={css.iconImage} />,
         iconColor: "#a78bfa",
+        backgroundClass: "cardBackground0",
       },
       {
         title: "Скорость",
-        description: "Выполняем заказы в кратчайшие сроки.",
+        description: "Выполняем заказы быстро и без задержек.",
         icon: <img src={SpeedIcon} alt="Speed Icon" className={css.iconImage} />,
         iconColor: "#7c3aed",
+        backgroundClass: "cardBackground1",
       },
       {
         title: "Экологичность",
-        description: "Используем безопасные средства для уборки.",
+        description: "Средства безопасны для дома и природы.",
         icon: <img src={EcoIcon} alt="Eco Icon" className={css.iconImage} />,
         iconColor: "#c084fc",
+        backgroundClass: "cardBackground2",
       },
       {
         title: "Доступность",
-        description: "Цены, которые подходят каждому.",
+        description: "Цены, подходящие каждому нашему клиенту.",
         icon: <img src={AffordabilityIcon} alt="Affordability Icon" className={css.iconImage} />,
         iconColor: "#e879f9",
+        backgroundClass: "cardBackground3",
       },
     ],
   },
@@ -114,27 +126,31 @@ const translations = {
     advantages: [
       {
         title: "Quality",
-        description: "Professional cleaning with a guarantee of cleanliness.",
+        description: "Cleaning with a guarantee of excellence.",
         icon: <img src={QualityIcon} alt="Quality Icon" className={css.iconImage} />,
         iconColor: "#a78bfa",
+        backgroundClass: "cardBackground0",
       },
       {
         title: "Speed",
-        description: "We complete orders in the shortest time.",
+        description: "We finish orders fast and on schedule.",
         icon: <img src={SpeedIcon} alt="Speed Icon" className={css.iconImage} />,
         iconColor: "#7c3aed",
+        backgroundClass: "cardBackground1",
       },
       {
         title: "Eco-Friendly",
-        description: "We use safe cleaning products.",
+        description: "Safe cleaning products for your home.",
         icon: <img src={EcoIcon} alt="Eco Icon" className={css.iconImage} />,
         iconColor: "#c084fc",
+        backgroundClass: "cardBackground2",
       },
       {
         title: "Affordability",
-        description: "Prices that suit everyone.",
+        description: "Prices that suit every client’s budget.",
         icon: <img src={AffordabilityIcon} alt="Affordability Icon" className={css.iconImage} />,
         iconColor: "#e879f9",
+        backgroundClass: "cardBackground3",
       },
     ],
   },
@@ -168,11 +184,12 @@ export default function WhyChooseUs({ lang = "pl" }) {
           {advantages.map((advantage, index) => (
             <div
               key={index}
-              className={`${css.advantageCard} ${css[`cardStyle${index}`]} ${isVisible ? css.fadeIn : ""}`}
+              className={`${css.advantageCard} ${css[advantage.backgroundClass]} ${css[`cardStyle${index}`]} ${isVisible ? css.fadeIn : ""}`}
               style={{
                 transitionDelay: `${index * 0.2}s`,
               }}
             >
+              <div className={css.backgroundIcon}></div> {/* Додаємо елемент для фонової іконки */}
               <div
                 className={`${css.icon} ${isVisible ? css.iconAnimate : ""}`}
                 style={{ color: advantage.iconColor }}
