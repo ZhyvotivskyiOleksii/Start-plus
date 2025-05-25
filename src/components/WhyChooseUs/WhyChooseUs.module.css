@@ -1,0 +1,202 @@
+.whyChooseUs {
+    background: #ffffff;
+    padding: clamp(60px, 10vw, 100px) clamp(15px, 3vw, 20px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.content {
+    max-width: 1440px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.heading {
+    font-family: "FuturaPT2", sans-serif;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
+    line-height: 1.2;
+    color: #1a1a1a;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.5s ease, transform 1.5s ease;
+    position: relative;
+}
+
+.highlightedWrapper {
+    display: inline-block;
+    white-space: nowrap;
+    background: linear-gradient(
+        to right,
+        #1a1a1a 50%,
+        #9966cc 50%,
+        #6e4bdc 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subheading {
+    font-family: "FuturaPT2", sans-serif;
+    font-size: clamp(1.5rem, 1.8vw, 1.2rem);
+    color: #888;
+    margin-bottom: clamp(2rem, 3vw, 3rem);
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1.5s ease, transform 1.5s ease;
+}
+
+.advantages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(20px, 3vw, 30px);
+    position: relative;
+    padding: 20px 0;
+}
+
+.advantageCard {
+    position: relative;
+    background: #8569ff80;
+    padding: clamp(50px, 6vw, 60px) clamp(25px, 3vw, 30px) clamp(25px, 3vw, 30px);
+    width: 100%;
+    max-width: 300px;
+    text-align: center;
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    z-index: 1;
+    border-radius: 10px;
+}
+
+.icon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-bottom: 20px;
+    transform-origin: center;
+    transition: transform 1.2s ease;
+    opacity: 0.9;
+}
+
+.iconImage {
+    width: clamp(6rem, 6vw, 4.5rem);
+    height: clamp(6rem, 6vw, 4.5rem);
+}
+
+.iconAnimate {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.advantageTitle {
+    font-family: "FuturaPT2", sans-serif;
+    font-size: clamp(1.9rem, 2vw, 1.4rem);
+    color: #030303;
+    margin-bottom: 12px;
+    margin-top: clamp(1rem, 2vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.advantageDescription {
+    font-family: "FuturaPT1", sans-serif;
+    font-size: clamp(1rem, 1.5vw, 0.95rem);
+    color: #010101;
+    line-height: 1.6;
+}
+
+.cardStyle0 {
+    transform: rotate(3deg);
+}
+
+.cardStyle1 {
+    transform: rotate(-2deg);
+}
+
+.cardStyle2 {
+    transform: rotate(2deg);
+}
+
+.cardStyle3 {
+    transform: rotate(-3deg);
+}
+
+.fadeIn {
+    opacity: 1 !important;
+    transform: scale(1) rotate(0deg) !important;
+}
+
+@media (max-width: 768px) {
+    .advantages {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, auto);
+        gap: clamp(10px, 1.5vw, 15px);
+        align-items: center;
+    }
+
+    .advantageCard {
+        max-width: 100%;
+        padding: clamp(40px, 5vw, 50px) clamp(15px, 2vw, 20px) clamp(15px, 2vw, 20px);
+    }
+
+    .heading {
+        font-size: clamp(1.8rem, 4.5vw, 2.5rem);
+        white-space: normal;
+        line-height: 1.1;
+    }
+
+    .subheading {
+        font-size: clamp(0.9rem, 1.6vw, 1rem);
+    }
+
+    .iconImage {
+        width: clamp(5rem, 5vw, 3.5rem);
+        height: clamp(5rem, 5vw, 3.5rem);
+    }
+
+    .advantageTitle {
+        font-size: clamp(1rem, 1.8vw, 1.2rem);
+        margin-top: clamp(0.75rem, 1.5vw, 1rem);
+    }
+
+    .advantageDescription {
+        font-size: clamp(0.75rem, 1.4vw, 0.85rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .heading {
+        font-size: clamp(1.6rem, 4vw, 2rem);
+    }
+
+    .subheading {
+        font-size: clamp(1rem, 1.4vw, 0.9rem);
+    }
+
+    .advantageTitle {
+        font-size: clamp(0.9rem, 1.6vw, 1rem);
+    }
+
+    .advantageDescription {
+        font-size: clamp(1rem, 1.3vw, 0.8rem);
+    }
+}
+
+@media (max-width: 320px) {
+    .advantages {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+}

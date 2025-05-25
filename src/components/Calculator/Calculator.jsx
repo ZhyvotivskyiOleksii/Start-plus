@@ -43,6 +43,8 @@ export default function Calculator() {
   const [floor, setFloor] = useState("");
   const [intercomCode, setIntercomCode] = useState("");
   const [name, setName] = useState("");
+  const [companyName, setCompanyName] = useState(""); // Новое состояние для названия компании
+  const [nip, setNip] = useState(""); // Новое состояние для NIP
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
@@ -53,6 +55,8 @@ export default function Calculator() {
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const nameRef = useRef(null);
+  const companyNameRef = useRef(null); // Ref для поля Nazwa firmy
+  const nipRef = useRef(null); // Ref для поля NIP
   const phoneRef = useRef(null);
   const emailRef = useRef(null);
   const streetRef = useRef(null);
@@ -369,6 +373,21 @@ export default function Calculator() {
   }, [name]);
 
   useEffect(() => {
+    if (companyName && companyNameRef.current) {
+      companyNameRef.current.classList.remove(
+        css["error-border"],
+        css["shake-anim"]
+      );
+    }
+  }, [companyName]);
+
+  useEffect(() => {
+    if (nip && nipRef.current) {
+      nipRef.current.classList.remove(css["error-border"], css["shake-anim"]);
+    }
+  }, [nip]);
+
+  useEffect(() => {
     if (phone && phoneRef.current) {
       phoneRef.current.classList.remove(css["error-border"], css["shake-anim"]);
     }
@@ -637,9 +656,22 @@ export default function Calculator() {
       missingFields.push("godzina sprzątania");
     }
 
-    if (!name) {
+    if (clientType === "Osoba prywatna" && !name) {
       nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       missingFields.push("imię");
+    }
+
+    if (clientType === "Firma" && !companyName) {
+      companyNameRef.current?.classList.add(
+        css["error-border"],
+        css["shake-anim"]
+      );
+      missingFields.push("nazwa firmy");
+    }
+
+    if (clientType === "Firma" && !nip) {
+      nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
+      missingFields.push("NIP");
     }
 
     if (!phone) {
@@ -701,6 +733,8 @@ export default function Calculator() {
         calendarRef.current?.scrollIntoView({ behavior: "smooth" });
       } else if (
         missingFields.includes("imię") ||
+        missingFields.includes("nazwa firmy") ||
+        missingFields.includes("NIP") ||
         missingFields.includes("telefon kontaktowy") ||
         missingFields.includes("adres e-mail")
       ) {
@@ -736,7 +770,9 @@ export default function Calculator() {
         intercom_code: intercomCode,
       },
       client_info: {
-        name: name,
+        name: clientType === "Osoba prywatna" ? name : undefined, // Отправляем name только для Osoba prywatna
+        company_name: clientType === "Firma" ? companyName : undefined, // Отправляем company_name для Firma
+        nip: clientType === "Firma" ? nip : undefined, // Отправляем nip для Firma
         phone: phone,
         email: email,
         additional_info: additionalInfo,
@@ -779,7 +815,7 @@ export default function Calculator() {
         client_email: orderData.client_info.email,
         client_phone: orderData.client_info.phone,
         client_info: {
-          name: orderData.client_info.name || "Jan Kowalski",
+          name: orderData.client_info.name || orderData.client_info.company_name || "Jan Kowalski",
         },
       });
 
@@ -1268,18 +1304,49 @@ export default function Calculator() {
               <h4>DANE KONTAKTOWE</h4>
               <div className={css["contact-fields"]}>
                 <div className={css["contact-row"]}>
-                  <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Imię</label>
-                    <input
-                      ref={nameRef}
-                      type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className={`${css["contact-input"]} ${
-                        name ? css.filled : ""
-                      }`}
-                    />
-                  </div>
+                  {clientType === "Osoba prywatna" ? (
+                    <div className={css["input-group"]}>
+                      <label className={css["input-label"]}>Imię</label>
+                      <input
+                        ref={nameRef}
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={`${css["contact-input"]} ${
+                          name ? css.filled : ""
+                        }`}
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <div className={css["input-group"]}>
+                        <label className={css["input-label"]}>
+                          Nazwa firmy
+                        </label>
+                        <input
+                          ref={companyNameRef}
+                          type="text"
+                          value={companyName}
+                          onChange={(e) => setCompanyName(e.target.value)}
+                          className={`${css["contact-input"]} ${
+                            companyName ? css.filled : ""
+                          }`}
+                        />
+                      </div>
+                      <div className={css["input-group"]}>
+                        <label className={css["input-label"]}>NIP</label>
+                        <input
+                          ref={nipRef}
+                          type="text"
+                          value={nip}
+                          onChange={(e) => setNip(e.target.value)}
+                          className={`${css["contact-input"]} ${
+                            nip ? css.filled : ""
+                          }`}
+                        />
+                      </div>
+                    </>
+                  )}
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>
                       Telefon kontaktowy

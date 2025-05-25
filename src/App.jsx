@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import { useState, useEffect } from "react";
 
 import AppBar from "./components/AppBar/AppBar";
-import HeroSection from "./components/HeroSection/HeroSection";
+import HomePage from "./components/HomePage"; // Додаємо новий компонент
 import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
 import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator";
@@ -15,7 +15,7 @@ import CookieBanner from "./components/CookieBanner/CookieBanner";
 import Footer from "./components/Footer/Footer";
 import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage";
 import TermsPage from "./components/TermsPage/TermsPage";
-import QuickOrder from "./components/QuickOrder/QuickOrder"; // Додаємо імпорт нового компонента
+import QuickOrder from "./components/QuickOrder/QuickOrder";
 
 function AppContent() {
   /* --------------------------------------------
@@ -74,7 +74,7 @@ function AppContent() {
       {/* App routes */}
       <Routes>
         {/* public pages */}
-        <Route path="/" element={<HeroSection lang={lang} />} />
+        <Route path="/" element={<HomePage lang={lang} />} /> {/* Оновлено: використовуємо HomePage */}
         <Route
           path="/calculator"
           element={<Calculator lang={lang} type="regular" title="Zwykłe sprzątanie" />}
@@ -98,7 +98,7 @@ function AppContent() {
         <Route path="/privacy-policy" element={<PrivacyPolicyPage lang={lang} />} />
         <Route path="/terms-of-service" element={<TermsPage lang={lang} />} />
         
-        {/* Новий маршрут для швидкого замовлення */}
+        {/* Маршрут для швидкого замовлення */}
         <Route path="/quick-order" element={<QuickOrder lang={lang} />} />
 
         {/* admin panel */}
