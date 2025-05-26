@@ -313,7 +313,7 @@ export default function Reviews({ lang = "pl" }) {
     setIsVisible(true);
 
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(window.innerWidth <= 480);
     };
 
     handleResize();
@@ -426,86 +426,89 @@ export default function Reviews({ lang = "pl" }) {
               </>
             ) : (
               <div className={styles.reviewsContainer}>
-                <Swiper
-                  modules={[Pagination, Navigation]}
-                  spaceBetween={10}
-                  slidesPerView={1}
-                  pagination={{ clickable: true, el: `.${styles.indicators}` }}
-                  navigation={{
-                    prevEl: `.${styles.leftArrow}`,
-                    nextEl: `.${styles.rightArrow}`,
-                  }}
-                  speed={800}
-                  effect="slide"
-                  breakpoints={{
-                    769: {
-                      slidesPerView: 4,
-                      spaceBetween: 10,
-                    },
-                    1025: {
-                      slidesPerView: 4,
-                      spaceBetween: 10,
-                    },
-                  }}
-                  onSwiper={(swiper) => setSwiperInstance(swiper)}
-                  className={styles.reviewsSwiper}
-                >
-                  {reviews.map((review, index) => (
-                    <SwiperSlide key={index}>
-                      <div
-                        className={`${styles.reviewCard} ${
-                          review.isImageCard
-                            ? styles.imageCard
-                            : index % 2 === 0
-                            ? styles.lightPurple
-                            : styles.black
-                        } ${flippedCards[index] ? styles.flipped : ""}`}
-                      >
-                        {review.isImageCard ? (
-                          <div className={styles.imageCardContent}></div>
-                        ) : (
-                          <div className={styles.cardInner}>
-                            <div className={styles.cardFront}>
-                              <div className={styles.reviewContent}>
-                                <img
-                                  src="/icon/Vector.png"
-                                  alt="Quote Icon"
-                                  className={styles.quoteIcon}
-                                />
-                                <p className={styles.reviewText}>{review.text}</p>
-                                <p className={styles.reviewDate}>{review.date}</p>
-                                <div className={styles.rating}>
-                                  {[...Array(review.rating)].map((_, i) => (
-                                    <FontAwesomeIcon key={i} icon={faStar} className={styles.starIcon} />
-                                  ))}
-                                </div>
-                              </div>
-                              <div className={styles.reviewAuthor}>
-                                <img
-                                  src={review.image}
-                                  alt={review.name}
-                                  className={styles.authorImg}
-                                />
-                                <span>{review.name}</span>
-                              </div>
-                              <div className={styles.fingerIcon}></div>
-                            </div>
-                            <div className={styles.cardBack}>
-                              <div className={styles.reviewContent}>
-                                <p className={styles.fullReviewText}>{review.fullText}</p>
-                                <div className={styles.rating}>
-                                  {[...Array(review.rating)].map((_, i) => (
-                                    <FontAwesomeIcon key={i} icon={faStar} className={styles.starIcon} />
-                                  ))}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </SwiperSlide>
+               <Swiper
+  modules={[Pagination, Navigation]}
+  spaceBetween={10}
+  slidesPerView={1}
+  pagination={{ clickable: true, el: `.${styles.indicators}` }}
+  navigation={{
+    prevEl: `.${styles.leftArrow}`,
+    nextEl: `.${styles.rightArrow}`,
+  }}
+  speed={800}
+  effect="slide"
+  breakpoints={{
+    481:  { slidesPerView: 2, spaceBetween: 10 },
+    1025: { slidesPerView: 4, spaceBetween: 10 },
+  }}
+  onSwiper={(swiper) => setSwiperInstance(swiper)}
+  className={styles.reviewsSwiper}
+>
+  {reviews.map((review, index) => (
+    <SwiperSlide key={index}>
+      <div
+        className={`${styles.reviewCard} ${
+          review.isImageCard
+            ? styles.imageCard
+            : index % 2 === 0
+            ? styles.lightPurple
+            : styles.black
+        } ${flippedCards[index] ? styles.flipped : ""}`}
+      >
+        {review.isImageCard ? (
+          <div className={styles.imageCardContent}></div>
+        ) : (
+          <div className={styles.cardInner}>
+            <div className={styles.cardFront}>
+              <div className={styles.reviewContent}>
+                <img
+                  src="/icon/Vector.png"
+                  alt="Quote Icon"
+                  className={styles.quoteIcon}
+                />
+                <p className={styles.reviewText}>{review.text}</p>
+                <p className={styles.reviewDate}>{review.date}</p>
+                <div className={styles.rating}>
+                  {[...Array(review.rating)].map((_, i) => (
+                    <FontAwesomeIcon
+                      key={i}
+                      icon={faStar}
+                      className={styles.starIcon}
+                    />
                   ))}
-                </Swiper>
+                </div>
+              </div>
+              <div className={styles.reviewAuthor}>
+                <img
+                  src={review.image}
+                  alt={review.name}
+                  className={styles.authorImg}
+                />
+                <span>{review.name}</span>
+              </div>
+              <div className={styles.fingerIcon}></div>
+            </div>
+            <div className={styles.cardBack}>
+              <div className={styles.reviewContent}>
+                <p className={styles.fullReviewText}>{review.fullText}</p>
+                <div className={styles.rating}>
+                  {[...Array(review.rating)].map((_, i) => (
+                    <FontAwesomeIcon
+                      key={i}
+                      icon={faStar}
+                      className={styles.starIcon}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </SwiperSlide>
+  ))}
+</Swiper>
+
               </div>
             )}
           </div>

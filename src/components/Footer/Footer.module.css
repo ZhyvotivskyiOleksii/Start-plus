@@ -3,7 +3,8 @@
   color: #ffffff;
   padding: 48px 0;
   font-size: 14px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .footerContent {
@@ -34,8 +35,8 @@
 }
 
 .companyName h2 {
-  font-family: "FuturaPT2", "FuturaPT1", sans-serif;
-  font-weight: 600;
+  font-family: "Futura PT";
+  font-weight: 700;
   font-size: 1.8rem;
   margin-bottom: 24px;
   color: #9966cc;

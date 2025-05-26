@@ -24,28 +24,28 @@ export default function BarMenu({
 
   const menuItems = {
     en: [
-      { name: "Standard", mobileName: "Standard Clean", icon: "/icon/cleaning.png", image: "/images/bear1.png", tag: "Popularne" },
+      { name: "Standard", mobileName: "Standard Clean", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
       { name: "Renovation", mobileName: "Post-Reno Clean", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
       { name: "Window Cleaning", mobileName: "Window Wash", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
       { name: "Private House", mobileName: "House Clean", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
       { name: "Office Cleaning", mobileName: "Office Clean", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
     ],
     pl: [
-      { name: "Zwykłe", mobileName: "Zwykłe Sprzątanie", icon: "/icon/cleaning.png", image: "/images/bear1.png", tag: "Popularne" },
+      { name: "Zwykłe", mobileName: "Zwykłe Sprzątanie", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
       { name: "Remont", mobileName: "Po Remoncie", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
       { name: "Mycie okien", mobileName: "Mycie Okien", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
       { name: "Dom prywatny", mobileName: "Dom Prywatny", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
       { name: "Sprzątanie biur", mobileName: "Sprzątanie Biur", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
     ],
     uk: [
-      { name: "Звичайне", mobileName: "Звичайне Прибирання", icon: "/icon/cleaning.png", image: "/images/bear1.png", tag: "Popularne" },
+      { name: "Звичайне", mobileName: "Звичайне Прибирання", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
       { name: "Ремонт", mobileName: "Після Ремонту", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
       { name: "Миття вікон", mobileName: "Миття Вікон", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
       { name: "Приватний будинок", mobileName: "Приватний Будинок", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
       { name: "Прибирання офісів", mobileName: "Прибирання Офісів", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
     ],
     ru: [
-      { name: "Обычное", mobileName: "Обычная Уборка", icon: "/icon/cleaning.png", image: "/images/bear1.png", tag: "Popularne" },
+      { name: "Обычное", mobileName: "Обычная Уборка", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
       { name: "Ремонт", mobileName: "После Ремонта", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
       { name: "Мойка окон", mobileName: "Мойка Окон", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
       { name: "Частный дом", mobileName: "Частный Дом", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },

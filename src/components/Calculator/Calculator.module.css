@@ -54,7 +54,8 @@
   margin-right: auto;
   padding: 0 clamp(10px, 2vw, 20px);
   box-sizing: border-box;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .container {
@@ -63,7 +64,8 @@
   margin: 0 auto;
   padding: 0 clamp(10px, 2vw, 20px);
   box-sizing: border-box;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calculator-impuls {
@@ -72,7 +74,8 @@
   margin: 0 auto;
   padding: 0 clamp(10px, 2vw, 20px);
   box-sizing: border-box;
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .calculator-container {
@@ -84,7 +87,8 @@
   max-width: 1440px;
   margin: 0 auto;
   box-sizing: border-box;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .discount-text {
@@ -95,7 +99,8 @@
   flex: 2 1 55%;
   min-width: 300px;
   padding: clamp(8px, 1.5vw, 16px);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calculator-right {
@@ -110,7 +115,8 @@
   border: 1px solid var(--light-border);
   box-shadow: var(--service-shadow);
   box-sizing: border-box;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 button {
@@ -131,7 +137,8 @@ button {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 button:hover {
@@ -162,7 +169,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .sticky-order-button:hover {
@@ -246,7 +254,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .user-type button.active {
@@ -300,7 +309,8 @@ button:active {
   min-width: 200px;
   width: 100%;
   transition: background 0.3s ease, box-shadow 0.3s ease;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .counter:hover {
@@ -323,7 +333,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .counter-button:hover {
@@ -352,7 +363,8 @@ button:active {
   text-align: center;
   transition: color 0.3s ease;
   flex-shrink: 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .counter-label {
@@ -361,7 +373,8 @@ button:active {
   font-weight: 500;
   text-transform: lowercase;
   flex-shrink: 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 @media (max-width: 760px) {
@@ -389,7 +402,8 @@ button:active {
   font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-secondary-color);
   margin-bottom: 16px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .additional-services {
@@ -402,7 +416,8 @@ button:active {
   font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
   margin-bottom: 10px;
   color: #0000007b;
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .service-block {
@@ -422,7 +437,8 @@ button:active {
   box-shadow: var(--service-shadow);
   border: 1px solid var(--light-border);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .service-item:hover {
@@ -444,7 +460,8 @@ button:active {
   color: var(--text-color);
   cursor: pointer;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .checkbox-wrapper {
@@ -535,7 +552,8 @@ button:active {
   margin: 0;
   font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .vacuum-price {
@@ -548,7 +566,8 @@ button:active {
   cursor: default;
   width: fit-content;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .service-icon {
@@ -593,7 +612,8 @@ button:active {
 
 .calculator-right h2 {
   font-size: clamp(1.4rem, 2vmin, 1.3rem);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
   color: var(--text-color);
   margin-bottom: 10px;
   line-height: 1.4;
@@ -606,7 +626,8 @@ button:active {
 
 .location-info h4 {
   font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   color: var(--text-color);
   margin-bottom: 4px;
   letter-spacing: 0.3px;
@@ -618,7 +639,8 @@ button:active {
   color: var(--text-secondary-color);
   margin: 0;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .specialist-info {
@@ -641,14 +663,16 @@ button:active {
   margin: 0;
   color: #000000;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calculator-right h4 {
   font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
   color: var(--text-color);
   margin-bottom: 8px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   letter-spacing: 0.3px;
 }
 
@@ -669,7 +693,8 @@ button:active {
   color: var(--text-color);
   margin: 0;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .selected-date {
@@ -693,7 +718,8 @@ button:active {
   color: var(--text-color);
   margin: 0;
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .promo-code {
@@ -729,7 +755,8 @@ button:active {
   font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
   color: var(--text-color);
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .promo-container button {
@@ -746,7 +773,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .promo-container button:hover {
@@ -773,7 +801,8 @@ button:active {
   font-weight: 800;
   margin-bottom: 8px;
   color: var(--text-color);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .total p strong {
@@ -784,7 +813,8 @@ button:active {
   color: var(--text-secondary-color);
   margin-left: 6px;
   font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .payment-icons {
@@ -814,7 +844,8 @@ button:active {
   font-weight: 600;
   color: var(--text-secondary-color);
   margin: 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .selected-services-container {
@@ -865,7 +896,8 @@ button:active {
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .service-price {
@@ -882,7 +914,8 @@ button:active {
   font-weight: 700;
   color: var(--text-color);
   white-space: nowrap;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .selected-service-item .remove-btn {
@@ -948,7 +981,8 @@ button:active {
   color: var(--text-color);
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .subtitle {
@@ -956,7 +990,8 @@ button:active {
   color: var(--text-secondary-color);
   margin-bottom: 12px;
   font-weight: 500;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calendar-section {
@@ -968,7 +1003,8 @@ button:active {
   color: #0000007b;
   margin-bottom: 10px;
   letter-spacing: 0.3px;
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .calendar-container {
@@ -1044,7 +1080,8 @@ button:active {
 .calendar-header h5 {
   font-size: clamp(1rem, 2vmin, 1.2rem);
   color: var(--text-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   margin: 0;
   text-transform: capitalize;
   text-align: center;
@@ -1067,7 +1104,8 @@ button:active {
   text-transform: lowercase;
   color: var(--text-secondary-color);
   padding: 2px 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calendar-grid {
@@ -1103,7 +1141,8 @@ button:active {
   font-weight: 600;
   font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--text-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calendar-day.hoverable:hover {
@@ -1172,7 +1211,8 @@ button:active {
   font-size: clamp(0.5rem, 0.9vmin, 0.6rem);
   margin-top: 2px;
   color: var(--text-secondary-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .discount-label {
@@ -1185,7 +1225,8 @@ button:active {
   padding: 3px 5px;
   border-radius: 4px;
   font-weight: 700;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .calendar-footer {
@@ -1199,14 +1240,16 @@ button:active {
   margin: 2px 0;
   font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
   color: var(--text-secondary-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .time-wrapper h5 {
   font-size: clamp(0.95rem, 1.8vmin, 1.1rem);
   color: var(--text-color);
   margin-bottom: 6px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   text-align: center;
   letter-spacing: 0.3px;
   font-weight: 700;
@@ -1233,7 +1276,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .time-slot:hover {
@@ -1278,7 +1322,8 @@ button:active {
 
 .frequency-section h4 {
   font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
   color: var(--text-color);
   margin-bottom: 10px;
   letter-spacing: 0.3px;
@@ -1340,7 +1385,8 @@ button:active {
   color: var(--text-color);
   margin: 0;
   line-height: 1.2;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .frequency-discount {
@@ -1348,7 +1394,8 @@ button:active {
   font-weight: 600;
   color: var(--discount-color);
   margin: 2px 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .frequency-price {
@@ -1356,13 +1403,15 @@ button:active {
   font-weight: 600;
   color: var(--text-color);
   margin: 2px 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .emoji {
   font-size: clamp(0.85rem, 1.4vmin, 0.95rem);
   margin-left: 3px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .selected-frequency {
@@ -1379,14 +1428,16 @@ button:active {
   font-weight: 600;
   color: var(--text-color);
   margin: 0;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .discount-inline {
   font-size: clamp(0.9rem, 0.9vmin, 0.7rem);
   color: var(--discount-color);
   margin-left: 4px;
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .paid-services-section {
@@ -1395,7 +1446,8 @@ button:active {
 
 .paid-services-section h4 {
   font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
   text-transform: uppercase;
   color: #0000007b;
   margin-bottom: 10px;
@@ -1443,7 +1495,8 @@ button:active {
   margin: 0;
   font-size: clamp(0.8rem, 1.5vmin, 0.9rem);
   color: var(--text-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .paid-service-card.selected p {
@@ -1466,14 +1519,16 @@ button:active {
   font-weight: 700;
   color: var(--text-color);
   margin-right: 4px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .price-old {
   font-size: clamp(0.75rem, 1.4vmin, 0.85rem);
   color: var(--text-secondary-color);
   text-decoration: line-through;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .paid-service-card.selected .price-new,
@@ -1504,7 +1559,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .qty-btn:hover {
@@ -1531,7 +1587,8 @@ button:active {
   color: var(--text-color);
   min-width: 24px;
   text-align: center;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .paid-service-card.selected .qty-value {
@@ -1559,7 +1616,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .remove-btn:hover {
@@ -1592,7 +1650,8 @@ button:active {
   align-items: center;
   box-shadow: var(--button-shadow);
   font-weight: 600;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .city-button:hover {
@@ -1612,7 +1671,8 @@ button:active {
   margin-bottom: 6px;
   outline: none;
   border-radius: 6px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .city-dropdown {
@@ -1647,7 +1707,8 @@ button:active {
   border-left: 1px solid var(--button-border-light);
   border-bottom: 1px solid var(--button-border-dark);
   border-right: 1px solid var(--button-border-dark);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .city-option:hover {
@@ -1673,7 +1734,8 @@ button:active {
   border-radius: 4px;
   font-weight: 600;
   font-size: clamp(0.7rem, 1.4vmin, 0.8rem);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .city-option.selected .city-price {
@@ -1715,7 +1777,8 @@ button:active {
 
 .address-section h4 {
   font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
   color: #0000007b;
   margin-bottom: 10px;
   letter-spacing: 0.3px;
@@ -1746,7 +1809,8 @@ button:active {
   color: var(--text-secondary-color);
   transition: all 0.2s;
   pointer-events: none;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .address-input,
@@ -1760,7 +1824,8 @@ button:active {
   border: none;
   color: var(--text-color);
   transition: border-color 0.3s ease;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .address-input:focus,
@@ -1792,7 +1857,8 @@ button:active {
 
 .contact-section h4 {
   font-size: clamp(1.9rem, 2.5vmin, 1.4rem);
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
   color: #0000007b;
   margin-bottom: 10px;
   letter-spacing: 0.3px;
@@ -1824,7 +1890,8 @@ button:active {
   margin-bottom: 6px;
   cursor: pointer;
   font-weight: 500;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 @media (max-width: 760px) {
@@ -1929,9 +1996,11 @@ button:active {
   color: var(--error-color);
   font-size: 14px;
   margin-top: 5px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
 }
 
 .bold-text {
-  font-family: "FuturaPT2", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 700;
 }

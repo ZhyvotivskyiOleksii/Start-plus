@@ -1,16 +1,16 @@
 .logoContainer {
   display: flex;
   align-items: center;
-  gap: 10px; 
-  text-decoration: none; 
+  gap: 10px;
+  text-decoration: none;
 }
 
 .logoText {
   font-size: 20px;
   color: #A16BFF;
   transition: 0.5s;
-  font-family: "FuturaPT2", sans-serif;
-
+  font-family: "Futura PT";
+  font-weight: 700;
 }
 
 .logoPlus {
@@ -18,7 +18,7 @@
 }
 
 .logoText:hover {
-  color: #A16BFF; 
+  color: #A16BFF;
 }
 
 /* @media (max-width: 320px) {

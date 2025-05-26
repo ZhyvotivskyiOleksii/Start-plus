@@ -22,7 +22,8 @@
 }
 
 .heading {
-    font-family: "FuturaPT2", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 700;
     font-size: clamp(2.5rem, 6vw, 4rem);
     margin-bottom: clamp(0.5rem, 1vw, 0.8rem);
     line-height: 1.2;
@@ -50,7 +51,8 @@
 }
 
 .subheading {
-    font-family: "FuturaPT2", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 700;
     font-size: clamp(1.5rem, 1.8vw, 1.2rem);
     color: #888;
     margin-bottom: clamp(2rem, 3vw, 3rem);
@@ -85,7 +87,6 @@
     border-radius: 10px;
 }
 
-
 .backgroundIcon {
     position: absolute;
     bottom: 0;
@@ -95,7 +96,6 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom right;
-    /* filter: brightness(0.9);  */
     z-index: 0;
 }
 
@@ -136,7 +136,8 @@
 }
 
 .advantageTitle {
-    font-family: "FuturaPT2", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 700;
     font-size: clamp(1.9rem, 2vw, 1.4rem);
     color: #030303;
     margin-bottom: 12px;
@@ -147,7 +148,8 @@
 }
 
 .advantageDescription {
-    font-family: "FuturaPT1", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 400;
     font-size: clamp(1rem, 1.5vw, 0.95rem);
     color: #010101;
     line-height: 1.6;

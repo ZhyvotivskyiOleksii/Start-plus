@@ -54,7 +54,8 @@
   align-items: center;
   text-decoration: none;
   color: var(--text-color);
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   font-size: clamp(10px, 1vw, 12px);
   padding: clamp(5px, 0.7vw, 7px) clamp(7px, 0.9vw, 9px);
   background: var(--service-bg);
@@ -159,7 +160,8 @@
   left: 10px;
   padding: 5px 10px;
   border-radius: 5px;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   font-size: 10px;
   text-transform: uppercase;
 }
@@ -178,7 +180,8 @@
   margin: 0;
   font-size: 16px;
   color: white;
-  font-family: "FuturaPT1", sans-serif;
+  font-family: "Futura PT";
+  font-weight: 400;
   line-height: 1.2;
   text-align: left;
   flex: 1;
@@ -228,7 +231,8 @@
   }
 
   .cardTitle {
-    font-family: "FuturaPT1", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 400;
     font-size: clamp(14px, 1.5vw, 16px);
     max-width: 35%;
   }
@@ -255,13 +259,15 @@
   }
 
   .cardTitle {
-    font-family: "FuturaPT1", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 400;
     font-size: clamp(12px, 1.2vw, 14px);
     max-width: 40%;
   }
 
   .tag {
-    font-family: "FuturaPT1", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 400;
     font-size: 8px;
     padding: 3px 6px;
   }

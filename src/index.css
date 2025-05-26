@@ -1,3 +1,18 @@
+:root {
+  --ls-text: 0.03em;
+}
+
+p,
+span,
+a,
+li,
+button,
+input,
+textarea,
+label,
+small {
+  letter-spacing: var(--ls-text);
+}
 
 
 *,
@@ -6,7 +21,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font: inherit;
+
 }
 
 html, body {
@@ -15,34 +30,11 @@ html, body {
   scroll-behavior: smooth;
 }
 
-:root {
-  --font-family: "FuturaPT1", sans-serif;
-
-}
-
-@font-face {
-    font-family: FuturaPT2;
-    src: url(../fonts/futura_pt_bold.ttf);
-  }
-  
-  @font-face {
-    font-family: FuturaPT1;
-    src: url(../fonts/futura_pt_book.ttf);
-  }
-  
-  @font-face {
-    font-family: FuturaPT3;
-    src: url(../fonts/futura_pt_cond_extra_bold.ttf);
-  }
 
 
 
-body {
-  font-family: "FuturaPT1", sans-serif;
 
-  line-height: 1.5;
-  background-color: rgb(255, 255, 255) !important;
-}
+
 
 img, picture, video, canvas, svg {
   max-width: 100%;
@@ -65,3 +57,5 @@ a {
 h1, h2, h3, h4, h5, h6 {
   line-height: 1.2;
 }
+
+

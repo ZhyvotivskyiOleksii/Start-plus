@@ -1,5 +1,4 @@
-"use client";
-
+import { useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import css from "./Calculator.module.css";
 import {
@@ -65,7 +64,7 @@ export default function Calculator() {
   const agreementRef = useRef(null);
   const orderButtonRef = useRef(null);
   const sentinelRef = useRef(null);
-
+  const location = useLocation();
   const api = axios.create({ baseURL: API });
 
   const cities = {
@@ -347,6 +346,15 @@ export default function Calculator() {
     observer.observe(marker);
     return () => observer.disconnect();
   }, []);
+
+
+  useEffect(() => {
+    const { state } = location;
+    if (state?.frequency && frequencyDiscounts[state.frequency] !== undefined) {
+        setCleaningFrequency(state.frequency);
+    }
+}, [location]);
+
 
   useEffect(() => {
     if (selectedDate && calendarRef.current) {

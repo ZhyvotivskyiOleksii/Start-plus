@@ -1,0 +1,90 @@
+@font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-Book.woff") format("woff"),
+          url("/fonts/FuturaPT-Book.ttf") format("truetype");
+     font-weight: 400;
+     font-style: normal;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-BookObl.woff") format("woff"),
+          url("/fonts/FuturaPT-BookObl.ttf") format("truetype");
+     font-weight: 400;
+     font-style: italic;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-Demi.woff") format("woff"),
+          url("/fonts/FuturaPT-Demi.ttf") format("truetype");
+     font-weight: 600;
+     font-style: normal;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-DemiObl.woff") format("woff"),
+          url("/fonts/FuturaPT-DemiObl.ttf") format("truetype");
+     font-weight: 600;
+     font-style: italic;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-Bold.woff") format("woff"),
+          url("/fonts/FuturaPT-Bold.ttf") format("truetype");
+     font-weight: 700;
+     font-style: normal;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-BoldObl.woff") format("woff"),
+          url("/fonts/FuturaPT-BoldObl.ttf") format("truetype");
+     font-weight: 700;
+     font-style: italic;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-ExtraBold.woff") format("woff"),
+          url("/fonts/FuturaPT-ExtraBold.ttf") format("truetype");
+     font-weight: 800;
+     font-style: normal;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-ExtraBoldObl.woff") format("woff"),
+          url("/fonts/FuturaPT-ExtraBoldObl.ttf") format("truetype");
+     font-weight: 800;
+     font-style: italic;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-Heavy.woff") format("woff"),
+          url("/fonts/FuturaPT-Heavy.ttf") format("truetype");
+     font-weight: 900;
+     font-style: normal;
+     font-display: swap;
+   }
+   
+   @font-face {
+     font-family: "Futura PT";
+     src: url("/fonts/FuturaPT-HeavyObl.woff") format("woff"),
+          url("/fonts/FuturaPT-HeavyObl.ttf") format("truetype");
+     font-weight: 900;
+     font-style: italic;
+     font-display: swap;
+   }
+   

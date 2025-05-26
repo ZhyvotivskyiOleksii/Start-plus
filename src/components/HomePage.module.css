@@ -1,17 +1,11 @@
-.pageWrapper {
-    position: relative;
-    width: 100%;
-}
-
-
-
 .insuranceStrip {
-    position: absolute;
-    width: 100vw;
+    position: relative;
+  
     height: 80px;
     background: #ffffff;
     text-align: center;
     z-index: 2;
+    margin-top: -40px;
 }
 
 .insuranceContent {
@@ -34,7 +28,8 @@
 }
 
 .insuranceContent span {
-    font-family: "FuturaPT2", sans-serif;
+    font-family: "Futura PT";
+    font-weight: 700;
     font-size: clamp(1rem, 1.5vw, 1.2rem);
     color: #030303;
     font-weight: 500;
@@ -43,6 +38,7 @@
 @media (max-width: 768px) {
     .insuranceStrip {
         height: 60px;
+        margin-top: -30px;
     }
 
     .insuranceContent {
@@ -62,5 +58,6 @@
 @media (max-width: 480px) {
     .insuranceStrip {
         height: 50px;
+        margin-top: -25px;
     }
 }
