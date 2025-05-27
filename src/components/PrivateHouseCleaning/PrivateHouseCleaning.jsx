@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import css from "../Calculator/Calculator.module.css";
@@ -58,6 +59,7 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
   const agreementRef = useRef(null);
   const sentinelRef = useRef(null);
   const orderButtonRef = useRef(null);
+  const location = useLocation();
   const [isSticked, setIsSticked] = useState(true);
 
   const cities = {
@@ -794,6 +796,17 @@ export default function PrivateHouseCleaning({ lang, type, title }) {
     },
   };
   const t = texts[lang] || texts.pl;
+
+
+  useEffect(() => {
+    const { state } = location;
+    if (state?.frequency && frequencyDiscounts[state.frequency] !== undefined) {
+      setCleaningFrequency(state.frequency);
+      console.log(`${texts[lang].logMessages.frequencySelected} ${state.frequency}`);
+    }
+  }, [location, lang]);
+
+
   // Завантаження промокодів з API
   useEffect(() => {
     const fetchPromoCodes = async () => {

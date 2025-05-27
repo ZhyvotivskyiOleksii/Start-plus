@@ -1,256 +1,345 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import css from "./FrequencyDiscountSection.module.css";
 
+/* ===== Хук «мобильный / не-мобильный» ==================================== */
+function useIsMobile(maxWidth = 768) {
+  const [isMobile, setIsMobile] = useState(
+    window.matchMedia(`(max-width:${maxWidth}px)`).matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width:${maxWidth}px)`);
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [maxWidth]);
+
+  return isMobile;
+}
+
+/* ===== Тексты и цены ===================================================== */
 const translations = {
-    pl: {
-        title: "Ile kosztuje sprzątanie mieszkania?",
-        subtitle: "Wybierz częstotliwość sprzątania, aby zobaczyć cenę z uwzględnieniem zniżki",
-        frequencyOptions: [
-            { label: "Raz w tygodniu", frequencyKey: "Raz w tygodniu", discount: 20, price: 155.92, type: "office" },
-            { label: "Raz na dwa tygodnie", frequencyKey: "Raz na dwa tygodnie", discount: 15, price: 165.67, type: "private-house" },
-            { label: "Raz w miesiącu", frequencyKey: "Raz w miesiącu", discount: 10, price: 175.41, type: "post-renovation" },
-            { label: "Jednorazowe sprzątanie", frequencyKey: "Jednorazowe sprzątanie", discount: 0, price: 194.90, type: "regular" },
-        ],
-        orderButton: "Zamów teraz",
-        popularTag: "Popularne",
-    },
-    uk: {
-        title: "Скільки коштує прибирання квартири?",
-        subtitle: "Виберіть частоту прибирання, щоб побачити ціну зі знижкою",
-        frequencyOptions: [
-            { label: "Щотижня", frequencyKey: "Raz w tygodniu", discount: 20, price: 155.92, type: "office" },
-            { label: "Кожні 2 тижні", frequencyKey: "Raz na dwa тижні", discount: 15, price: 165.67, type: "private-house" },
-            { label: "Раз на місяць", frequencyKey: "Raz w miesiącu", discount: 10, price: 175.41, type: "post-renovation" },
-            { label: "Одноразове прибирання", frequencyKey: "Jednorazowe sprzątanie", discount: 0, price: 194.90, type: "regular" },
-        ],
-        orderButton: "Замовити зараз",
-        popularTag: "Популярне",
-    },
-    ru: {
-        title: "Сколько стоит уборка квартиры?",
-        subtitle: "Выберите частоту уборки, чтобы увидеть цену со скидкой",
-        frequencyOptions: [
-            { label: "Еженедельно", frequencyKey: "Raz w tygodniu", discount: 20, price: 155.92, type: "office" },
-            { label: "Каждые 2 недели", frequencyKey: "Raz na dwa tygodnie", discount: 15, price: 165.67, type: "private-house" },
-            { label: "Раз в месяц", frequencyKey: "Raz w miesiącu", discount: 10, price: 175.41, type: "post-renovation" },
-            { label: "Одноразовая уборка", frequencyKey: "Jednorazowe sprzątanie", discount: 0, price: 194.90, type: "regular" },
-        ],
-        orderButton: "Заказать сейчас",
-        popularTag: "Популярное",
-    },
-    en: {
-        title: "How much does apartment cleaning cost?",
-        subtitle: "Choose the cleaning frequency to see the discounted price",
-        frequencyOptions: [
-            { label: "Weekly", frequencyKey: "Raz w tygodniu", discount: 20, price: 155.92, type: "office" },
-            { label: "Every 2 weeks", frequencyKey: "Raz na dwa tygodnie", discount: 15, price: 165.67, type: "private-house" },
-            { label: "Monthly", frequencyKey: "Raz w miesiącu", discount: 10, price: 175.41, type: "post-renovation" },
-            { label: "One-time cleaning", frequencyKey: "Jednorazowe sprzątanie", discount: 0, price: 194.90, type: "regular" },
-        ],
-        orderButton: "Order Now",
-        popularTag: "Popular",
-    },
+  pl: {
+    title: "Ile kosztuje sprzątanie mieszkania?",
+    subtitle:
+      "Wybierz częstotliwość sprzątania, aby zobaczyć cenę z uwzględnieniem zniżki",
+    frequencyOptions: [
+      {
+        label: "Raz w tygodniu",
+        frequencyKey: "Raz w tygodniu",
+        discount: 20,
+        prices: { regular: 155.92, office: 196.8, "private-house": 212 }
+      },
+      {
+        label: "Raz na dwa tygodnie",
+        frequencyKey: "Raz na dwa tygodnie",
+        discount: 15,
+        prices: { regular: 165.67, office: 209.1, "private-house": 225.25 }
+      },
+      {
+        label: "Raz w miesiącu",
+        frequencyKey: "Raz w miesiącu",
+        discount: 10,
+        prices: { regular: 175.41, office: 221.4, "private-house": 238.5 }
+      },
+      {
+        label: "Jednorazowe sprzątanie",
+        frequencyKey: "Jednorazowe sprzątanie",
+        discount: 0,
+        prices: { regular: 194.9, office: 246, "private-house": 265 }
+      }
+    ],
+    orderButton: "Zamów teraz",
+    popularTag: "Popularne"
+  },
+  uk: {
+    title: "Скільки коштує прибирання квартири?",
+    subtitle: "Виберіть частоту прибирання, щоб побачити ціну зі знижкою",
+    frequencyOptions: [
+      {
+        label: "Щотижня",
+        frequencyKey: "Raz w tygodniu",
+        discount: 20,
+        prices: { regular: 155.92, office: 196.8, "private-house": 212 }
+      },
+      {
+        label: "Кожні 2 тижні",
+        frequencyKey: "Raz na dwa tygодnie",
+        discount: 15,
+        prices: { regular: 165.67, office: 209.1, "private-house": 225.25 }
+      },
+      {
+        label: "Раз на місяць",
+        frequencyKey: "Raz w miesiącu",
+        discount: 10,
+        prices: { regular: 175.41, office: 221.4, "private-house": 238.5 }
+      },
+      {
+        label: "Одноразове прибирання",
+        frequencyKey: "Jednorazowe sprzątanie",
+        discount: 0,
+        prices: { regular: 194.9, office: 246, "private-house": 265 }
+      }
+    ],
+    orderButton: "Замовити зараз",
+    popularTag: "Популярне"
+  },
+  ru: {
+    title: "Сколько стоит уборка квартиры?",
+    subtitle: "Выберите частоту уборки, чтобы увидеть цену со скидкой",
+    frequencyOptions: [
+      {
+        label: "Еженедельно",
+        frequencyKey: "Raz w tygodniu",
+        discount: 20,
+        prices: { regular: 155.92, office: 196.8, "private-house": 212 }
+      },
+      {
+        label: "Каждые 2 недели",
+        frequencyKey: "Raz na dwa tygodniе",
+        discount: 15,
+        prices: { regular: 165.67, office: 209.1, "private-house": 225.25 }
+      },
+      {
+        label: "Раз в месяц",
+        frequencyKey: "Raz w miesiącu",
+        discount: 10,
+        prices: { regular: 175.41, office: 221.4, "private-house": 238.5 }
+      },
+      {
+        label: "Одноразовая уборка",
+        frequencyKey: "Jednorazowe sprzątanie",
+        discount: 0,
+        prices: { regular: 194.9, office: 246, "private-house": 265 }
+      }
+    ],
+    orderButton: "Заказать сейчас",
+    popularTag: "Популярное"
+  },
+  en: {
+    title: "How much does apartment cleaning cost?",
+    subtitle: "Choose the cleaning frequency to see the discounted price",
+    frequencyOptions: [
+      {
+        label: "Weekly",
+        frequencyKey: "Raz w tygodniu",
+        discount: 20,
+        prices: { regular: 155.92, office: 196.8, "private-house": 212 }
+      },
+      {
+        label: "Every 2 weeks",
+        frequencyKey: "Raz na dwa tygодnie",
+        discount: 15,
+        prices: { regular: 165.67, office: 209.1, "private-house": 225.25 }
+      },
+      {
+        label: "Monthly",
+        frequencyKey: "Raz w miesiącu",
+        discount: 10,
+        prices: { regular: 175.41, office: 221.4, "private-house": 238.5 }
+      },
+      {
+        label: "One-time cleaning",
+        frequencyKey: "Jednorazowe sprzątanie",
+        discount: 0,
+        prices: { regular: 194.9, office: 246, "private-house": 265 }
+      }
+    ],
+    orderButton: "Order Now",
+    popularTag: "Popular"
+  }
 };
 
+/* ===== Типы услуг ======================================================== */
 const serviceTypes = [
-    {
-        name: {
-            pl: "Sprzątanie mieszkań",
-            uk: "Прибирання квартир",
-            ru: "Уборка квартир",
-            en: "Apartment Cleaning",
-        },
-        mobileName: {
-            pl: "Sprzątanie mieszkań",
-            uk: "Прибирання квартир",
-            ru: "Уборка квартир",
-            en: "Apartment Cleaning",
-        },
-        description: {
-            pl: "Kompleksowe sprzątanie mieszkań z rabatem w zależności od częstotliwości.",
-            uk: "Комплексне прибирання квартир зі знижкою залежно від частоти.",
-            ru: "Комплексная уборка квартир со скидкой в зависимости от частоты.",
-            en: "Comprehensive apartment cleaning with a discount based on frequency.",
-        },
-        icon: "/icon/cleaning-home.png",
-        image: "/images/bear1.png",
-        type: "regular",
+  {
+    name: {
+      pl: "Sprzątanie mieszkań",
+      uk: "Прибирання квартир",
+      ru: "Уборка квартир",
+      en: "Apartment Cleaning"
     },
-    {
-        name: {
-            pl: "Po remoncie",
-            uk: "Після ремонту",
-            ru: "После ремонта",
-            en: "Post-Renovation",
-        },
-        mobileName: {
-            pl: "Po remoncie",
-            uk: "Після ремонту",
-            ru: "После ремонта",
-            en: "Post-Renovation",
-        },
-        description: {
-            pl: "Dokładne sprzątanie po remoncie z rabatem w zależności od częstotliwości.",
-            uk: "Ретельне прибирання після ремонту зі знижкою залежно від частоти.",
-            ru: "Тщательная уборка после ремонта со скидкой в зависимости от частоты.",
-            en: "Thorough post-renovation cleaning with a discount based on frequency.",
-        },
-        icon: "/icon/remont-home.png",
-        image: "/images/bear1.png",
-        type: "post-renovation",
+    description: {
+      pl: "Kompleksowe sprzątanie mieszkań z rabatem w zależności od częstotliwości.",
+      uk: "Комплексне прибирання квартир зі знижкою залежно від частоти.",
+      ru: "Комплексная уборка квартир со скидкой в зависимости от частоты.",
+      en: "Comprehensive apartment cleaning with a discount based on frequency."
     },
-    {
-        name: {
-            pl: "Dom prywatny",
-            uk: "Приватний будинок",
-            ru: "Частный дом",
-            en: "Private House",
-        },
-        mobileName: {
-            pl: "Dom prywatny",
-            uk: "Приватний будинок",
-            ru: "Частный дом",
-            en: "Private House",
-        },
-        description: {
-            pl: "Kompleksowe sprzątanie domów prywatnych z rabatem w zależności od częstotliwości.",
-            uk: "Комплексне прибирання приватних будинків зі знижкою залежно від частоти.",
-            ru: "Комплексная уборка частных домов со скидкой в зависимости от частоты.",
-            en: "Comprehensive private house cleaning with a discount based on frequency.",
-        },
-        icon: "/icon/house.png",
-        image: "/images/bear1.png",
-        type: "private-house",
+    icon: "/icon/cleaning-home.png",
+    type: "regular",
+    route: "/calculator"
+  },
+  {
+    name: {
+      pl: "Dom prywatny",
+      uk: "Приватний будинок",
+      ru: "Частный дом",
+      en: "Private House"
     },
-    {
-        name: {
-            pl: "Sprzątanie biur",
-            uk: "Прибирання офісів",
-            ru: "Уборка офисов",
-            en: "Office Cleaning",
-        },
-        mobileName: {
-            pl: "Sprzątanie biur",
-            uk: "Прибирання офісів",
-            ru: "Уборка офисов",
-            en: "Office Cleaning",
-        },
-        description: {
-            pl: "Profesjonalne sprzątanie biur z rabatem w zależności od częstotliwości.",
-            uk: "Професійне прибирання офісів зі знижкою залежно від частоти.",
-            ru: "Профессиональная уборка офисов со скидкой в зависимости от частоты.",
-            en: "Professional office cleaning with a discount based on frequency.",
-        },
-        icon: "/icon/office.png",
-        image: "/images/bear1.png",
-        type: "office",
+    description: {
+      pl: "Kompleksowe sprzątanie domów prywatnych z rabatem w zależności od częstotliwości.",
+      uk: "Комплексне прибирання приватних будинків зі знижкою залежно від частоти.",
+      ru: "Комплексная уборка частных домов со скидкой в зависимости от частоты.",
+      en: "Comprehensive private house cleaning with a discount based on frequency."
     },
+    icon: "/icon/house.png",
+    type: "private-house",
+    route: "/private-house"
+  },
+  {
+    name: {
+      pl: "Sprzątanie biur",
+      uk: "Прибирання офісів",
+      ru: "Уборка офисов",
+      en: "Office Cleaning"
+    },
+    description: {
+      pl: "Profesjonalne sprzątanie biur z rabatem w zależności od częstotliwości.",
+      uk: "Професійне прибирання офісів зі знижкою залежно від частоти.",
+      ru: "Профессиональная уборка офисов со скидкой в зависимости от частоты.",
+      en: "Professional office cleaning with a discount based on frequency."
+    },
+    icon: "/icon/office.png",
+    type: "office",
+    route: "/office-cleaning"
+  }
 ];
 
+/* ===== Компонент ========================================================= */
 export default function FrequencyDiscountSection({ lang = "pl" }) {
-    const { title, subtitle, frequencyOptions, orderButton, popularTag } = translations[lang] || translations.pl;
-    const [activeIndex, setActiveIndex] = useState(0);
-    const navigate = useNavigate();
+  const { title, subtitle, frequencyOptions, orderButton, popularTag } =
+    translations[lang] || translations.pl;
 
-    const handleFrequencyClick = (index) => {
-        setActiveIndex(index);
-    };
+  const [activeIndex, setActiveIndex] = useState(3);   // по-умолчанию «одноразово»
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
+  const GAP = 10;                                     // единый зазор для JS + CSS
 
-    const handleServiceClick = (type) => {
-        const selectedFrequency = frequencyOptions[activeIndex];
-        navigate("/calculator", { state: { frequency: selectedFrequency.frequencyKey, type } });
-    };
+  /* ----- Смещение «бегунка» --------------------------------------------- */
+  const getSliderTransform = (i) => {
+    if (!isMobile) {
+      // десктоп: 4 колонки
+      return `translateX(calc(${i * 100}% + ${i * 15}px))`;
+    }
+    // мобильный grid 2 × 2
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    return `
+      translate(
+        calc(${col * 100}% + ${col * GAP}px),
+        calc(${row * 100}% + ${row * GAP}px)
+      )`;
+  };
 
-    // Функція для розділення назви на 2 частини
-    const splitServiceName = (name) => {
-        const words = name[lang].split(" ");
-        if (words.length === 1) {
-            return [words[0], ""]; // Якщо одне слово, друге залишаємо пустим
-        }
-        const firstPart = words[0];
-        const secondPart = words.slice(1).join(" ");
-        return [firstPart, secondPart];
-    };
+  /* ----- Хэндлеры ------------------------------------------------------- */
+  const handleFrequencyClick = (i) => setActiveIndex(i);
 
-    // Функція для розділення заголовка
-    const splitTitle = (title) => {
-        const words = title.split(" ");
-        const lastWord = words[words.length - 1];
-        const firstPart = words.slice(0, -1).join(" ");
-        return [firstPart, lastWord];
-    };
+  const handleServiceClick = (type, route) => {
+    const selectedFrequency = frequencyOptions[activeIndex];
+    navigate(route, {
+      state: { frequency: selectedFrequency.frequencyKey, type }
+    });
+  };
 
-    const [titleFirstPart, titleLastWord] = splitTitle(title);
+  /* ----- Вспомогательные форматтеры ------------------------------------ */
+  const splitServiceName = (nameObj) => {
+    const words = nameObj[lang].split(" ");
+    return words.length === 1
+      ? [words[0], ""]
+      : [words[0], words.slice(1).join(" ")];
+  };
 
-    return (
-        <section className={css.frequencySection}>
-            <div className={css.container}>
-                <h2 className={css.title}>
-                    {titleFirstPart} <span className={css.highlightedTitle}>{titleLastWord}</span>
-                </h2>
-                <p className={css.subtitle}>{subtitle}</p>
-                <div className={css.frequencyTabs}>
-                    <div
-                        className={css.slidingBackground}
-                        style={{
-                            transform: `translateX(calc(${activeIndex * 100}% + ${activeIndex * 15}px))`,
-                        }}
-                    />
-                    {frequencyOptions.map((option, index) => (
-                        <div
-                            key={index}
-                            className={`${css.tab} ${activeIndex === index ? css.active : ""}`}
-                            onClick={() => handleFrequencyClick(index)}
-                        >
-                            <div className={css.tabContent}>
-                                <span className={css.tabDiscount}>
-                                    {option.discount}% {/* Завжди показуємо знижку */}
-                                </span>
-                                <span className={css.tabLabel}>{option.label}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className={css.serviceCards}>
-                    {serviceTypes.map((service, index) => {
-                        const [firstPart, secondPart] = splitServiceName(service.name);
-                        return (
-                            <div key={index} className={css.serviceCard}>
-                                <div className={css.serviceCardInner}>
-                                    <div className={css.serviceHeader}>
-                                        <div className={css.serviceInfo}>
-                                            <div className={css.serviceName}>
-                                                <span className={css.namePart}>{firstPart}</span>
-                                                <span className={css.namePart}>{secondPart}</span>
-                                            </div>
-                                            <p className={css.servicePrice}>
-                                                {frequencyOptions[activeIndex].price.toFixed(2)} {lang === "pl" || lang === "uk" || lang === "ru" ? "зл" : "PLN"}
-                                                {frequencyOptions[activeIndex].discount > 0 && (
-                                                    <span className={css.serviceDiscount}>
-                                                        -{frequencyOptions[activeIndex].discount}%
-                                                    </span>
-                                                )}
-                                            </p>
-                                        </div>
-                                        <img src={service.icon} alt={service.name[lang]} className={css.serviceIcon} />
-                                        <span className={css.serviceTag}>{popularTag}</span>
-                                    </div>
-                                    <div className={css.serviceBody}>
-                                        <p className={css.serviceDescription}>{service.description[lang]}</p>
-                                        <button
-                                            className={css.serviceButton}
-                                            onClick={() => handleServiceClick(service.type)}
-                                        >
-                                            {orderButton}
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+  const splitTitle = (str) => {
+    const words = str.split(" ");
+    return [words.slice(0, -1).join(" "), words.at(-1)];
+  };
+
+  const [titleFirst, titleLast] = splitTitle(title);
+
+  /* ----- JSX ------------------------------------------------------------ */
+  return (
+    <section className={css.frequencySection}>
+      <div className={css.container}>
+        <h2 className={css.title}>
+          {titleFirst} <span className={css.highlightedTitle}>{titleLast}</span>
+        </h2>
+
+        <p className={css.subtitle}>{subtitle}</p>
+
+        {/* ----------- Кнопки-частоты -------------- */}
+        <div className={css.frequencyTabs}>
+          <div
+            className={css.slidingBackground}
+            style={{ transform: getSliderTransform(activeIndex) }}
+          />
+          {frequencyOptions.map((opt, i) => (
+            <div
+              key={i}
+              className={`${css.tab} ${activeIndex === i ? css.active : ""}`}
+              onClick={() => handleFrequencyClick(i)}
+            >
+              <div className={css.tabContent}>
+                <span className={css.tabDiscount}>{opt.discount}%</span>
+                <span className={css.tabLabel}>{opt.label}</span>
+              </div>
             </div>
-        </section>
-    );
+          ))}
+        </div>
+
+        {/* ----------- Карточки услуг -------------- */}
+        <div className={css.serviceCards}>
+          {serviceTypes.map((srv, i) => {
+            const [first, second] = splitServiceName(srv.name);
+            const price = frequencyOptions[activeIndex].prices[srv.type];
+            return (
+              <div key={i} className={css.serviceCard}>
+                <div className={css.serviceCardInner}>
+                  <div className={css.serviceHeader}>
+                    <div className={css.serviceInfo}>
+                      <div className={css.serviceName}>
+                        <span className={css.namePart}>{first}</span>
+                        <span className={css.namePart}>{second}</span>
+                      </div>
+                      <p className={css.servicePrice}>
+                        {price.toFixed(2)} zł
+                        {frequencyOptions[activeIndex].discount > 0 && (
+                          <span className={css.serviceDiscount}>
+                            -
+                            {frequencyOptions[activeIndex].discount}
+                            %
+                          </span>
+                        )}
+                      </p>
+                    </div>
+
+                    <img
+                      src={srv.icon}
+                      alt={srv.name[lang]}
+                      className={css.serviceIcon}
+                    />
+                    <span className={css.serviceTag}>{popularTag}</span>
+                  </div>
+
+                  <div className={css.serviceBody}>
+                    <p className={css.serviceDescription}>
+                      {srv.description[lang]}
+                    </p>
+                    <button
+                      className={css.serviceButton}
+                      onClick={() =>
+                        handleServiceClick(srv.type, srv.route)
+                      }
+                    >
+                      {orderButton}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
 }

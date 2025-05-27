@@ -11,7 +11,7 @@ const dict = {
       title: "I. Definicje",
       definitions: [
         { term: "Regulamin", definition: "niniejszy regulamin Portalu „www.startplus-clean.com”, regulujący korzystanie z Portalu, prawa i obowiązki Właściciela Portalu, Klientów oraz Wykonawców, a także zasady świadczenia usług sprzątania." },
-        { term: "Właściciel Portalu", definition: "startplus-clean NATALIIA ZHYVOTIVSKA z siedzibą w Warszawie, ul. Edwarda Habicha 18/45, 02-495 Warszawa, NIP: 5242838146, REGON: 368071450. Dane do kontaktu: E-mail: info@startplus-clean.com, Strona www: www.startplus-clean.com." },
+        { term: "Właściciel Portalu", definition: "STARTPLUS NATALIIA ZHYVOTIVSKA z siedzibą w Warszawie, ul. Edwarda Habicha 18/45, 02-495 Warszawa, NIP: 5242838146, REGON: 368071450. Dane do kontaktu: E-mail: info@startplus-clean.com, Strona www: www.startplus-clean.com." },
         { term: "Portal", definition: "Portal internetowy „www.startplus-clean.com”, za pośrednictwem którego świadczone są usługi w zakresie realizacji Zleceń Sprzątania oraz prowadzona jest interakcja pomiędzy Klientami a Wykonawcami. Dostęp do Portalu możliwy jest poprzez urządzenia podłączone do sieci Internet." },
         { term: "Wykonawca", definition: "osoba fizyczna lub prawna wykonująca działalność gospodarczą (rejestrowaną lub nierejestrowaną), zarejestrowana na Portalu jako podmiot gotowy do realizacji Zleceń sprzątania lokalu, zgodnie z Regulaminem sprzątania i innymi normami ustalonymi przez Właściciela Portalu." },
         { term: "Klient", definition: "osoba fizyczna posiadająca co najmniej ograniczoną zdolność do czynności prawnych i ukończone 18 lat, a także osoba prawna lub jednostka organizacyjna, posiadająca zdolność prawną i zdolność do czynności prawnej, która zarejestrowała się na Portalu w celu skorzystania z usług sprzątania." },
@@ -96,7 +96,7 @@ const dict = {
     section6: {
       title: "VI. Polityka prywatności",
       points: [
-        "Portal przestrzega RODO. Administratorem danych jest startplus-clean NATALIIA ZHYVOTIVSKA (ul. Edwarda Habicha 18/45, 02-495 Warszawa, info@startplus-clean.com).",
+        "Portal przestrzega RODO. Administratorem danych jest STARTPLUS NATALIIA ZHYVOTIVSKA (ul. Edwarda Habicha 18/45, 02-495 Warszawa, info@startplus-clean.com).",
         "Dane Klienta przetwarzane są w celu realizacji Umowy i działań przed jej zawarciem.",
         "Podanie danych jest dobrowolne, ale niezbędne do zawarcia i realizacji Umowy.",
         "Dane mogą być przekazywane Wykonawcom oraz dostawcom usług zewnętrznych (np. płatności bezgotówkowe).",
@@ -159,7 +159,7 @@ const dict = {
       title: "I. Визначення",
       definitions: [
         { term: "Регламент", definition: "цей регламент Порталу „www.startplus-clean.com”, що регулює використання Порталу, права та обов’язки Власника Порталу, Клієнтів та Виконавців, а також принципи надання послуг прибирання." },
-        { term: "Власник Порталу", definition: "startplus-clean NATALIIA ZHYVOTIVSKA, Варшава, вул. Едварда Хабіха 18/45, 02-495 Варшава, NIP: 5242838146, REGON: 368071450. Контакти: E-mail: info@startplus-clean.com, Вебсайт: www.startplus-clean.com." },
+        { term: "Власник Порталу", definition: "STARTPLUS NATALIIA ZHYVOTIVSKA, Варшава, вул. Едварда Хабіха 18/45, 02-495 Варшава, NIP: 5242838146, REGON: 368071450. Контакти: E-mail: info@startplus-clean.com, Вебсайт: www.startplus-clean.com." },
         { term: "Портал", definition: "Інтернет-портал „www.startplus-clean.com”, через який надаються послуги з виконання Замовлень на Прибирання та здійснюється взаємодія між Клієнтами та Виконавцями. Доступ до Порталу можливий через пристрої, підключені до мережі Інтернет." },
         { term: "Виконавець", definition: "фізична або юридична особа, що здійснює господарську діяльність (зареєстровану або незареєстровану), зареєстрована на Порталі як суб’єкт, готовий до виконання Замовлень на прибирання приміщень, відповідно до Регламенту прибирання та іншими нормами, встановленими Власником Порталу." },
         { term: "Клієнт", definition: "фізична особа, яка має щонайменше обмежену правоздатність і досягла 18 років, а також юридична особа або організаційна одиниця, що має правоздатність і здатність до правових дій, яка зареєструвалася на Порталі для замовлення послуг прибирання." },
@@ -244,7 +244,7 @@ const dict = {
     section6: {
       title: "VI. Політика конфіденційності",
       points: [
-        "Портал дотримується GDPR. Адміністратором даних є startplus-clean NATALIIA ZHYVOTIVSKA (вул. Едварда Хабіха 18/45, 02-495 Варшава, info@startplus-clean.com).",
+        "Портал дотримується GDPR. Адміністратором даних є STARTPLUS NATALIIA ZHYVOTIVSKA (вул. Едварда Хабіха 18/45, 02-495 Варшава, info@startplus-clean.com).",
         "Дані Клієнта обробляються для виконання Договору та вжиття заходів перед його укладенням.",
         "Надання даних є добровільним, але необхідним для укладення та виконання Договору.",
         "Дані можуть передаватися Виконавцям та постачальникам зовнішніх послуг (наприклад, безготівкові платежі).",
@@ -307,7 +307,7 @@ const dict = {
       title: "I. Определения",
       definitions: [
         { term: "Регламент", definition: "настоящий регламент Портала „www.startplus-clean.com”, регулирующий использование Портала, права и обязанности Владельца, Клиентов и Исполнителей, а также принципы оказания услуг уборки." },
-        { term: "Владелец Портала", definition: "startplus-clean NATALIIA ZHYVOTIVSKA, Варшава, ул. Эдварда Хабиха 18/45, 02-495 Варшава, NIP: 5242838146, REGON: 368071450. Контакты: E-mail: info@startplus-clean.com, Вебсайт: www.startplus-clean.com." },
+        { term: "Владелец Портала", definition: "STARTPLUS NATALIIA ZHYVOTIVSKA, Варшава, ул. Эдварда Хабиха 18/45, 02-495 Варшава, NIP: 5242838146, REGON: 368071450. Контакты: E-mail: info@startplus-clean.com, Вебсайт: www.startplus-clean.com." },
         { term: "Портал", definition: "Интернет-портал „www.startplus-clean.com”, через который оказываются услуги по выполнению Заказов на Уборку и взаимодействие между Клиентами и Исполнителями. Доступ к Порталу возможен через устройства, подключенные к сети Интернет." },
         { term: "Исполнитель", definition: "физическое или юридическое лицо, осуществляющее хозяйственную деятельность (зарегистрированную или незарегистрированную), зарегистрированное на Портале как субъект, готовый выполнять Заказы на уборку помещений, в соответствии с Регламентом уборки и другими нормами, установленными Владельцем Портала." },
         { term: "Клиент", definition: "физическое лицо, достигшее 18 лет и обладающее ограниченной правоспособностью, а также юридическое лицо или организационная единица, обладающая правоспособностью и дееспособностью, зарегистрированная на Портале для заказа услуг уборки." },
@@ -392,7 +392,7 @@ const dict = {
     section6: {
       title: "VI. Політика конфіденційності",
       points: [
-        "Портал дотримується GDPR. Адміністратором даних є startplus-clean NATALIIA ZHYVOTIVSKA (вул. Едварда Хабіха 18/45, 02-495 Варшава, info@startplus-clean.com).",
+        "Портал дотримується GDPR. Адміністратором даних є STARTPLUS NATALIIA ZHYVOTIVSKA (вул. Едварда Хабіха 18/45, 02-495 Варшава, info@startplus-clean.com).",
         "Дані Клієнта обробляються для виконання Договору та вжиття заходів перед його укладенням.",
         "Надання даних є добровільним, але необхідним для укладення та виконання Договору.",
         "Дані можуть передаватися Виконавцям та постачальникам зовнішніх послуг (наприклад, безготівкові платежі).",
@@ -455,7 +455,7 @@ const dict = {
       title: "I. Definitions",
       definitions: [
         { term: "Terms", definition: "these Terms of the „www.startplus-clean.com” Portal, governing its use, rights, and obligations of the Portal Owner, Clients, and Contractors, as well as the principles of providing cleaning services." },
-        { term: "Portal Owner", definition: "startplus-clean NATALIIA ZHYVOTIVSKA, located at ul. Edwarda Habicha 18/45, 02-495 Warsaw, NIP: 5242838146, REGON: 368071450. Contact details: E-mail: info@startplus-clean.com, Website: www.startplus-clean.com." },
+        { term: "Portal Owner", definition: "STARTPLUS NATALIIA ZHYVOTIVSKA, located at ul. Edwarda Habicha 18/45, 02-495 Warsaw, NIP: 5242838146, REGON: 368071450. Contact details: E-mail: info@startplus-clean.com, Website: www.startplus-clean.com." },
         { term: "Portal", definition: "The „www.startplus-clean.com” internet portal through which cleaning order services are provided and interactions between Clients and Contractors are facilitated. Access to the Portal is possible via devices connected to the Internet." },
         { term: "Contractor", definition: "A natural or legal person engaged in business activity (registered or unregistered), registered on the Portal as an entity ready to perform cleaning orders in accordance with the Cleaning Terms and other standards set by the Portal Owner." },
         { term: "Client", definition: "A natural person (over 18 years) with at least limited legal capacity, or a legal entity/organization with legal capacity, registered on the Portal to order cleaning services." },
@@ -540,7 +540,7 @@ const dict = {
     section6: {
       title: "VI. Privacy Policy",
       points: [
-        "The Portal complies with GDPR. The Administrator is startplus-clean NATALIIA ZHYVOTIVSKA (ul. Edwarda Habicha 18/45, 02-495 Warsaw, info@startplus-clean.com).",
+        "The Portal complies with GDPR. The Administrator is STARTPLUS NATALIIA ZHYVOTIVSKA (ul. Edwarda Habicha 18/45, 02-495 Warsaw, info@startplus-clean.com).",
         "Client data is processed to fulfill the Agreement and take pre-contractual actions.",
         "Providing data is voluntary but necessary for concluding and executing the Agreement.",
         "Data may be transferred to Contractors and external service providers (e.g., non-cash payments).",
