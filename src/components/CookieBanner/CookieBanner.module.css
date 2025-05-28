@@ -11,36 +11,38 @@
 }
 
 .cookieBannerScope .bannerWrap {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease, opacity 0.5s ease;
   opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none; /* Уникаємо взаємодії, коли банер прихований */
 }
 
 .cookieBannerScope .bannerWrap.show {
-  max-height: 500px;
   opacity: 1;
+  pointer-events: auto; /* Дозволяємо взаємодію, коли банер видимий */
 }
 
 .cookieBannerScope .bannerWrap.hide {
-  max-height: 0;
   opacity: 0;
+  pointer-events: none;
 }
 
 .cookieBannerScope .modalContainer {
+  position: fixed;
+  inset: 0;
   opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.5s ease;
+  pointer-events: none; /* Уникаємо взаємодії, коли модалка прихована */
+  z-index: 1000; /* Збільшуємо z-index, щоб модалка була поверх усіх елементів */
 }
 
 .cookieBannerScope .modalContainer.show {
   opacity: 1;
-  visibility: visible;
+  pointer-events: auto; /* Дозволяємо взаємодію, коли модалка видима */
 }
 
 .cookieBannerScope .modalContainer.hide {
   opacity: 0;
-  visibility: hidden;
+  pointer-events: none;
 }
 
 .cookieBannerScope .bannerWrap {
@@ -248,8 +250,17 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 50;
+  z-index: 1000; /* Збільшуємо z-index, щоб фон був поверх усіх елементів */
+  opacity: 0;
   transition: opacity 0.5s ease;
+}
+
+.cookieBannerScope .modalContainer.show .backdrop {
+  opacity: 1;
+}
+
+.cookieBannerScope .modalContainer.hide .backdrop {
+  opacity: 0;
 }
 
 .cookieBannerScope .modal {
@@ -257,7 +268,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 51;
+  z-index: 1001; /* Збільшуємо z-index, щоб модалка була поверх фону та інших елементів */
   width: 90vw;
   max-width: 640px;
   max-height: 85vh;

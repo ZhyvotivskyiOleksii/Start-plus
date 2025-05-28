@@ -363,7 +363,7 @@ export default function CookieBanner({
     statistics: false,
     marketing: false,
   });
-  const [errorMessage, setErrorMessage] = useState(null); // Додаємо стан для відображення помилок
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -450,7 +450,7 @@ export default function CookieBanner({
 
       try {
         const userId = localStorage.getItem('userId');
-        console.log("Saving consent to server:", { consent: finalSelection, userId }); // Лог перед відправкою
+        console.log("Saving consent to server:", { consent: finalSelection, userId });
 
         const response = await fetch('http://localhost:3001/api/save-consent', {
           method: 'POST',
@@ -466,7 +466,7 @@ export default function CookieBanner({
         const result = await response.json();
         if (response.ok) {
           console.log('Consent saved to database:', result);
-          setErrorMessage(null); // Очищаємо повідомлення про помилку
+          setErrorMessage(null);
         } else {
           console.error('Error saving consent to database:', result.message);
           setErrorMessage(result.message || 'Failed to save consent to database');
@@ -480,16 +480,14 @@ export default function CookieBanner({
 
   const handleShowDetails = () => {
     setOpenBanner(false);
-    setTimeout(() => setOpenModal(true), 300);
+    setOpenModal(true); // Прибираємо setTimeout, щоб модалка з'являлася одразу
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-    setTimeout(() => {
-      if (localStorage.getItem("cookiesAccepted") !== "true") {
-        setOpenBanner(true);
-      }
-    }, 300);
+    if (localStorage.getItem("cookiesAccepted") !== "true") {
+      setOpenBanner(true); // Прибираємо setTimeout, щоб банер з'являвся одразу
+    }
   };
 
   const Switch = ({ value, onChange, disabled }) => {

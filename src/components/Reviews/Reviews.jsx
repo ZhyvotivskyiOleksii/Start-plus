@@ -26,7 +26,7 @@ const translations = {
         rating: 5,
         date: "25 kwietnia 2023 r.",
         positives: ["Gotowość do interakcji", "Punktualność", "Jakość", "Profesjonalizm"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "",
@@ -44,7 +44,7 @@ const translations = {
         rating: 5,
         date: "3 listopada 2022 r.",
         positives: ["Profesjonalizm", "Ceny"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Paulina Kilen",
@@ -53,7 +53,7 @@ const translations = {
         rating: 5,
         date: "2 listopada 2022 r.",
         positives: [],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Barb",
@@ -62,7 +62,7 @@ const translations = {
         rating: 5,
         date: "27 września 2022 r.",
         positives: ["Punktualność", "Jakość", "Profesjonalizm", "Ceny"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Kamil Nowak",
@@ -71,7 +71,7 @@ const translations = {
         rating: 5,
         date: "15 lutego 2023 р.",
         positives: ["Професіоналізм", "Якість"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Ewa Kowalczyk",
@@ -80,7 +80,7 @@ const translations = {
         rating: 5,
         date: "10 stycznia 2023 р.",
         positives: ["Пунктуальність", "Якість"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
     ],
   },
@@ -98,7 +98,7 @@ const translations = {
         rating: 5,
         date: "25 квітня 2023 р.",
         positives: ["Готовність до взаємодії", "Пунктуальність", "Якість", "Професіоналізм"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "",
@@ -116,7 +116,7 @@ const translations = {
         rating: 5,
         date: "3 листопада 2022 р.",
         positives: ["Професіоналізм", "Ціни"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Поліна Кілен",
@@ -125,7 +125,7 @@ const translations = {
         rating: 5,
         date: "2 листопада 2022 р.",
         positives: [],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Барбара",
@@ -134,7 +134,7 @@ const translations = {
         rating: 5,
         date: "27 вересня 2022 р.",
         positives: ["Пунктуальність", "Якість", "Професіоналізм", "Ціни"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Каміль Новак",
@@ -143,7 +143,7 @@ const translations = {
         rating: 5,
         date: "15 лютого 2023 р.",
         positives: ["Професіоналізм", "Якість"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Єва Ковальчик",
@@ -152,7 +152,7 @@ const translations = {
         rating: 5,
         date: "10 січня 2023 р.",
         positives: ["Пунктуальність", "Якість"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
     ],
   },
@@ -170,7 +170,7 @@ const translations = {
         rating: 5,
         date: "25 апреля 2023 г.",
         positives: ["Готовность к взаимодействию", "Пунктуальность", "Качество", "Профессионализм"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "",
@@ -188,7 +188,7 @@ const translations = {
         rating: 5,
         date: "3 ноября 2022 г.",
         positives: ["Профессионализм", "Цены"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Полина Килен",
@@ -197,7 +197,7 @@ const translations = {
         rating: 5,
         date: "2 ноября 2022 г.",
         positives: [],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Барбара",
@@ -206,7 +206,7 @@ const translations = {
         rating: 5,
         date: "27 сентября 2022 г.",
         positives: ["Пунктуальность", "Качество", "Профессионализм", "Цены"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Камиль Новак",
@@ -215,7 +215,7 @@ const translations = {
         rating: 5,
         date: "15 февраля 2023 г.",
         positives: ["Профессионализм", "Качество"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Ева Ковальчик",
@@ -224,7 +224,7 @@ const translations = {
         rating: 5,
         date: "10 января 2023 г.",
         positives: ["Пунктуальность", "Качество"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
     ],
   },
@@ -242,7 +242,7 @@ const translations = {
         rating: 5,
         date: "April 25, 2023",
         positives: ["Responsiveness", "Punctuality", "Quality", "Professionalism"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "",
@@ -260,7 +260,7 @@ const translations = {
         rating: 5,
         date: "November 3, 2022",
         positives: ["Professionalism", "Pricing"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Paulina Kilen",
@@ -269,7 +269,7 @@ const translations = {
         rating: 5,
         date: "November 2, 2022",
         positives: [],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Barb",
@@ -278,7 +278,7 @@ const translations = {
         rating: 5,
         date: "September 27, 2022",
         positives: ["Punctuality", "Quality", "Professionalism", "Pricing"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Kamil Nowak",
@@ -287,7 +287,7 @@ const translations = {
         rating: 5,
         date: "February 15, 2023",
         positives: ["Professionalism", "Quality"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
       {
         name: "Ewa Kowalczyk",
@@ -296,7 +296,7 @@ const translations = {
         rating: 5,
         date: "January 10, 2023",
         positives: ["Punctuality", "Quality"],
-        image: "/logo.webp",
+        image: "/icon/rev.svg",
       },
     ],
   },
