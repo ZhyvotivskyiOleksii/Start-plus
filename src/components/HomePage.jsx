@@ -5,7 +5,12 @@ import HeroSection from "./HeroSection/HeroSection";
 import FrequencyDiscountSection from "./FrequencyDiscountSection/FrequencyDiscountSection";
 import WhyChooseUs from "./WhyChooseUs/WhyChooseUs";
 import Reviews from "./Reviews/Reviews";
+import FAQSection from "./FAQSection/FAQSection"; 
 import css from "./HomePage.module.css";
+import AboutUsSection from "./AboutUsSection/AboutUsSection"; 
+import CleanGuaranteeSection from "./CleanGuaranteeSection/CleanGuaranteeSection";
+import DiscountSection from "./DiscountSection/DiscountSection";
+
 import ShieldIcon from "/icon/ShieldIcon.svg";
 
 export default function HomePage({ lang = "pl" }) {
@@ -30,7 +35,10 @@ export default function HomePage({ lang = "pl" }) {
             <WhyChooseUs lang={lang} />
             <Reviews lang={lang} />
             <FrequencyDiscountSection lang={lang} />
-
+            <FAQSection lang={lang} /> 
+            <DiscountSection lang={lang} />
+            <AboutUsSection lang={lang} />
+            <CleanGuaranteeSection lang={lang} />
         </>
     );
 }

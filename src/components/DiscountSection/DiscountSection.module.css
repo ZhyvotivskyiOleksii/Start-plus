@@ -1,0 +1,193 @@
+.discountSection {
+    padding: clamp(60px, 8vw, 80px) clamp(20px, 4vw, 30px);
+    position: relative;
+    overflow: hidden;
+    background-image: url(/images/water-drop.png);
+    background: linear-gradient(135deg, #6e4bdc 0%, #850ff4 100%);
+}
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 clamp(15px, 3vw, 25px);
+    box-sizing: border-box;
+    font-family: "Futura PT";
+    font-weight: 400;
+}
+
+.contentWrapper {
+    display: flex;
+    gap: clamp(20px, 3vw, 30px);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.textWrapper {
+    width: 60%;
+}
+
+.imageWrapper {
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sideImage {
+    width: clamp(500px, 75vw, 750px);
+    height: auto;
+    transition: transform 0.3s ease;
+}
+
+.sideImage:hover {
+    transform: scale(1.05);
+}
+
+.title {
+    font-family: "Futura PT";
+    font-weight: 700;
+    font-size: clamp(2rem, 3vw, 2.5rem);
+    margin-bottom: clamp(0.8rem, 1.5vw, 1rem);
+    line-height: 1.2;
+    letter-spacing: 0.51;
+    color: #a9a9a9;
+    text-transform: uppercase;
+    text-align: left;
+}
+
+.description {
+    font-family: "Futura PT";
+    font-weight: 400;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    color: #e6e0fa;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.promoCodeWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.promoCode {
+    font-family: "Futura PT";
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    color: #1a1a1a;
+    padding: 10px 15px;
+    background: #ffffff;
+    border-radius: 8px;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.promoCode:hover {
+    background: #f0e6ff;
+    transform: scale(1.02);
+}
+
+.copyButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s ease;
+}
+
+.copyButton:hover {
+    transform: scale(1.1);
+}
+
+.copyButton:active {
+    transform: scale(0.9);
+}
+
+.copyIcon {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1);
+    transition: filter 0.3s ease;
+}
+
+.copyButton:hover .copyIcon {
+    filter: brightness(0) invert(0) hue-rotate(250deg);
+}
+
+.checkIcon {
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(0) hue-rotate(120deg);
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .discountSection {
+        padding: clamp(40px, 6vw, 60px) clamp(15px, 3vw, 20px);
+    }
+
+    .contentWrapper {
+        flex-direction: column;
+        gap: clamp(15px, 2vw, 20px);
+    }
+
+    .textWrapper {
+        width: 100%;
+        text-align: center;
+    }
+
+    .title {
+        text-align: center;
+    }
+
+    .imageWrapper {
+        width: 100%;
+    }
+
+    .sideImage {
+        width: clamp(400px, 60vw, 600px);
+    }
+
+    .promoCodeWrapper {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .discountSection {
+        padding: clamp(30px, 5vw, 40px) clamp(10px, 2vw, 15px);
+    }
+
+    .title {
+        font-size: clamp(1.2rem, 2vw, 1.5rem);
+    }
+
+    .description {
+        font-size: clamp(0.8rem, 1.4vw, 0.9rem);
+    }
+
+    .promoCode {
+        font-size: clamp(1rem, 1.8vw, 1.2rem);
+        padding: 8px 12px;
+    }
+
+    .copyIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .checkIcon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .sideImage {
+        width: clamp(300px, 45vw, 450px);
+    }
+}

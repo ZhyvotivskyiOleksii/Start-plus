@@ -1,5 +1,4 @@
 .frequencySection {
-    background: linear-gradient(135deg, #f7f4fb 0%, #ffffff 100%);
     padding: clamp(60px, 8vw, 80px) clamp(20px, 4vw, 30px);
     display: flex;
     justify-content: center;

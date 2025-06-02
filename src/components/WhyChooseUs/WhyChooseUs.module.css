@@ -4,7 +4,9 @@
 }
 
 .whyChooseUs {
-    background: #ffffff;
+    background-image: url(/public/images/decor.webp);
+    background-repeat: no-repeat;
+    background-position: center right;
     padding: clamp(0px, 10vw, 80px) clamp(15px, 3vw, 20px);
     display: flex;
     justify-content: center;

@@ -17,6 +17,7 @@ import PrivacyPolicyPage from "./components/PrivacyPolicyPage/PrivacyPolicyPage"
 import TermsPage from "./components/TermsPage/TermsPage";
 import QuickOrder from "./components/QuickOrder/QuickOrder";
 
+
 function AppContent() {
   /* --------------------------------------------
      GLOBAL LANGUAGE STATE
