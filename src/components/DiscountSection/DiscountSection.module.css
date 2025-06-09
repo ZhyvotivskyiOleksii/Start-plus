@@ -4,6 +4,8 @@
     overflow: hidden;
     background-image: url(/images/water-drop.png);
     background: linear-gradient(135deg, #6e4bdc 0%, #850ff4 100%);
+
+   
 }
 
 .container {

@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavig
 import { useState, useEffect } from "react";
 
 import AppBar from "./components/AppBar/AppBar";
-import HomePage from "./components/HomePage"; // Додаємо новий компонент
+import HomePage from "./components/HomePage"; 
 import Calculator from "./components/Calculator/Calculator";
 import RenovationCalculator from "./components/RenovationCalculator/RenovationCalculator";
 import WindowCleaningCalculator from "./components/WindowCleaningCalculator/WindowCleaningCalculator";

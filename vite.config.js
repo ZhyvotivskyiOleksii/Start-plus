@@ -6,29 +6,22 @@ export default defineConfig({
   plugins: [
     react(),
     cp({
+      dot: true,
+      verbose: true,
       targets: [
         {
           src: 'sms-auth-php',
-          dest: 'dist/sms-auth-php'
+          dest: 'dist'
         },
         {
           src: 'sms-auth-php/.env',
-          dest: 'dist/sms-auth-php/env'
+          dest: 'dist/sms-auth-php'
+        },
+        {
+          src: 'sms-auth-php/.htaccess',
+          dest: 'dist/sms-auth-php'
         }
       ]
     })
   ],
-  assetsInclude: ['**/*.ttf'],
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          icons: ['react-icons'],
-          motion: ['framer-motion'],
-        },
-      },
-    },
-    chunkSizeWarningLimit: 1000,
-  }
 });

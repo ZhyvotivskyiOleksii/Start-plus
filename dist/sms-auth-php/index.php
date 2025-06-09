@@ -1,6 +1,5 @@
 <?php
-// Налаштування локального часового поясу
-date_default_timezone_set('Europe/Warsaw'); // CEST для Варшави
+date_default_timezone_set('Europe/Warsaw'); 
 
 function logit(string $m): void {
     $dir = __DIR__ . '/logs';
@@ -10,11 +9,8 @@ function logit(string $m): void {
     error_log($line);                      
 }
 
-// Функція для нормалізації номера телефону
 function normalizePhoneNumber(string $phone): string {
-    // Видаляємо код країни (наприклад, +48 або +380)
     $phone = preg_replace('/^\+\d{1,3}/', '', $phone);
-    // Видаляємо всі пробіли, тире тощо
     $phone = preg_replace('/[^0-9]/', '', $phone);
     return $phone;
 }
@@ -87,7 +83,6 @@ function sms_send(string $phone, string $code): void {
     }
 }
 
-/* вхідні дані */
 $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
