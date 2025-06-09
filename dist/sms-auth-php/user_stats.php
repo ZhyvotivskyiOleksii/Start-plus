@@ -37,75 +37,85 @@ try {
     );
     logit("Підключення до бази даних успішне!");
 } catch(PDOException $e) {
-    logit("Помилка підключення до бази даних: ".$e->getMessage());
+    logit("Помилка підключення до бази даних: " . $e->getMessage());
     http_response_code(500); 
-    echo '{"message":"Помилка підключення до бази даних"}'; 
+    echo json_encode(['message' => 'Помилка підключення до бази даних']);
     exit;
 }
 
-/* вхідні дані */
-$input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$method = $_SERVER['REQUEST_METHOD'];
-
-/* ----------- /api/users/stats ------------------ */
-if ($uri === '/api/users/stats' && $method === 'GET') {
-    $period = $_GET['period'] ?? '30d'; // 7d, 30d, 1y
+/* Обробка ендпоінта /api/users/stats */
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $period = $_GET['period'] ?? '30d'; // Період: 7d, 30d, 1y тощо
+    $dateFrom = null;
+    switch ($period) {
+        case '7d':
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-7 days'));
+            break;
+        case '1y':
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-1 year'));
+            break;
+        case '30d':
+        default:
+            $dateFrom = date('Y-m-d H:i:s', strtotime('-30 days'));
+            break;
+    }
 
     try {
-        $stats = [];
-
         // Загальна кількість користувачів
-        $stmt = $pdo->query('SELECT COUNT(*) as total FROM users');
-        $stats['total_users'] = (int)$stmt->fetchColumn();
+        $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM users');
+        $totalUsers = $totalStmt->fetch()['total'];
 
-        // Кількість користувачів за статусом
-        $stmt = $pdo->query('SELECT status, COUNT(*) as count FROM users GROUP BY status');
-        $statusCounts = $stmt->fetchAll();
-        $stats['status_counts'] = [];
-        foreach ($statusCounts as $row) {
-            $stats['status_counts'][$row['status']] = (int)$row['count'];
-        }
+        // Кількість користувачів за статусами
+        $statusStmt = $pdo->query('SELECT status, COUNT(*) as count FROM users GROUP BY status');
+        $statusCountsRaw = $statusStmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        $statusCounts = [
+            'active' => (int)($statusCountsRaw['active'] ?? 0),
+            'inactive' => (int)($statusCountsRaw['inactive'] ?? 0),
+            'banned' => (int)($statusCountsRaw['banned'] ?? 0),
+        ];
 
-        // Нові користувачі за період
-        $dateCondition = '';
-        switch ($period) {
-            case '7d':
-                $dateCondition = 'WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)';
-                break;
-            case '1y':
-                $dateCondition = 'WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 YEAR)';
-                break;
-            case '30d':
-            default:
-                $dateCondition = 'WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)';
-                break;
-        }
-        $stmt = $pdo->query("SELECT COUNT(*) as new_users FROM users $dateCondition");
-        $stats['new_users'] = (int)$stmt->fetchColumn();
+        // Кількість нових користувачів за період
+        $newStmt = $pdo->prepare('SELECT COUNT(*) as new_users FROM users WHERE created_at >= ?');
+        $newStmt->execute([$dateFrom]);
+        $newUsers = $newStmt->fetch()['new_users'];
+
+        // Загальна кількість замовлень
+        $ordersStmt = $pdo->query('SELECT COUNT(*) as total_orders FROM orders');
+        $totalOrders = $ordersStmt->fetch()['total_orders'];
 
         // Середня кількість замовлень на користувача
-        $stmt = $pdo->query('SELECT COUNT(*) as total_orders FROM orders');
-        $totalOrders = (int)$stmt->fetchColumn();
-        $stats['avg_orders_per_user'] = $stats['total_users'] > 0 ? round($totalOrders / $stats['total_users'], 2) : 0;
+        $avgOrdersPerUser = $totalUsers > 0 ? $totalOrders / $totalUsers : 0;
 
-        logit("Отримано статистику користувачів: " . json_encode($stats));
+        // Приблизний дохід за період
+        $revenueStmt = $pdo->prepare('SELECT SUM(total_price) as revenue FROM orders WHERE created_at >= ?');
+        $revenueStmt->execute([$dateFrom]);
+        $revenue = $revenueStmt->fetch()['revenue'] ?? 0;
+
+        $stats = [
+            'total_users' => (int)$totalUsers,
+            'status_counts' => $statusCounts,
+            'new_users' => (int)$newUsers,
+            'avg_orders_per_user' => round($avgOrdersPerUser, 2),
+            'total_orders' => (int)$totalOrders,
+            'revenue' => (float)$revenue,
+        ];
+
+        logit("Отримано статистику користувачів для періоду $period: " . json_encode($stats));
         echo json_encode($stats);
     } catch (PDOException $e) {
-        logit("Помилка при отриманні статистики: " . $e->getMessage());
+        logit("Помилка при отриманні статистики користувачів: " . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['message' => 'Помилка при отриманні статистики: ' . $e->getMessage()]);
+        echo json_encode(['message' => 'Помилка при отриманні статистики користувачів: ' . $e->getMessage()]);
     }
     exit;
 }
 
-/* Catch-all для невідомих ендпоінтів */
+/* Catch-all для невідомих методів */
 http_response_code(404);
-logit("Ендпоінт не знайдено: $uri, метод: $method");
+logit("Ендпоінт /api/users/stats підтримує лише GET метод, отриманий метод: " . $_SERVER['REQUEST_METHOD']);
 echo json_encode([
-    'message' => 'Ендпоінт не знайдено',
-    'uri' => $uri,
-    'method' => $method
+    'message' => 'Ендпоінт підтримує лише GET метод',
+    'uri' => $_SERVER['REQUEST_URI'],
+    'method' => $_SERVER['REQUEST_METHOD']
 ]);
 exit;
-?>

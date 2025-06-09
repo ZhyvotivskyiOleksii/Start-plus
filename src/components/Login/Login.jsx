@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import css from "./Login.module.css";
+
 export default function Login({ lang, handleLogin }) {
   const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
@@ -17,9 +18,9 @@ export default function Login({ lang, handleLogin }) {
       phonePlaceholder: "Numer telefonu",
       getCodeButton: "Otrzymaj kod",
       description:
-        "Konto jest powiązane z Twoim numerem telefonu. Za każdym razem otrzymasz unikalny kod, który musisz wpisać, aby zalogować się do strony. Gdy wpiszesz swój numer po raz pierwszy, przejdziesz do strony rejestracji. Za każdym kolejnym razem zalogujesz się do swojego konta.",
+        "Konto jest powiązane z Twoim numerem telefonu. Za każdym razem otrzymasz unikalny kod, który musisz wpisać, aby zalogować się do strony. Gdy wpiszesz swój numer po raz pierwszy, przejdziesz do strony rejestracji. Za każdym kolejnym razem zalogujesz się do swojego kontа.",
       agree: "Zgadzam się z Regulaminem",
-      error: "Nieprawidłowy номер telefonu",
+      error: "Nieprawidłowy numer telefonu",
       verifyPlaceholder: "Wprowadź kod SMS",
       verifyButton: "Potwierdź",
     },
@@ -87,6 +88,9 @@ export default function Login({ lang, handleLogin }) {
     { code: "+44", name: "United Kingdom", flag: "🇬🇧" },
   ];
 
+  // Використовуємо VITE_API_BASE_URL із резервним значенням
+  const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const phoneRegex = /^\+?[1-9]\d{9,14}$/;
@@ -97,7 +101,7 @@ export default function Login({ lang, handleLogin }) {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3001/api/send-sms", {
+      const response = await fetch(`${API}/api/send-sms`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: fullPhone }),
@@ -123,7 +127,7 @@ export default function Login({ lang, handleLogin }) {
     }
     if (!showVerification) return;
     try {
-      const response = await fetch("http://localhost:3001/api/verify-sms", {
+      const response = await fetch(`${API}/api/verify-sms`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone: fullPhone, code: smsCode }),

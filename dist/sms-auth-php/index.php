@@ -47,7 +47,7 @@ try {
 } catch(PDOException $e) {
     logit("Помилка підключення до бази даних: ".$e->getMessage());
     http_response_code(500); 
-    echo '{"message":"Помилка підключення до бази даних"}'; 
+    echo json_encode(['message' => 'Помилка підключення до бази даних']); 
     exit;
 }
 
@@ -87,8 +87,12 @@ $input = json_decode(file_get_contents('php://input'), true) ?: $_POST;
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Обрізаємо базовий префікс (/sms-auth-php), якщо він є
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/'); // "/sms-auth-php" або ""
+$path = '/' . ltrim(substr($uri, strlen($base)), '/'); // завжди "/api/send-sms"
+
 /* ----------- /api/login (admin) ---------------- */
-if ($uri === '/api/login' && $method === 'POST') {
+if ($path === '/api/login' && $method === 'POST') {
     $u = $input['username'] ?? ''; 
     $p = $input['password'] ?? '';
     if (!$u || !$p) {
@@ -112,7 +116,7 @@ if ($uri === '/api/login' && $method === 'POST') {
 }
 
 /* ----------- /api/send-sms --------------------- */
-if ($uri === '/api/send-sms' && $method === 'POST') {
+if ($path === '/api/send-sms' && $method === 'POST') {
     $phone = $input['phone'] ?? null;
     if (!$phone) {
         http_response_code(400);
@@ -129,10 +133,9 @@ if ($uri === '/api/send-sms' && $method === 'POST') {
         logit("Користувач $phone ".($exists ? 'знайдений' : 'не знайдений'));
         logit("Збереження коду в базі даних...");
         $stmt = $pdo->prepare('INSERT INTO sms_codes (phone, code, created_at) VALUES (?, ?, ?)');
-        $stmt->execute([$phone, $code, date('Y-m-d H:i:s')]); // Використовуємо локальний час
+        $stmt->execute([$phone, $code, date('Y-m-d H:i:s')]);
         $affectedRows = $stmt->rowCount();
         logit("Код успішно збережено, додано рядків: $affectedRows");
-        // Додаткова перевірка, чи запис дійсно доданий
         $checkStmt = $pdo->prepare('SELECT * FROM sms_codes WHERE phone = ? AND code = ?');
         $checkStmt->execute([$phone, $code]);
         $smsRecord = $checkStmt->fetch();
@@ -154,7 +157,7 @@ if ($uri === '/api/send-sms' && $method === 'POST') {
 }
 
 /* ----------- /api/verify-sms ------------------- */
-if ($uri === '/api/verify-sms' && $method === 'POST') {
+if ($path === '/api/verify-sms' && $method === 'POST') {
     $phone = $input['phone'] ?? null; 
     $code = $input['code'] ?? null;
     if (!$phone || !$code) {
@@ -187,7 +190,6 @@ if ($uri === '/api/verify-sms' && $method === 'POST') {
         } else {
             logit("Користувач уже існує: $phone");
         }
-        // Оновлення last_login
         $pdo->prepare('UPDATE users SET last_login = ? WHERE phone = ?')->execute([date('Y-m-d H:i:s'), $phone]);
         logit("Оновлено last_login для користувача: $phone");
         echo json_encode(['message' => 'Верифікація успішна', 'token' => 'token-'.time()]);
@@ -200,7 +202,7 @@ if ($uri === '/api/verify-sms' && $method === 'POST') {
 }
 
 /* ----------- /api/discounts -------------------- */
-if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
+if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $path, $matches)) {
     if ($method === 'GET') {
         $type = $_GET['type'] ?? 'regular';
         logit("Отримуємо знижки для type: $type");
@@ -302,7 +304,7 @@ if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/create-payu-payment --------------- */
-if ($uri === '/api/create-payu-payment' && $method === 'POST') {
+if ($path === '/api/create-payu-payment' && $method === 'POST') {
     $payuConfig = [
         'merchantPosId' => '4371532',
         'clientId' => '4371532',
@@ -333,7 +335,7 @@ if ($uri === '/api/create-payu-payment' && $method === 'POST') {
     }
 
     $payuOrder = [
-        'notifyUrl' => 'http://localhost:3001/api/payu-notify',
+        'notifyUrl' => $_ENV['PAYU_NOTIFY_URL'] ?? 'http://localhost:3001/api/payu-notify',
         'customerIp' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
         'merchantPosId' => $payuConfig['merchantPosId'],
         'description' => $orderData['description'] ?? "Zamówienie #$orderId",
@@ -353,7 +355,7 @@ if ($uri === '/api/create-payu-payment' && $method === 'POST') {
                 'quantity' => 1,
             ],
         ],
-        'continueUrl' => 'http://localhost:3000/payment-success',
+        'continueUrl' => $_ENV['PAYU_CONTINUE_URL'] ?? 'http://localhost:3000/payment-success',
         'settings' => [
             'invoiceDisabled' => true,
         ],
@@ -430,7 +432,7 @@ if ($uri === '/api/create-payu-payment' && $method === 'POST') {
 }
 
 /* ----------- /api/payu-notify ----------------- */
-if ($uri === '/api/payu-notify' && $method === 'POST') {
+if ($path === '/api/payu-notify' && $method === 'POST') {
     $payload = json_decode(file_get_contents('php://input'), true);
     logit("Отримано callback від PayU: " . json_encode($payload));
 
@@ -489,7 +491,7 @@ if ($uri === '/api/payu-notify' && $method === 'POST') {
 }
 
 /* ----------- /api/promo-codes ------------------ */
-if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
+if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $path, $matches)) {
     if ($method === 'GET') {
         $stmt = $pdo->query('SELECT * FROM promo_codes ORDER BY id DESC');
         $promoCodes = $stmt->fetchAll();
@@ -552,7 +554,7 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/users ------------------------ */
-if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
+if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
     if ($method === 'GET' && !isset($matches[1])) {
         $status = $_GET['status'] ?? null;
         $search = $_GET['search'] ?? null;
@@ -587,14 +589,11 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $users = $stmt->fetchAll();
             logit("Знайдено користувачів: " . count($users));
 
-            // Додаємо статистику для кожного користувача
             foreach ($users as &$user) {
-                // Кількість замовлень
                 $orderStmt = $pdo->prepare('SELECT COUNT(*) as order_count FROM orders WHERE user_id = ?');
                 $orderStmt->execute([$user['id']]);
                 $user['order_count'] = (int)$orderStmt->fetch()['order_count'];
 
-                // Загальна сума витрат
                 $spentStmt = $pdo->prepare('SELECT SUM(total_price) as total_spent FROM orders WHERE user_id = ?');
                 $spentStmt->execute([$user['id']]);
                 $user['total_spent'] = (float)($spentStmt->fetch()['total_spent'] ?? 0);
@@ -628,16 +627,13 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
             $stmt->execute([$id]);
             $orders = $stmt->fetchAll();
 
-            // Додаємо деталі замовлення
             foreach ($orders as &$order) {
                 $orderDetails = [];
 
-                // Декодируем client_info
                 if ($order['client_info']) {
                     $clientInfo = json_decode($order['client_info'], true);
                     if (is_array($clientInfo)) {
                         $order['client_info'] = $clientInfo;
-                        // Если в client_info нет additional_info, но есть details, используем его
                         if (!isset($clientInfo['additional_info']) && $order['details']) {
                             $order['client_info']['additional_info'] = $order['details'];
                         }
@@ -648,7 +644,6 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
                     $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
                 }
 
-                // Декодируем address
                 if ($order['address']) {
                     $address = json_decode($order['address'], true);
                     if (is_array($address)) {
@@ -664,7 +659,6 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
                     $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
                 }
 
-                // Город берём из колонки city
                 $order['city'] = $order['city'] ?? 'N/A';
 
                 switch ($order['order_type']) {
@@ -813,8 +807,8 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/users/stats ------------------ */
-if ($uri === '/api/users/stats' && $method === 'GET') {
-    $period = $_GET['period'] ?? '30d'; // Період: 7d, 30d, 1y тощо
+if ($path === '/api/users/stats' && $method === 'GET') {
+    $period = $_GET['period'] ?? '30d';
     $dateFrom = null;
     switch ($period) {
         case '7d':
@@ -830,11 +824,9 @@ if ($uri === '/api/users/stats' && $method === 'GET') {
     }
 
     try {
-        // Загальна кількість користувачів
         $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM users');
         $totalUsers = $totalStmt->fetch()['total'];
 
-        // Кількість користувачів за статусами
         $statusStmt = $pdo->query('SELECT status, COUNT(*) as count FROM users GROUP BY status');
         $statusCountsRaw = $statusStmt->fetchAll(PDO::FETCH_KEY_PAIR);
         $statusCounts = [
@@ -843,19 +835,15 @@ if ($uri === '/api/users/stats' && $method === 'GET') {
             'banned' => (int)($statusCountsRaw['banned'] ?? 0),
         ];
 
-        // Кількість нових користувачів за період
         $newStmt = $pdo->prepare('SELECT COUNT(*) as new_users FROM users WHERE created_at >= ?');
         $newStmt->execute([$dateFrom]);
         $newUsers = $newStmt->fetch()['new_users'];
 
-        // Загальна кількість замовлень
         $ordersStmt = $pdo->query('SELECT COUNT(*) as total_orders FROM orders');
         $totalOrders = $ordersStmt->fetch()['total_orders'];
 
-        // Середня кількість замовлень на користувача
         $avgOrdersPerUser = $totalUsers > 0 ? $totalOrders / $totalUsers : 0;
 
-        // Приблизний дохід за період
         $revenueStmt = $pdo->prepare('SELECT SUM(total_price) as revenue FROM orders WHERE created_at >= ?');
         $revenueStmt->execute([$dateFrom]);
         $revenue = $revenueStmt->fetch()['revenue'] ?? 0;
@@ -880,7 +868,7 @@ if ($uri === '/api/users/stats' && $method === 'GET') {
 }
 
 /* ----------- /api/orders ----------------------- */
-if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
+if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
     if ($method === 'GET' && !isset($matches[1])) {
         $userId = $_GET['user_id'] ?? null;
         $serviceType = $_GET['service_type'] ?? null;
@@ -946,12 +934,10 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             foreach ($orders as &$order) {
                 $orderDetails = [];
 
-                // Декодируем client_info
                 if ($order['client_info']) {
                     $clientInfo = json_decode($order['client_info'], true);
                     if (is_array($clientInfo)) {
                         $order['client_info'] = $clientInfo;
-                        // Если в client_info нет additional_info, но есть details, используем его
                         if (!isset($clientInfo['additional_info']) && $order['details']) {
                             $order['client_info']['additional_info'] = $order['details'];
                         }
@@ -962,7 +948,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                     $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
                 }
 
-                // Декодируем address
                 if ($order['address']) {
                     $address = json_decode($order['address'], true);
                     if (is_array($address)) {
@@ -978,7 +963,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
                     $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
                 }
 
-                // Город берём из колонки city
                 $order['city'] = $order['city'] ?? 'N/A';
 
                 switch ($order['order_type']) {
@@ -1040,27 +1024,23 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
     }
 
     /* ----------- /api/orders/stats ------------------ */
-    if ($uri === '/api/orders/stats' && $method === 'GET') {
-        $period = $_GET['period'] ?? '7d'; // Період: 7d, 30d, 90d тощо
+    if ($path === '/api/orders/stats' && $method === 'GET') {
+        $period = $_GET['period'] ?? '7d';
         $days = 7;
         if ($period === '30d') $days = 30;
         elseif ($period === '90d') $days = 90;
 
         try {
-            // Загальна кількість замовлень
             $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM orders');
             $totalOrders = $totalStmt->fetch()['total'];
 
-            // Кількість замовлень за типами
             $typeStmt = $pdo->query('SELECT order_type, COUNT(*) as count FROM orders GROUP BY order_type');
             $typeCounts = $typeStmt->fetchAll(PDO::FETCH_KEY_PAIR);
 
-            // Кількість нових замовлень за період
             $newStmt = $pdo->prepare('SELECT COUNT(*) as new_orders FROM orders WHERE created_at >= ?');
             $newStmt->execute([date('Y-m-d H:i:s', strtotime("-$days days"))]);
             $newOrders = $newStmt->fetch()['new_orders'];
 
-            // Середня сума замовлення
             $totalPriceStmt = $pdo->query('SELECT AVG(total_price) as avg_price FROM orders');
             $avgPrice = $totalPriceStmt->fetch()['avg_price'];
 
@@ -1110,16 +1090,15 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         $clientType = $clientInfo['client_type'] ?? null;
         $companyName = $clientInfo['company_name'] ?? null;
         $nip = $clientInfo['nip'] ?? null;
-        $vatInfo = $clientInfo['vat_info'] ?? null; // Додаємо vat_info
+        $vatInfo = $clientInfo['vat_info'] ?? null;
         logit("Витягнуті значення: clientName=$clientName, clientPhone=$clientPhone, clientEmail=$clientEmail, clientType=$clientType, companyName=$companyName, nip=$nip, vatInfo=" . json_encode($vatInfo));
 
-        // Оновлюємо client_info, включаючи vat_info
         $updatedClientInfo = [
             'name' => $clientName,
             'phone' => $clientPhone,
             'email' => $clientEmail,
             'additional_info' => $clientAdditionalInfo,
-            'vat_info' => $vatInfo // Додаємо vat_info до client_info
+            'vat_info' => $vatInfo
         ];
 
         $userId = null;
@@ -1151,9 +1130,8 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             logit("Телефон або email відсутні у client_info, користувач не створюється");
         }
 
-        // Використовуємо cleaning_category як order_type, якщо order_type є quick_order
         if ($orderData["order_type"] === "quick_order") {
-            $orderType = $orderData["cleaning_category"] ?? "standard"; // Якщо cleaning_category відсутнє, за замовчуванням "standard"
+            $orderType = $orderData["cleaning_category"] ?? "standard";
         } else {
             $orderType = $orderData["order_type"];
         }
@@ -1178,7 +1156,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
         $values[] = $userId;
         $placeholders[] = "?";
 
-        // Додаємо client_type, company_name, nip
         $columns[] = "client_type";
         $values[] = $clientType;
         $placeholders[] = "?";
@@ -1193,7 +1170,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $placeholders[] = "?";
         }
 
-        // Додаємо order_date
         if (isset($orderData["selected_date"]) && isset($orderData["selected_time"])) {
             $orderDate = $orderData["selected_date"] . " " . $orderData["selected_time"] . ":00";
             $columns[] = "order_date";
@@ -1201,14 +1177,12 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $placeholders[] = "?";
         }
 
-        // Додаємо details
         if (isset($orderData["details"])) {
             $columns[] = "details";
             $values[] = $orderData["details"];
             $placeholders[] = "?";
         }
 
-        // Додаємо специфічні поля для standard і general (аналогічно apartment/private_house)
         if (in_array($orderType, ["standard", "general"])) {
             $requiredFields = ["rooms", "bathrooms", "selected_date", "selected_time"];
             foreach ($requiredFields as $field) {
@@ -1232,7 +1206,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
             $placeholders[] = "?";
             $placeholders[] = "?";
         } else {
-            // Обробка інших типів замовлень (window_cleaning, renovation, office, private_house, apartment)
             switch ($orderType) {
                 case "window_cleaning":
                     $requiredWindowFields = ["windows", "balconies", "selected_date", "selected_time"];
@@ -1406,7 +1379,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $uri, $matches)) {
 }
 
 /* ----------- /api/save-consent ----------------- */
-if ($uri === '/api/save-consent' && $method === 'POST') {
+if ($path === '/api/save-consent' && $method === 'POST') {
     try {
         $consent = $input['consent'] ?? null;
         $userId = $input['userId'] ?? null;
@@ -1456,6 +1429,7 @@ if ($uri === '/api/save-consent' && $method === 'POST') {
     exit;
 }
 
+/* Catch-all для невідомих ендпоінтів */
 http_response_code(404);
 logit("Ендпоінт не знайдено: $uri, метод: $method");
 echo json_encode([
@@ -1464,4 +1438,3 @@ echo json_encode([
     'method' => $method
 ]);
 exit;
-?>

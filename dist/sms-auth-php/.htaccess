@@ -1,12 +1,17 @@
-# public_html/sms-auth-php/.htaccess
 RewriteEngine On
 RewriteBase /sms-auth-php/
+
+RewriteRule ^sms-auth-php/(api/.*)$ /sms-auth-php/index.php [L,QSA]
 
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
 RewriteRule ^api/users/stats/?$   user_stats.php   [L,QSA]
-RewriteRule ^api/users(/.*)?$      index.php        [L,QSA]
-
+RewriteRule ^api/                  index.php        [L,QSA]
 RewriteRule ^ index.php [L,QSA]
+
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
