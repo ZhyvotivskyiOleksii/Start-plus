@@ -60,7 +60,7 @@ function sms_send(string $phone, string $code): void {
         'access_token' => $apiKey,
         'to' => $phone,
         'from' => $from,
-        'message' => "Twój kod weryfikacyjny to: $code",
+        'message' => "Kod weryfikacyjny to: $code",
         'format' => 'json'
     ]);
     $ch = curl_init('https://api.smsapi.pl/sms.do');
@@ -340,7 +340,7 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
         'merchantPosId' => $payuConfig['merchantPosId'],
         'description' => $orderData['description'] ?? "Zamówienie #$orderId",
         'currencyCode' => 'PLN',
-        'totalAmount' => (int)($orderData['total_price'] * 100), // Переводимо в копійки
+        'totalAmount' => (int)($orderData['total_price'] * 100), 
         'extOrderId' => (string)$orderId,
         'buyer' => [
             'email' => $orderData['client_email'],

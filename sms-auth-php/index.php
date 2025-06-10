@@ -60,7 +60,7 @@ function sms_send(string $phone, string $code): void {
         'access_token' => $apiKey,
         'to' => $phone,
         'from' => $from,
-        'message' => "Twój kod weryfikacyjny to: $code",
+        'message' => "Kod weryfikacyjny to: $code",
         'format' => 'json'
     ]);
     $ch = curl_init('https://api.smsapi.pl/sms.do');

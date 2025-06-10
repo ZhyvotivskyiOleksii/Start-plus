@@ -12,7 +12,7 @@ import UsersSection from "./UsersSection";
 
 Modal.setAppElement("#root");
 
-const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php/api";
 
 export default function AdminPanel({ lang = "pl" }) {
   const [username, setUsername] = useState("");
