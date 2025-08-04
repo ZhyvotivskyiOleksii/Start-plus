@@ -3,7 +3,7 @@ import axios from "axios";
 import css from "./RenovationCalculator.module.css";
 import { FaCalendarAlt, FaPercentage, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
-const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php/api";
 
 export default function RenovationCalculator({ lang, type, title }) {
   const [area, setArea] = useState(0);

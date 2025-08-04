@@ -1,5 +1,8 @@
-import { useLocation } from "react-router-dom";
-import React, { useState, useEffect, useRef } from "react";
+"use client";
+
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import css from "./Calculator.module.css";
 import {
   FaCalendarAlt,
@@ -9,10 +12,13 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 
-const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php/api";
 
 export default function Calculator() {
-  const [clientType, setClientType] = useState("Osoba prywatna");
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [clientType, setClientType] = useState(t("calculator.clientTypePrivate"));
   const [rooms, setRooms] = useState(1);
   const [bathrooms, setBathrooms] = useState(1);
   const [kitchen, setKitchen] = useState(true);
@@ -27,9 +33,7 @@ export default function Calculator() {
   const [bookedDates] = useState(new Set(["2025-03-15"]));
   const [discounts, setDiscounts] = useState({});
   const [promoCodes, setPromoCodes] = useState([]);
-  const [cleaningFrequency, setCleaningFrequency] = useState(
-    "Jednorazowe sprzątanie"
-  );
+  const [cleaningFrequency, setCleaningFrequency] = useState(t("calculator.frequencyOneTime"));
   const [vacuumNeeded, setVacuumNeeded] = useState(false);
   const [selectedCity, setSelectedCity] = useState("Warszawa");
   const [showCityDropdown, setShowCityDropdown] = useState(false);
@@ -42,20 +46,20 @@ export default function Calculator() {
   const [floor, setFloor] = useState("");
   const [intercomCode, setIntercomCode] = useState("");
   const [name, setName] = useState("");
-  const [companyName, setCompanyName] = useState(""); // Новое состояние для названия компании
-  const [nip, setNip] = useState(""); // Новое состояние для NIP
+  const [companyName, setCompanyName] = useState("");
+  const [nip, setNip] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(true); // Зміна за замовчуванням на true
   const [agreeToMarketing, setAgreeToMarketing] = useState(false);
   const [error, setError] = useState("");
 
   const calendarRef = useRef(null);
   const timeSlotsRef = useRef(null);
   const nameRef = useRef(null);
-  const companyNameRef = useRef(null); // Ref для поля Nazwa firmy
-  const nipRef = useRef(null); // Ref для поля NIP
+  const companyNameRef = useRef(null);
+  const nipRef = useRef(null);
   const phoneRef = useRef(null);
   const emailRef = useRef(null);
   const streetRef = useRef(null);
@@ -64,7 +68,6 @@ export default function Calculator() {
   const agreementRef = useRef(null);
   const orderButtonRef = useRef(null);
   const sentinelRef = useRef(null);
-  const location = useLocation();
   const api = axios.create({ baseURL: API });
 
   const cities = {
@@ -118,10 +121,10 @@ export default function Calculator() {
   );
 
   const frequencyDiscounts = {
-    "Raz w tygodniu": 20,
-    "Raz na dwa tygodnie": 15,
-    "Raz w miesiącu": 10,
-    "Jednorazowe sprzątanie": 0,
+    [t("calculator.frequencyWeekly")]: 20,
+    [t("calculator.frequencyBiweekly")]: 15,
+    [t("calculator.frequencyMonthly")]: 10,
+    [t("calculator.frequencyOneTime")]: 0,
   };
 
   const basePrice = 184.9;
@@ -132,18 +135,18 @@ export default function Calculator() {
   const vacuumCost = 28.0;
 
   const months = [
-    "styczeń",
-    "luty",
-    "marzec",
-    "kwiecień",
-    "maj",
-    "czerwiec",
-    "lipiec",
-    "sierpień",
-    "wrzesień",
-    "październik",
-    "listopad",
-    "grudzień",
+    t("calculator.monthJanuary"),
+    t("calculator.monthFebruary"),
+    t("calculator.monthMarch"),
+    t("calculator.monthApril"),
+    t("calculator.monthMay"),
+    t("calculator.monthJune"),
+    t("calculator.monthJuly"),
+    t("calculator.monthAugust"),
+    t("calculator.monthSeptember"),
+    t("calculator.monthOctober"),
+    t("calculator.monthNovember"),
+    t("calculator.monthDecember"),
   ];
   const availableTimes = [
     "7:30",
@@ -165,7 +168,7 @@ export default function Calculator() {
   const paidServices = [
     {
       id: 1,
-      name: "Mycie piekarnika",
+      name: t("calculator.serviceOvenCleaning"),
       price: 32.0,
       oldPrice: 40.0,
       icon: "/icon/oven.png",
@@ -174,7 +177,7 @@ export default function Calculator() {
     },
     {
       id: 2,
-      name: "Mycie okapu",
+      name: t("calculator.serviceHoodCleaning"),
       price: 32.0,
       oldPrice: 40.0,
       icon: "/icon/hood.png",
@@ -183,7 +186,7 @@ export default function Calculator() {
     },
     {
       id: 3,
-      name: "Sprzątanie wnętrza szafek kuchennych",
+      name: t("calculator.serviceKitchenCabinets"),
       price: 52.0,
       oldPrice: 65.0,
       icon: "/icon/cupboard.png",
@@ -192,7 +195,7 @@ export default function Calculator() {
     },
     {
       id: 4,
-      name: "Mycie naczyń",
+      name: t("calculator.serviceDishWashing"),
       price: 20.0,
       oldPrice: 25.0,
       icon: "/icon/dishes.png",
@@ -201,7 +204,7 @@ export default function Calculator() {
     },
     {
       id: 5,
-      name: "Czyszczenie lodówki",
+      name: t("calculator.serviceFridgeCleaning"),
       price: 32.0,
       oldPrice: 40.0,
       icon: "/icon/fridge.png",
@@ -210,7 +213,7 @@ export default function Calculator() {
     },
     {
       id: 6,
-      name: "Mycie mikrofalówki",
+      name: t("calculator.serviceMicrowaveCleaning"),
       price: 14.4,
       oldPrice: 18.0,
       icon: "/icon/microwave.png",
@@ -219,7 +222,7 @@ export default function Calculator() {
     },
     {
       id: 7,
-      name: "Sprzątanie balkonu",
+      name: t("calculator.serviceBalconyCleaning"),
       price: 28.0,
       oldPrice: 35.0,
       icon: "/icon/balcony.png",
@@ -228,7 +231,7 @@ export default function Calculator() {
     },
     {
       id: 8,
-      name: "Mycie okien (szt.)",
+      name: t("calculator.serviceWindowCleaning"),
       price: 32.0,
       oldPrice: 40.0,
       icon: "/icon/window.png",
@@ -237,7 +240,7 @@ export default function Calculator() {
     },
     {
       id: 9,
-      name: "Prasowanie",
+      name: t("calculator.serviceIroning"),
       price: 40.0,
       oldPrice: 50.0,
       icon: "/icon/iron.png",
@@ -246,7 +249,7 @@ export default function Calculator() {
     },
     {
       id: 10,
-      name: "Sprzątanie kuwety",
+      name: t("calculator.servicePetLitter"),
       price: 8.0,
       oldPrice: 10.0,
       icon: "/icon/pets.png",
@@ -255,7 +258,7 @@ export default function Calculator() {
     },
     {
       id: 11,
-      name: "Dodatkowe godziny",
+      name: t("calculator.serviceExtraHours"),
       price: 40.0,
       oldPrice: 50.0,
       icon: "/icon/time.png",
@@ -264,7 +267,7 @@ export default function Calculator() {
     },
     {
       id: 12,
-      name: "Czyszczenie wnętrza szafy",
+      name: t("calculator.serviceWardrobeCleaning"),
       price: 44.0,
       oldPrice: 30.0,
       icon: "/icon/wardrobe.png",
@@ -347,14 +350,12 @@ export default function Calculator() {
     return () => observer.disconnect();
   }, []);
 
-
   useEffect(() => {
     const { state } = location;
     if (state?.frequency && frequencyDiscounts[state.frequency] !== undefined) {
-        setCleaningFrequency(state.frequency);
+      setCleaningFrequency(state.frequency);
     }
-}, [location]);
-
+  }, [location, frequencyDiscounts]);
 
   useEffect(() => {
     if (selectedDate && calendarRef.current) {
@@ -470,7 +471,7 @@ export default function Calculator() {
       setDiscount(promoCode.discount);
     } else {
       setDiscount(0);
-      alert("Invalid promo code");
+      alert(t("calculator.invalidPromoCode"));
     }
   }
 
@@ -503,7 +504,7 @@ export default function Calculator() {
       return sum;
     }, 0);
     total += servicesCost + (cities[selectedCity] || 0);
-    if (clientType === "Firma") total *= companyMultiplier;
+    if (clientType === t("calculator.clientTypeCompany")) total *= companyMultiplier;
     return total.toFixed(2);
   }
 
@@ -557,8 +558,8 @@ export default function Calculator() {
   function formatWorkTime() {
     const { hours, minutes } = calculateCleanersAndTime();
     return minutes > 0
-      ? `${hours} godzin ${minutes} minut`
-      : `${hours} godziny`;
+      ? `${hours} ${t("calculator.hours")} ${minutes} ${t("calculator.minutes")}`
+      : `${hours} ${t("calculator.hours")}`;
   }
 
   function renderCalendar() {
@@ -607,9 +608,9 @@ export default function Calculator() {
           {discountValue > 0 && (
             <span className={css["discount-label"]}>-{discountValue}%</span>
           )}
-          {isToday && <span className={css["day-label"]}>dziś</span>}
-          {isTomorrow && <span className={css["day-label"]}>jutro</span>}
-          {isPast && <span className={css["day-label"]}>niedostępny</span>}
+          {isToday && <span className={css["day-label"]}>{t("calculator.today")}</span>}
+          {isTomorrow && <span className={css["day-label"]}>{t("calculator.tomorrow")}</span>}
+          {isPast && <span className={css["day-label"]}>{t("calculator.unavailable")}</span>}
         </div>
       );
     }
@@ -652,7 +653,7 @@ export default function Calculator() {
         css["shake-anim"]
       );
       calendarRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push("data sprzątania");
+      missingFields.push(t("calculator.date"));
     }
 
     if (!selectedTime) {
@@ -661,48 +662,51 @@ export default function Calculator() {
         css["shake-anim"]
       );
       timeSlotsRef.current?.scrollIntoView({ behavior: "smooth" });
-      missingFields.push("godzina sprzątania");
+      missingFields.push(t("calculator.time"));
     }
 
-    if (clientType === "Osoba prywatna" && !name) {
+    if (clientType === t("calculator.clientTypePrivate") && !name) {
       nameRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-      missingFields.push("imię");
+      missingFields.push(t("calculator.name"));
     }
 
-    if (clientType === "Firma" && !companyName) {
+    if (clientType === t("calculator.clientTypeCompany") && !companyName) {
       companyNameRef.current?.classList.add(
         css["error-border"],
         css["shake-anim"]
       );
-      missingFields.push("nazwa firmy");
+      missingFields.push(t("calculator.companyName"));
     }
 
-    if (clientType === "Firma" && !nip) {
+    if (clientType === t("calculator.clientTypeCompany") && !nip) {
       nipRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-      missingFields.push("NIP");
+      missingFields.push(t("calculator.nip"));
     }
 
     if (!phone) {
       phoneRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-      missingFields.push("telefon kontaktowy");
+      missingFields.push(t("calculator.phone"));
     }
 
     if (!email) {
       emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-      missingFields.push("adres e-mail");
+      missingFields.push(t("calculator.email"));
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (email && !emailRegex.test(email)) {
-      setError("Proszę wprowadzić prawidłowy adres e-mail.");
+      setError(t("calculator.invalidEmail"));
       emailRef.current?.classList.add(css["error-border"], css["shake-anim"]);
       emailRef.current?.scrollIntoView({ behavior: "smooth" });
       return;
     }
 
     if (!street) {
-      streetRef.current?.classList.add(css["error-border"], css["shake-anim"]);
-      missingFields.push("ulica");
+      streetRef.current?.classList.add(
+        css["error-border"],
+        css["shake-anim"]
+      );
+      missingFields.push(t("calculator.street"));
     }
 
     if (!houseNumber) {
@@ -710,7 +714,7 @@ export default function Calculator() {
         css["error-border"],
         css["shake-anim"]
       );
-      missingFields.push("numer domu");
+      missingFields.push(t("calculator.houseNumber"));
     }
 
     if (!postalCode) {
@@ -718,7 +722,7 @@ export default function Calculator() {
         css["error-border"],
         css["shake-anim"]
       );
-      missingFields.push("kod pocztowy");
+      missingFields.push(t("calculator.postalCode"));
     }
 
     if (!agreeToTerms || !agreeToMarketing) {
@@ -726,31 +730,29 @@ export default function Calculator() {
         css["error-border"],
         css["shake-anim"]
       );
-      missingFields.push("zgoda na regulamin i przetwarzanie danych");
+      missingFields.push(t("calculator.agreement"));
     }
 
     if (missingFields.length > 0) {
-      const errorMessage = `Proszę wypełnić wszystkie wymagane pola: ${missingFields.join(
-        ", "
-      )}.`;
+      const errorMessage = `${t("calculator.missingFields")} ${missingFields.join(", ")}.`;
       setError(errorMessage);
       if (
-        missingFields.includes("data sprzątania") ||
-        missingFields.includes("godzina sprzątania")
+        missingFields.includes(t("calculator.date")) ||
+        missingFields.includes(t("calculator.time"))
       ) {
         calendarRef.current?.scrollIntoView({ behavior: "smooth" });
       } else if (
-        missingFields.includes("imię") ||
-        missingFields.includes("nazwa firmy") ||
-        missingFields.includes("NIP") ||
-        missingFields.includes("telefon kontaktowy") ||
-        missingFields.includes("adres e-mail")
+        missingFields.includes(t("calculator.name")) ||
+        missingFields.includes(t("calculator.companyName")) ||
+        missingFields.includes(t("calculator.nip")) ||
+        missingFields.includes(t("calculator.phone")) ||
+        missingFields.includes(t("calculator.email"))
       ) {
         nameRef.current?.scrollIntoView({ behavior: "smooth" });
       } else if (
-        missingFields.includes("ulica") ||
-        missingFields.includes("numer domu") ||
-        missingFields.includes("kod pocztowy")
+        missingFields.includes(t("calculator.street")) ||
+        missingFields.includes(t("calculator.houseNumber")) ||
+        missingFields.includes(t("calculator.postalCode"))
       ) {
         streetRef.current?.scrollIntoView({ behavior: "smooth" });
       } else {
@@ -778,9 +780,9 @@ export default function Calculator() {
         intercom_code: intercomCode,
       },
       client_info: {
-        name: clientType === "Osoba prywatna" ? name : undefined, // Отправляем name только для Osoba prywatna
-        company_name: clientType === "Firma" ? companyName : undefined, // Отправляем company_name для Firma
-        nip: clientType === "Firma" ? nip : undefined, // Отправляем nip для Firma
+        name: clientType === t("calculator.clientTypePrivate") ? name : undefined,
+        company_name: clientType === t("calculator.clientTypeCompany") ? companyName : undefined,
+        nip: clientType === t("calculator.clientTypeCompany") ? nip : undefined,
         phone: phone,
         email: email,
         additional_info: additionalInfo,
@@ -813,34 +815,31 @@ export default function Calculator() {
       const { orderId } = response.data;
 
       if (!orderId) {
-        throw new Error("Не вдалося отримати orderId із відповіді /api/orders");
+        throw new Error(t("calculator.orderIdError"));
       }
 
       const paymentResponse = await api.post("/create-payu-payment", {
         order_id: orderId,
         total_price: parseFloat(calculateTotal()),
-        description: `Sprzątanie mieszkania #${orderId}`,
+        description: `${t("calculator.paymentDescription")} #${orderId}`,
         client_email: orderData.client_info.email,
         client_phone: orderData.client_info.phone,
         client_info: {
-          name: orderData.client_info.name || orderData.client_info.company_name || "Jan Kowalski",
+          name: orderData.client_info.name || orderData.client_info.company_name || t("calculator.defaultClientName"),
         },
       });
 
       const { redirectUri } = paymentResponse.data;
 
       if (!redirectUri) {
-        throw new Error(
-          "Не вдалося отримати redirectUri із відповіді /api/create-payu-payment"
-        );
+        throw new Error(t("calculator.redirectUriError"));
       }
 
       window.location.href = redirectUri;
     } catch (error) {
       console.error("Error during order handling:", error);
       setError(
-        error.response?.data?.error ||
-          "Wystąpił błąd podczas składania zamówienia. Spróbuj ponownie."
+        error.response?.data?.error || t("calculator.orderError")
       );
     }
   }
@@ -849,10 +848,10 @@ export default function Calculator() {
     <section className={css["calc-wrap"]}>
       <div className={css.container}>
         <h2 className={css["cacl-title"]}>
-          Sprzątanie mieszkania {selectedCity}
+          {t("calculator.title")} {selectedCity}
         </h2>
         <p className={css.subtitle}>
-          Wybierz poniższe parametry, aby obliczyć koszt.
+          {t("calculator.subtitle")}
         </p>
       </div>
 
@@ -861,16 +860,16 @@ export default function Calculator() {
           <div className={css["calculator-left"]}>
             <div className={css["user-type"]}>
               <button
-                className={clientType === "Osoba prywatna" ? css.active : ""}
-                onClick={() => setClientType("Osoba prywatna")}
+                className={clientType === t("calculator.clientTypePrivate") ? css.active : ""}
+                onClick={() => setClientType(t("calculator.clientTypePrivate"))}
               >
-                Osoba prywatna
+                {t("calculator.clientTypePrivate")}
               </button>
               <button
-                className={clientType === "Firma" ? css.active : ""}
-                onClick={() => setClientType("Firma")}
+                className={clientType === t("calculator.clientTypeCompany") ? css.active : ""}
+                onClick={() => setClientType(t("calculator.clientTypeCompany"))}
               >
-                Firma +23%
+                {t("calculator.clientTypeCompany")} +23%
               </button>
             </div>
 
@@ -885,10 +884,10 @@ export default function Calculator() {
                 <span className={css["counter-value"]}>{rooms}</span>
                 <span className={css["counter-label"]}>
                   {rooms === 1
-                    ? "pokój"
+                    ? t("calculator.roomSingular")
                     : rooms >= 2 && rooms <= 4
-                    ? "pokoje"
-                    : "pokoi"}
+                    ? t("calculator.roomPlural2to4")
+                    : t("calculator.roomPlural")}
                 </span>
                 <button
                   className={css["counter-button"]}
@@ -908,10 +907,10 @@ export default function Calculator() {
                 <span className={css["counter-value"]}>{bathrooms}</span>
                 <span className={css["counter-label"]}>
                   {bathrooms === 1
-                    ? "łazienka"
+                    ? t("calculator.bathroomSingular")
                     : bathrooms >= 2 && bathrooms <= 4
-                    ? "łazienki"
-                    : "łazienek"}
+                    ? t("calculator.bathroomPlural2to4")
+                    : t("calculator.bathroomPlural")}
                 </span>
                 <button
                   className={css["counter-button"]}
@@ -923,12 +922,11 @@ export default function Calculator() {
             </div>
 
             <p className={css.note}>
-              * Kompleksowe sprzątanie całego mieszkania, w tym kuchni, toalety
-              oraz łazienki
+              {t("calculator.note")}
             </p>
 
             <div className={css["additional-services"]}>
-              <h4>Dodatkowe usługi</h4>
+              <h4>{t("calculator.additionalServices")}</h4>
               <div className={css["service-block"]}>
                 <div className={css["service-item"]}>
                   <label className={css["checkbox-label"]}>
@@ -944,7 +942,7 @@ export default function Calculator() {
                         onChange={handleKitchenChange}
                         className={css["custom-checkbox"]}
                       />
-                      Kuchnia
+                      {t("calculator.kitchen")}
                     </div>
                   </label>
 
@@ -962,7 +960,7 @@ export default function Calculator() {
                           onChange={handleKitchenAnnexChange}
                           className={css["custom-checkbox"]}
                         />
-                        Aneks kuchenny
+                        {t("calculator.kitchenAnnex")}
                       </div>
                     </label>
                   </div>
@@ -987,18 +985,18 @@ export default function Calculator() {
                 </div>
                 <div className={css["text-price-wrapper"]}>
                   <div>
-                    <p>Na zamówieniu potrzebny jest odkurzacz</p>
-                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
+                    <p>{t("calculator.vacuumNeeded")}</p>
+                    <p>{t("calculator.vacuumProvided")}</p>
                   </div>
                   <button className={css["vacuum-price"]}>
-                    {vacuumCost.toFixed(2)} zł
+                    {vacuumCost.toFixed(2)} {t("calculator.currency")}
                   </button>
                 </div>
               </label>
             </div>
 
             <div className={css["calendar-section"]} ref={calendarRef}>
-              <h4>WYBIERZ DOGODNY TERMIN I GODZINĘ SPRZĄTANIA</h4>
+              <h4>{t("calculator.selectDateTime")}</h4>
               <div className={css["calendar-container"]}>
                 <div className={css["calendar-time-wrapper"]}>
                   <div className={css["calendar-wrapper"]}>
@@ -1021,13 +1019,13 @@ export default function Calculator() {
                     </div>
 
                     <div className={css["calendar-days"]}>
-                      <div>pon</div>
-                      <div>wt</div>
-                      <div>śr</div>
-                      <div>czw</div>
-                      <div>pt</div>
-                      <div>sob</div>
-                      <div>niedz</div>
+                      <div>{t("calculator.dayMonday")}</div>
+                      <div>{t("calculator.dayTuesday")}</div>
+                      <div>{t("calculator.dayWednesday")}</div>
+                      <div>{t("calculator.dayThursday")}</div>
+                      <div>{t("calculator.dayFriday")}</div>
+                      <div>{t("calculator.daySaturday")}</div>
+                      <div>{t("calculator.daySunday")}</div>
                     </div>
 
                     <div className={css["calendar-grid"]}>
@@ -1036,7 +1034,7 @@ export default function Calculator() {
                   </div>
 
                   <div className={css["time-wrapper"]} ref={timeSlotsRef}>
-                    <h5>Godzina</h5>
+                    <h5>{t("calculator.time")}</h5>
                     <div className={css["time-slots"]}>
                       {availableTimes.map((time) => (
                         <button
@@ -1055,15 +1053,17 @@ export default function Calculator() {
                 </div>
 
                 <div className={css["calendar-footer"]}>
-                  <p>Można zacząć w dowolnym momencie</p>
+                  <p>{t("calculator.anyTime")}</p>
                 </div>
               </div>
             </div>
 
             <div className={css["frequency-section"]}>
               <h4>
-                CZĘSTSZE SPRZĄTANIE -{" "}
-                <span className={css["discount-text"]}>WIĘKSZA ZNIŻKA</span>
+                {t("calculator.frequentCleaning")}{" "}
+                <span className={css["discount-text"]}>
+                  {t("calculator.biggerDiscount")}
+                </span>
               </h4>
               <div className={css["frequency-options"]}>
                 {Object.entries(frequencyDiscounts).map(
@@ -1088,9 +1088,9 @@ export default function Calculator() {
                             -{freqDiscount}%
                           </p>
                           <p className={css["frequency-price"]}>
-                            {freqPrice} zł
+                            {freqPrice} {t("calculator.currency")}
                           </p>
-                          {freq === "Jednorazowe sprzątanie" && (
+                          {freq === t("calculator.frequencyOneTime") && (
                             <span className={css["emoji"]}></span>
                           )}
                         </div>
@@ -1102,7 +1102,7 @@ export default function Calculator() {
             </div>
 
             <div className={css["paid-services-section"]}>
-              <h4>Dodatkowe usługi płatne</h4>
+              <h4>{t("calculator.paidServices")}</h4>
               <div className={css["paid-services-grid"]}>
                 {paidServices.map((service) => (
                   <div
@@ -1125,11 +1125,11 @@ export default function Calculator() {
                     <p>{service.name}</p>
                     <div className={css["price-wrapper"]}>
                       <span className={css["price-new"]}>
-                        {service.price.toFixed(2)} zł
+                        {service.price.toFixed(2)} {t("calculator.currency")}
                       </span>
                       {service.oldPrice && (
                         <span className={css["price-old"]}>
-                          {service.oldPrice.toFixed(2)} zł
+                          {service.oldPrice.toFixed(2)} {t("calculator.currency")}
                         </span>
                       )}
                     </div>
@@ -1177,20 +1177,20 @@ export default function Calculator() {
             </div>
 
             <div className={css["address-section"]}>
-              <h4>WPROWADŹ SWÓJ ADRES</h4>
+              <h4>{t("calculator.enterAddress")}</h4>
               <div className={css["city-select"]}>
                 <button
                   className={css["city-button"]}
                   onClick={() => setShowCityDropdown(!showCityDropdown)}
                 >
-                  Wybierz miasto: {selectedCity} +
-                  {cities[selectedCity].toFixed(2)} zł ▼
+                  {t("calculator.selectCity")}: {selectedCity} +
+                  {cities[selectedCity].toFixed(2)} {t("calculator.currency")} ▼
                 </button>
                 {showCityDropdown && (
                   <div className={css["city-dropdown"]}>
                     <input
                       type="text"
-                      placeholder="Wprowadź nazwę miejscowości..."
+                      placeholder={t("calculator.cityPlaceholder")}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className={css["city-search"]}
@@ -1209,7 +1209,7 @@ export default function Calculator() {
                       >
                         {city}
                         <span className={css["city-price"]}>
-                          +{cost.toFixed(2)} zł
+                          +{cost.toFixed(2)} {t("calculator.currency")}
                         </span>
                       </button>
                     ))}
@@ -1219,7 +1219,7 @@ export default function Calculator() {
               <div className={css["address-fields"]}>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Ulica</label>
+                    <label className={css["input-label"]}>{t("calculator.street")}</label>
                     <input
                       ref={streetRef}
                       type="text"
@@ -1231,7 +1231,7 @@ export default function Calculator() {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Kod pocztowy</label>
+                    <label className={css["input-label"]}>{t("calculator.postalCode")}</label>
                     <input
                       ref={postalCodeRef}
                       type="text"
@@ -1243,7 +1243,7 @@ export default function Calculator() {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Numer domu</label>
+                    <label className={css["input-label"]}>{t("calculator.houseNumber")}</label>
                     <input
                       ref={houseNumberRef}
                       type="text"
@@ -1256,7 +1256,7 @@ export default function Calculator() {
                   </div>
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>
-                      Numer mieszkania
+                      {t("calculator.apartmentNumber")}
                     </label>
                     <input
                       type="text"
@@ -1270,7 +1270,7 @@ export default function Calculator() {
                 </div>
                 <div className={css["address-row"]}>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Budynek</label>
+                    <label className={css["input-label"]}>{t("calculator.building")}</label>
                     <input
                       type="text"
                       value={building}
@@ -1281,7 +1281,7 @@ export default function Calculator() {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Piętro</label>
+                    <label className={css["input-label"]}>{t("calculator.floor")}</label>
                     <input
                       type="text"
                       value={floor}
@@ -1293,7 +1293,7 @@ export default function Calculator() {
                   </div>
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>
-                      Kod od domofonu
+                      {t("calculator.intercomCode")}
                     </label>
                     <input
                       type="text"
@@ -1309,12 +1309,12 @@ export default function Calculator() {
             </div>
 
             <div className={css["contact-section"]}>
-              <h4>DANE KONTAKTOWE</h4>
+              <h4>{t("calculator.contactDetails")}</h4>
               <div className={css["contact-fields"]}>
                 <div className={css["contact-row"]}>
-                  {clientType === "Osoba prywatna" ? (
+                  {clientType === t("calculator.clientTypePrivate") ? (
                     <div className={css["input-group"]}>
-                      <label className={css["input-label"]}>Imię</label>
+                      <label className={css["input-label"]}>{t("calculator.name")}</label>
                       <input
                         ref={nameRef}
                         type="text"
@@ -1329,7 +1329,7 @@ export default function Calculator() {
                     <>
                       <div className={css["input-group"]}>
                         <label className={css["input-label"]}>
-                          Nazwa firmy
+                          {t("calculator.companyName")}
                         </label>
                         <input
                           ref={companyNameRef}
@@ -1342,7 +1342,7 @@ export default function Calculator() {
                         />
                       </div>
                       <div className={css["input-group"]}>
-                        <label className={css["input-label"]}>NIP</label>
+                        <label className={css["input-label"]}>{t("calculator.nip")}</label>
                         <input
                           ref={nipRef}
                           type="text"
@@ -1357,7 +1357,7 @@ export default function Calculator() {
                   )}
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>
-                      Telefon kontaktowy
+                      {t("calculator.phone")}
                     </label>
                     <input
                       ref={phoneRef}
@@ -1370,7 +1370,7 @@ export default function Calculator() {
                     />
                   </div>
                   <div className={css["input-group"]}>
-                    <label className={css["input-label"]}>Adres e-mail</label>
+                    <label className={css["input-label"]}>{t("calculator.email")}</label>
                     <input
                       ref={emailRef}
                       type="email"
@@ -1385,7 +1385,7 @@ export default function Calculator() {
                 <div className={css["contact-row"]}>
                   <div className={css["input-group"]}>
                     <label className={css["input-label"]}>
-                      Dodatkowa informacja do zamówienia
+                      {t("calculator.additionalInfo")}
                     </label>
                     <textarea
                       value={additionalInfo}
@@ -1407,8 +1407,7 @@ export default function Calculator() {
                   onChange={(e) => setAgreeToTerms(e.target.checked)}
                   className={css["custom-checkbox"]}
                 />
-                Składając zamówienie zgadzam się z Regulaminem i Polityką
-                prywatności.
+                {t("calculator.termsAgreement")}
               </label>
               <label className={css["agreement-label"]}>
                 <input
@@ -1417,47 +1416,42 @@ export default function Calculator() {
                   onChange={(e) => setAgreeToMarketing(e.target.checked)}
                   className={css["custom-checkbox"]}
                 />
-                Wyrażam zgodę na przetwarzanie moich danych osobowych przez
-                administratora
+                {t("calculator.marketingAgreement")}
               </label>
             </div>
           </div>
 
           <div className={css["calculator-right"]}>
             <h2>
-              Sprzątanie mieszkania z {rooms}{" "}
+              {t("calculator.title")} {rooms}{" "}
               {rooms === 1
-                ? "pokój"
+                ? t("calculator.roomSingular")
                 : rooms >= 2 && rooms <= 4
-                ? "pokoje"
-                : "pokoi"}{" "}
-              i {bathrooms}{" "}
+                ? t("calculator.roomPlural2to4")
+                : t("calculator.roomPlural")}{" "}
+              {t("calculator.and")} {bathrooms}{" "}
               {bathrooms === 1
-                ? "łazienka"
+                ? t("calculator.bathroomSingular")
                 : bathrooms >= 2 && bathrooms <= 4
-                ? "łazienki"
-                : "łazienek"}
-              {kitchen ? ", kuchnia" : kitchenAnnex ? ", aneks kuchenny" : ""},
-              przedpokój
+                ? t("calculator.bathroomPlural2to4")
+                : t("calculator.bathroomPlural")}
+              {kitchen ? `, ${t("calculator.kitchen")}` : kitchenAnnex ? `, ${t("calculator.kitchenAnnex")}` : ""}, {t("calculator.hallway")}
               <br />
-              {calculateBasePrice()} zł
+              {calculateBasePrice()} {t("calculator.currency")}
             </h2>
 
             <div className={css["location-info"]}>
-              <h4>Lokalizacja</h4>
+              <h4>{t("calculator.location")}</h4>
               <p>{selectedCity}</p>
             </div>
 
             <div className={css["specialist-info"]}>
               <img src="/icon/bucket.png" alt="Specialists" />
-              <p>
-                Nasi wykonawcy posiadają wszystkie niezbędne środki czystości
-                oraz sprzęt.
-              </p>
+              <p>{t("calculator.specialistInfo")}</p>
             </div>
 
             <h4>
-              Przybliżony czas pracy:{" "}
+              {t("calculator.estimatedTime")}{" "}
               <span className={css["bold-text"]}>{formatWorkTime()}</span>
             </h4>
             {calculateCleanersAndTime().cleaners > 1 && (
@@ -1470,7 +1464,9 @@ export default function Calculator() {
                     </span>
                   )
                 )}
-                <p>Kilka sprzątaczy: {calculateCleanersAndTime().cleaners}</p>
+                <p>
+                  {t("calculator.multipleCleaners")}: {calculateCleanersAndTime().cleaners}
+                </p>
               </div>
             )}
 
@@ -1503,7 +1499,7 @@ export default function Calculator() {
                     )}
                 </p>
               ) : (
-                <p>Wybierz termin i godzinę</p>
+                <p>{t("calculator.selectDateTimePlaceholder")}</p>
               )}
             </div>
 
@@ -1520,9 +1516,9 @@ export default function Calculator() {
 
             <div className={css["location-cost"]}>
               <p>
-                Dodatkowy koszt dojazdu:{" "}
+                {t("calculator.travelCost")}{" "}
                 <span className={css["bold-text"]}>
-                  +{cities[selectedCity].toFixed(2)} zł
+                  +{cities[selectedCity].toFixed(2)} {t("calculator.currency")}
                 </span>
               </p>
             </div>
@@ -1547,7 +1543,7 @@ export default function Calculator() {
                         {service.name}
                         {service.type === "quantity" &&
                           ` (${selectedServices[service.id]}${
-                            service.id === 9 || service.id === 11 ? " god" : "x"
+                            service.id === 9 || service.id === 11 ? ` ${t("calculator.hoursShort")}` : "x"
                           })`}
                       </p>
                     </div>
@@ -1557,7 +1553,7 @@ export default function Calculator() {
                           ? service.price
                           : service.price * selectedServices[service.id]
                         ).toFixed(2)}{" "}
-                        zł
+                        {t("calculator.currency")}
                       </p>
                     </div>
                     <button
@@ -1590,10 +1586,10 @@ export default function Calculator() {
                       alt="Vacuum"
                       className={css["selected-service-icon"]}
                     />
-                    <p>Przywieziemy ręczny odkurzacz do sprzątania</p>
+                    <p>{t("calculator.vacuumProvided")}</p>
                   </div>
                   <div className={css["service-price"]}>
-                    <p>{vacuumCost.toFixed(2)} zł</p>
+                    <p>{vacuumCost.toFixed(2)} {t("calculator.currency")}</p>
                   </div>
                   <button
                     className={css["remove-btn"]}
@@ -1613,18 +1609,18 @@ export default function Calculator() {
                 <FaPercentage className={css["promo-icon"]} />
                 <input
                   type="text"
-                  placeholder="Promokod"
+                  placeholder={t("calculator.promoPlaceholder")}
                   value={promo}
                   onChange={(e) => setPromo(e.target.value)}
                 />
-                <button onClick={handlePromoApply}>Zastosuj</button>
+                <button onClick={handlePromoApply}>{t("calculator.applyPromo")}</button>
               </div>
             </div>
 
             <div className={css.total}>
               <p>
-                <strong>Do zapłaty:</strong> {calculateTotal()} zł{" "}
-                <del>{calculateStrikethroughPrice()} zł</del>
+                <strong>{t("calculator.total")}</strong> {calculateTotal()} {t("calculator.currency")}{" "}
+                <del>{calculateStrikethroughPrice()} {t("calculator.currency")}</del>
               </p>
               {error && <p className={css["error-message"]}>{error}</p>}
               <div ref={sentinelRef} />
@@ -1633,7 +1629,7 @@ export default function Calculator() {
                 className={`${css["sticky-order-button"]} ${css.sticked}`}
                 onClick={handleOrder}
               >
-                Zamawiam za {calculateTotal()} zł
+                {t("calculator.orderButton")} {calculateTotal()} {t("calculator.currency")}
               </button>
               <div className={css["payment-icons"]}>
                 <img src="/icon/visa.svg" alt="Visa" />

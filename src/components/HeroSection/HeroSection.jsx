@@ -2,59 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import css from "./HeroSection.module.css";
 import { FaArrowRight } from "react-icons/fa";
 
-const translations = {
-  pl: {
-    heading: "Odkryj perfekcyjną czystość, którą pokochasz!",
-    subheading: "Zamów sprzątanie w kilka kliknięć!",
-    quickOrderTitle: "Szybkie zamówienie sprzątania",
-    quickOrderCategoryLabel: "Kategoria sprzątania:",
-    quickOrderCategoryStandard: "Standardowe",
-    quickOrderCategoryGeneral: "Generalne",
-    quickOrderSubmit: "Zamów teraz",
-  },
-  uk: {
-    heading: "Відкрийте ідеальну чистоту, яку ви полюбите!",
-    subheading: "Замовте прибирання у кілька кліків!",
-    quickOrderTitle: "Швидке замовлення прибирання",
-    quickOrderCategoryLabel: "Категорія прибирання:",
-    quickOrderCategoryStandard: "Стандартне",
-    quickOrderCategoryGeneral: "Генеральне",
-    quickOrderSubmit: "Замовити зараз",
-  },
-  ru: {
-    heading: "Откройте идеальную чистоту, которую вы полюбите!",
-    subheading: "Закажите уборку в несколько кликов!",
-    quickOrderTitle: "Быстрый заказ уборки",
-    quickOrderCategoryLabel: "Категория уборки:",
-    quickOrderCategoryStandard: "Стандартная",
-    quickOrderCategoryGeneral: "Генеральная",
-    quickOrderSubmit: "Заказать сейчас",
-  },
-  en: {
-    heading: "Discover a Perfect Clean You'll Love!",
-    subheading: "Order cleaning in a few clicks!",
-    quickOrderTitle: "Quick Order for Cleaning",
-    quickOrderCategoryLabel: "Cleaning Category:",
-    quickOrderCategoryStandard: "Standard",
-    quickOrderCategoryGeneral: "General",
-    quickOrderSubmit: "Order Now",
-  },
-};
-
-export default function HeroSection({ lang = "pl" }) {
-  const {
-    heading,
-    subheading,
-    quickOrderTitle,
-    quickOrderCategoryLabel,
-    quickOrderCategoryStandard,
-    quickOrderCategoryGeneral,
-    quickOrderSubmit,
-  } = translations[lang] || translations.pl;
-
+export default function HeroSection() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [category, setCategory] = useState("standard");
   const [showDropdown, setShowDropdown] = useState(false);
@@ -88,12 +41,12 @@ export default function HeroSection({ lang = "pl" }) {
     <section className={css.hero}>
       <div className={css.heroContent}>
         <div className={`${css.textBlock} ${isVisible ? css.fadeIn : ""}`}>
-          <h1>{heading}</h1>
-          <p className={css.subheading}>{subheading}</p>
+          <h1>{t("heading")}</h1>
+          <p className={css.subheading}>{t("subheading")}</p>
           <div className={`${css.quickOrder} ${isVisible ? css.fadeIn : ""}`}>
-            <h3>{quickOrderTitle}</h3>
+            <h3>{t("quickOrderTitle")}</h3>
             <div className={css.orderField}>
-              <label>{quickOrderCategoryLabel}</label>
+              <label>{t("quickOrderCategoryLabel")}</label>
               <div className={css.orderFieldInner}>
                 <div
                   className={css["category-select"]}
@@ -102,8 +55,8 @@ export default function HeroSection({ lang = "pl" }) {
                 >
                   <span>
                     {category === "standard"
-                      ? quickOrderCategoryStandard
-                      : quickOrderCategoryGeneral}
+                      ? t("quickOrderCategoryStandard")
+                      : t("quickOrderCategoryGeneral")}
                   </span>
                   <span>▼</span>
                   {showDropdown && (
@@ -118,7 +71,7 @@ export default function HeroSection({ lang = "pl" }) {
                         }`}
                         onClick={() => handleCategoryChange("standard")}
                       >
-                        {quickOrderCategoryStandard}
+                        {t("quickOrderCategoryStandard")}
                       </div>
                       <div
                         className={`${css["category-option"]} ${
@@ -126,7 +79,7 @@ export default function HeroSection({ lang = "pl" }) {
                         }`}
                         onClick={() => handleCategoryChange("general")}
                       >
-                        {quickOrderCategoryGeneral}
+                        {t("quickOrderCategoryGeneral")}
                       </div>
                     </div>
                   )}
@@ -135,7 +88,7 @@ export default function HeroSection({ lang = "pl" }) {
                   className={css.submitButton}
                   onClick={handleQuickOrderRedirect}
                 >
-                  {quickOrderSubmit}
+                  {t("quickOrderSubmit")}
                   <FaArrowRight className={css.submitIcon} />
                 </button>
               </div>

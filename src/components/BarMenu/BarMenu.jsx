@@ -1,15 +1,18 @@
+"use client";
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import css from "./BarMenu.module.css";
 
 export default function BarMenu({
-  lang,
   isAuthenticated,
   handleLogin,
   handleLogout,
   closeMobileMenu,
   isOpen,
 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -22,82 +25,79 @@ export default function BarMenu({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const menuItems = {
-    en: [
-      { name: "Standard", mobileName: "Standard Clean", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
-      { name: "Renovation", mobileName: "Post-Reno Clean", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
-      { name: "Window Cleaning", mobileName: "Window Wash", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
-      { name: "Private House", mobileName: "House Clean", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
-      { name: "Office Cleaning", mobileName: "Office Clean", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
-    ],
-    pl: [
-      { name: "Zwykłe", mobileName: "Zwykłe Sprzątanie", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
-      { name: "Remont", mobileName: "Po Remoncie", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
-      { name: "Mycie okien", mobileName: "Mycie Okien", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
-      { name: "Dom prywatny", mobileName: "Dom Prywatny", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
-      { name: "Sprzątanie biur", mobileName: "Sprzątanie Biur", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
-    ],
-    uk: [
-      { name: "Звичайне", mobileName: "Звичайне Прибирання", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
-      { name: "Ремонт", mobileName: "Після Ремонту", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
-      { name: "Миття вікон", mobileName: "Миття Вікон", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
-      { name: "Приватний будинок", mobileName: "Приватний Будинок", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
-      { name: "Прибирання офісів", mobileName: "Прибирання Офісів", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
-    ],
-    ru: [
-      { name: "Обычное", mobileName: "Обычная Уборка", icon: "/icon/cleaning-home.png", image: "/images/bear1.png", tag: "Popularne" },
-      { name: "Ремонт", mobileName: "После Ремонта", icon: "/icon/paint.png", image: "/images/bear2.png", tag: "Popularne" },
-      { name: "Мойка окон", mobileName: "Мойка Окон", icon: "/icon/window.png", image: "/images/bear3.png", tag: "Popularne" },
-      { name: "Частный дом", mobileName: "Частный Дом", icon: "/icon/house.png", image: "/images/bear4.png", tag: "Nowe" },
-      { name: "Уборка офисов", mobileName: "Уборка Офисов", icon: "/icon/office.png", image: "/images/bear5.png", tag: "Popularne" },
-    ],
-  };
-
-  const items = menuItems[lang] || menuItems.pl;
+  const menuItems = [
+    {
+      name: t("barMenu.standardName"),
+      mobileName: t("barMenu.standardMobileName"),
+      icon: "/icon/cleaning-home.png",
+      image: "/images/bear1.png",
+      tag: "Popularne",
+    },
+    {
+      name: t("barMenu.renovationName"),
+      mobileName: t("barMenu.renovationMobileName"),
+      icon: "/icon/paint.png",
+      image: "/images/bear2.png",
+      tag: "Popularne",
+    },
+    {
+      name: t("barMenu.windowCleaningName"),
+      mobileName: t("barMenu.windowCleaningMobileName"),
+      icon: "/icon/window.png",
+      image: "/images/bear3.png",
+      tag: "Popularne",
+    },
+    {
+      name: t("barMenu.privateHouseName"),
+      mobileName: t("barMenu.privateHouseMobileName"),
+      icon: "/icon/house.png",
+      image: "/images/bear4.png",
+      tag: "Nowe",
+    },
+    {
+      name: t("barMenu.officeCleaningName"),
+      mobileName: t("barMenu.officeCleaningMobileName"),
+      icon: "/icon/office.png",
+      image: "/images/bear5.png",
+      tag: "Popularne",
+    },
+  ];
 
   const handleMenuClick = (itemName) => {
-    const standardNames = {
-      en: ["Standard", "Standard Clean"],
-      pl: ["Zwykłe", "Zwykłe Sprzątanie"],
-      uk: ["Звичайне", "Звичайне Прибирання"],
-      ru: ["Обычное", "Обычная Уборка"],
-    };
-    const renovationNames = {
-      en: ["Renovation", "Post-Reno Clean"],
-      pl: ["Remont", "Po Remoncie"],
-      uk: ["Ремонт", "Після Ремонту"],
-      ru: ["Ремонт", "После Ремонта"],
-    };
-    const windowCleaningNames = {
-      en: ["Window Cleaning", "Window Wash"],
-      pl: ["Mycie okien", "Mycie Okien"],
-      uk: ["Миття вікон", "Миття Вікон"],
-      ru: ["Мойка окон", "Мойка Окон"],
-    };
-    const privateHouseNames = {
-      en: ["Private House", "House Clean"],
-      pl: ["Dom prywatny", "Dom Prywatny"],
-      uk: ["Приватний будинок", "Приватний Будинок"],
-      ru: ["Частный дом", "Частный Дом"],
-    };
-    const officeCleaningNames = {
-      en: ["Office Cleaning", "Office Clean"],
-      pl: ["Sprzątanie biur", "Sprzątanie Biur"],
-      uk: ["Прибирання офісів", "Прибирання Офісів"],
-      ru: ["Уборка офисов", "Уборка Офисов"],
-    };
+    const standardNames = [
+      t("barMenu.standardName"),
+      t("barMenu.standardMobileName"),
+    ];
+    const renovationNames = [
+      t("barMenu.renovationName"),
+      t("barMenu.renovationMobileName"),
+    ];
+    const windowCleaningNames = [
+      t("barMenu.windowCleaningName"),
+      t("barMenu.windowCleaningMobileName"),
+    ];
+    const privateHouseNames = [
+      t("barMenu.privateHouseName"),
+      t("barMenu.privateHouseMobileName"),
+    ];
+    const officeCleaningNames = [
+      t("barMenu.officeCleaningName"),
+      t("barMenu.officeCleaningMobileName"),
+    ];
 
-    const nameToCheck = isMobile ? items.find(item => item.mobileName === itemName)?.mobileName : itemName;
+    const nameToCheck = isMobile
+      ? menuItems.find((item) => item.mobileName === itemName)?.mobileName
+      : itemName;
 
-    if (nameToCheck === (isMobile ? standardNames[lang][1] : standardNames[lang][0])) {
+    if (nameToCheck === (isMobile ? standardNames[1] : standardNames[0])) {
       navigate("/calculator");
-    } else if (nameToCheck === (isMobile ? renovationNames[lang][1] : renovationNames[lang][0])) {
+    } else if (nameToCheck === (isMobile ? renovationNames[1] : renovationNames[0])) {
       navigate("/renovation");
-    } else if (nameToCheck === (isMobile ? windowCleaningNames[lang][1] : windowCleaningNames[lang][0])) {
+    } else if (nameToCheck === (isMobile ? windowCleaningNames[1] : windowCleaningNames[0])) {
       navigate("/window-cleaning");
-    } else if (nameToCheck === (isMobile ? privateHouseNames[lang][1] : privateHouseNames[lang][0])) {
+    } else if (nameToCheck === (isMobile ? privateHouseNames[1] : privateHouseNames[0])) {
       navigate("/private-house");
-    } else if (nameToCheck === (isMobile ? officeCleaningNames[lang][1] : officeCleaningNames[lang][0])) {
+    } else if (nameToCheck === (isMobile ? officeCleaningNames[1] : officeCleaningNames[0])) {
       navigate("/office-cleaning");
     }
     if (closeMobileMenu && isMobile) closeMobileMenu();
@@ -108,7 +108,7 @@ export default function BarMenu({
       <div className={`${css["menu-container"]} ${isOpen ? css.open : css.close}`}>
         {isMobile ? (
           <div className={css.cardGrid}>
-            {items.map((item, index) => (
+            {menuItems.map((item, index) => (
               <div
                 key={index}
                 className={css.card}
@@ -129,7 +129,7 @@ export default function BarMenu({
           </div>
         ) : (
           <ul>
-            {items.map((item, index) => (
+            {menuItems.map((item, index) => (
               <li key={index} style={{ transitionDelay: `${0.05 * index}s` }}>
                 <a
                   href="#"

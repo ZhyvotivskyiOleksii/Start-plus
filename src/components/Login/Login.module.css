@@ -2,117 +2,114 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(20px, 5vw, 40px);
+  gap: clamp(40px, 8vw, 80px);
   height: 100vh;
-  padding: clamp(10px, 2vw, 20px);
+  padding: clamp(20px, 4vw, 40px);
   box-sizing: border-box;
-  background-color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(138, 75, 255, 0.05) 100%);
   position: relative;
   margin: 0;
   overflow: hidden;
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .background {
-  width: 430px;
-  height: 520px;
-  position: absolute;
-  transform: translate(-50%, -50%);
-  left: 50%;
-  top: 50%;
-}
-
-.background .shape {
-  height: 200px;
-  width: 200px;
-  position: absolute;
-  border-radius: 50%;
-}
-
-.shape:first-child {
-  background: linear-gradient(#8a4bff, #a98aff);
-  left: -80px;
-  top: -80px;
-}
-
-.shape:last-child {
-  background: linear-gradient(to right, #6a1bff, #8a4bff);
-  right: -30px;
-  bottom: -80px;
-}
-
-.loginBox {
-  height: 520px;
-  width: 400px;
-  background-color: rgba(138, 75, 255, 0.05);
-  position: absolute;
-  transform: translate(-50%, -50%);
-  top: 50%;
-  left: 50%;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(138, 75, 255, 0.2);
-  padding: 50px 35px;
-  box-sizing: border-box;
-  transition: transform 0.3s ease;
-}
-
-.loginBox:hover {
-  transform: translate(-50%, -50%) translateY(-3px);
+  display: none;
 }
 
 .illustration {
-  display: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  max-width: 400px;
+  opacity: 0;
+  animation: slideInLeft 0.8s ease-out forwards;
+}
+
+.illustration img {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 10px 20px rgba(138, 75, 255, 0.2));
+  transition: transform 0.3s ease;
+}
+
+.illustration img:hover {
+  transform: scale(1.05);
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.loginBox {
+  width: 400px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(138, 75, 255, 0.15);
+  padding: 40px;
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  opacity: 0;
+  animation: slideInRight 0.8s ease-out forwards;
+}
+
+.loginBox:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(138, 75, 255, 0.25);
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(50px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 .title {
   font-family: "Futura PT";
-  font-weight: 400;
-  font-size: 32px;
-  line-height: 42px;
+  font-weight: 500;
+  font-size: 28px;
   text-align: center;
   color: #333333;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.8vw, 16px);
+  gap: 20px;
 }
 
 .phoneInputWrapper,
 .verifyInputWrapper {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   position: relative;
 }
 
 .verifyInputWrapper {
   opacity: 0;
-  transform: translateY(-10px);
-  animation: slideIn 0.3s ease forwards;
+  transform: translateY(20px);
+  animation: slideUp 0.5s ease forwards;
 }
 
-@keyframes slideIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+@keyframes slideUp {
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .label {
   font-family: "Futura PT";
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   color: #666666;
-  letter-spacing: 0.5px;
-  margin-top: 30px;
-  text-align: start;
+  text-align: left;
   transition: color 0.3s ease;
 }
 
@@ -124,34 +121,41 @@
 .phoneInput {
   display: flex;
   align-items: center;
-  height: 50px;
-  border-radius: 3px;
-  background: rgba(138, 75, 255, 0.05);
-  transition: background 0.3s ease;
+  height: 48px;
+  border-radius: 12px;
+  background: #f8f5ff;
+  border: 1px solid rgba(138, 75, 255, 0.2);
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.phoneInput:focus-within {
+  border: 1px solid #8a4bff;
+  box-shadow: 0 0 0 3px rgba(138, 75, 255, 0.1);
 }
 
 .smsCodeInput {
-  height: 50px;
-  border-radius: 3px;
-  background: rgba(138, 75, 255, 0.05);
-  padding: 0 10px;
+  height: 48px;
+  border-radius: 12px;
+  background: #f8f5ff;
+  padding: 0 16px;
   font-family: "Futura PT";
   font-weight: 400;
   font-size: 14px;
   color: #333333;
   outline: none;
-  transition: background 0.3s ease;
+  border: 1px solid rgba(138, 75, 255, 0.2);
+  transition: border 0.3s ease, box-shadow 0.3s ease;
 }
 
-.phoneInput:focus-within,
 .smsCodeInput:focus {
-  background: rgba(138, 75, 255, 0.1);
+  border: 1px solid #8a4bff;
+  box-shadow: 0 0 0 3px rgba(138, 75, 255, 0.1);
 }
 
 .countrySection {
   display: flex;
   align-items: center;
-  padding: 0 clamp(5px, 1vw, 7px);
+  padding: 0 12px;
 }
 
 .countryCodeDisplay {
@@ -161,38 +165,31 @@
   font-weight: 400;
   font-size: 14px;
   color: #333333;
-  gap: 5px;
+  gap: 4px;
 }
 
 .countryToggle {
   border: none;
   cursor: pointer;
-  padding: 2px;
-  border-radius: 3px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  margin-left: 8px;
-  background: rgba(138, 75, 255, 0.27);
-  transition: background 0.3s ease;
-}
-
-.countryToggle:hover {
-  background: rgba(138, 75, 255, 0.47);
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
 }
 
 .arrowDown {
-  color: #333333;
-  font-size: 0.7rem;
+  color: #8a4bff;
+  font-size: 0.8rem;
 }
 
 .verticalDivider {
   width: 1px;
   height: 60%;
   background-color: rgba(138, 75, 255, 0.2);
-  margin: 0 8px;
+  margin: 0 12px;
 }
 
 .phoneNumber {
@@ -202,7 +199,7 @@
   font-family: "Futura PT";
   font-weight: 400;
   font-size: 14px;
-  padding: 0 10px;
+  padding: 0 16px;
   background: transparent;
   color: #333333;
 }
@@ -219,179 +216,206 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: rgb(16, 16, 16);
-  border: 2px solid rgba(138, 75, 255, 0.2);
-  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(138, 75, 255, 0.2);
+  border-radius: 12px;
   max-height: 30vh;
   overflow-y: auto;
   z-index: 1000;
-  margin-top: 5px;
-  animation: slideDown 0.3s ease forwards;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.countryList::-webkit-scrollbar {
-  display: none;
+  margin-top: 8px;
+  box-shadow: 0 10px 20px rgba(138, 75, 255, 0.1);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: slideDown 0.3s ease-out forwards;
+  scrollbar-width: thin;
+  scrollbar-color: #8a4bff #f8f5ff;
 }
 
 @keyframes slideDown {
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.countryList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.countryList::-webkit-scrollbar-thumb {
+  background: #8a4bff;
+  border-radius: 3px;
 }
 
 .countryItem {
-  padding: clamp(6px, 1vw, 10px);
+  padding: 12px 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: #ffffff;
+  color: #333333;
   font-family: "Futura PT";
   font-weight: 400;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
-  transition: background 0.3s ease;
+  font-size: 14px;
+  transition: color 0.2s ease;
 }
 
 .countryItem:hover {
-  background: rgba(138, 75, 255, 0.27);
+  color: #6a1bff;
 }
 
 .actionButton {
-  padding: 15px 0;
-  background: #8a4bff;
+  padding: 14px 0;
+  background: linear-gradient(135deg, #8a4bff 0%, #6a1bff 100%);
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   font-family: "Futura PT";
-  font-weight: 400;
-  font-size: 18px;
-  margin-top: 30px;
+  font-weight: 500;
+  font-size: 16px;
   width: 100%;
-  transition: background 0.3s ease, transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .actionButton:hover {
-  background: #6a1bff;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(138, 75, 255, 0.3);
 }
 
 .actionButton:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 .description {
   font-family: "Futura PT";
   font-weight: 400;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  font-size: 14px;
   color: #666666;
-  margin-top: clamp(6px, 1vw, 8px);
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-.agree {
+.toggleWrapper {
   display: flex;
+  justify-content: center;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   font-family: "Futura PT";
   font-weight: 400;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  font-size: 14px;
   color: #333333;
-  margin-top: clamp(6px, 1vw, 8px);
 }
 
-.agree input {
-  accent-color: #8a4bff;
-  width: 14px;
-  height: 14px;
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e0e0e0;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .slider {
+  background-color: #8a4bff;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
 }
 
 .error {
   font-family: "Futura PT";
   font-weight: 400;
-  font-size: clamp(0.75rem, 1vw, 0.85rem);
+  font-size: 12px;
   color: #ff4d4d;
+  text-align: left;
   margin-top: 4px;
-  text-align: start;
 }
 
 @media (max-width: 768px) {
   .loginContainer {
     flex-direction: column;
-    gap: clamp(10px, 3vw, 20px);
-    padding: clamp(5px, 1vw, 10px);
+    gap: 30px;
   }
 
-  .background {
-    width: 100%;
-    height: 100%;
+  .illustration {
+    width: 80%;
+    max-width: 300px;
+    animation: fadeIn 0.8s ease-out;
   }
 
   .loginBox {
-    height: auto;
     width: 100%;
-    max-width: clamp(280px, 95vw, 380px);
-    max-height: 90vh;
-    padding: clamp(30px, 5vw, 40px) clamp(20px, 3vw, 30px);
-  }
-
-  .phoneInput,
-  .smsCodeInput {
-    height: clamp(40px, 5vw, 44px);
-  }
-
-  .actionButton {
-    padding: clamp(12px, 2vw, 15px) 0;
+    max-width: 380px;
+    padding: 30px;
+    animation: fadeIn 0.8s ease-out 0.2s forwards;
   }
 }
 
 @media (max-width: 480px) {
-  .background .shape {
-    height: 150px;
-    width: 150px;
-  }
-
-  .shape:first-child {
-    left: -40px;
-    top: -40px;
-  }
-
-  .shape:last-child {
-    right: -15px;
-    bottom: -40px;
-  }
-
-  .phoneInput,
-  .smsCodeInput {
-    height: clamp(38px, 5vw, 42px);
-  }
-
-  .actionButton {
-    padding: clamp(10px, 1.5vw, 12px) 0;
-  }
-
   .loginBox {
-    padding: clamp(20px, 4vw, 30px) clamp(15px, 2vw, 20px);
-  }
-
-  .countryList {
-    max-height: 25vh;
+    padding: 20px;
   }
 
   .title {
-    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-size: 24px;
+  }
+
+  .actionButton {
+    font-size: 14px;
   }
 
   .description,
-  .agree,
-  .error {
-    font-size: clamp(0.7rem, 1vw, 0.8rem);
+  .toggleWrapper {
+    font-size: 12px;
+  }
+
+  .toggle {
+    width: 40px;
+    height: 20px;
+  }
+
+  .slider:before {
+    height: 16px;
+    width: 16px;
+    bottom: 2px;
+    left: 2px;
+  }
+
+  input:checked + .slider:before {
+    transform: translateX(20px);
   }
 }

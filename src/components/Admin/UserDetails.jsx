@@ -1,6 +1,6 @@
 import { useState } from "react";
 import css from "./AdminPanel.module.css";
-import { FaUser, FaPhone, FaEnvelope, FaHome, FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
+import { FaUser, FaPhone, FaEnvelope, FaHome, FaCalendarAlt, FaMoneyBillWave, FaGift } from "react-icons/fa";
 
 function UserDetails({ selectedUser, setSelectedUser, updateUser, updateOrder, isLoading, t }) {
   const [editUser, setEditUser] = useState({
@@ -8,11 +8,16 @@ function UserDetails({ selectedUser, setSelectedUser, updateUser, updateOrder, i
     phone: selectedUser.phone || "",
     email: selectedUser.email || "",
     status: selectedUser.status || "active",
+    bonus_balance: selectedUser.bonus_balance || 0, // Реальні дані з API
+    bonus_expiry: selectedUser.bonus_expiry ? selectedUser.bonus_expiry.split(" ")[0] : "", // Формат дати
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditUser((prev) => ({ ...prev, [name]: value }));
+    setEditUser((prev) => ({
+      ...prev,
+      [name]: name === "bonus_balance" ? parseFloat(value) || 0 : value,
+    }));
   };
 
   const handleSave = () => {
@@ -88,6 +93,33 @@ function UserDetails({ selectedUser, setSelectedUser, updateUser, updateOrder, i
           <p>
             <strong>{t.totalSpent}</strong>
             <span>{selectedUser.total_spent ? `${selectedUser.total_spent} zł` : "0 zł"}</span>
+          </p>
+        </div>
+        <div className={css.infoRow}>
+          <FaGift className={css.infoIcon} />
+          <p>
+            <strong>{t.bonusBalance}</strong>
+            <input
+              type="number"
+              name="bonus_balance"
+              value={editUser.bonus_balance}
+              onChange={handleChange}
+              min="0"
+              step="0.01"
+              placeholder="0.00 zł"
+            />
+          </p>
+        </div>
+        <div className={css.infoRow}>
+          <FaCalendarAlt className={css.infoIcon} />
+          <p>
+            <strong>{t.bonusExpiry}</strong>
+            <input
+              type="date"
+              name="bonus_expiry"
+              value={editUser.bonus_expiry}
+              onChange={handleChange}
+            />
           </p>
         </div>
         <div className={css.infoRow}>

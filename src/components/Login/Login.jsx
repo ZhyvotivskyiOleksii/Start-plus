@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import css from "./Login.module.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Login({ lang, handleLogin }) {
   const [phone, setPhone] = useState("");
@@ -9,6 +10,8 @@ export default function Login({ lang, handleLogin }) {
   const [showVerification, setShowVerification] = useState(false);
   const [smsCode, setSmsCode] = useState("");
   const [verifyError, setVerifyError] = useState("");
+  const [agree, setAgree] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {}, [showVerification]);
 
@@ -18,7 +21,7 @@ export default function Login({ lang, handleLogin }) {
       phonePlaceholder: "Numer telefonu",
       getCodeButton: "Otrzymaj kod",
       description:
-        "Konto jest powiązane z Twoim numerem telefonu. Za każdym razem otrzymasz unikalny kod, który musisz wpisać, aby zalogować się do strony. Gdy wpiszesz swój numer po raz pierwszy, przejdziesz do strony rejestracji. Za każdym kolejnym razem zalogujesz się do swojego kontа.",
+        "Konto powiązane z numerem telefonu. Otrzymasz kod SMS do logowania lub rejestracji.",
       agree: "Zgadzam się z Regulaminem",
       error: "Nieprawidłowy numer telefonu",
       verifyPlaceholder: "Wprowadź kod SMS",
@@ -29,7 +32,7 @@ export default function Login({ lang, handleLogin }) {
       phonePlaceholder: "Phone number",
       getCodeButton: "Get Code",
       description:
-        "Your account is linked to your phone number. Each time you will receive a unique code that you must enter to log in to the site. When you enter your number for the first time, you will be directed to the registration page. Each subsequent time you will log in to your account.",
+        "Account linked to phone. Get SMS code for login.",
       agree: "I agree with the Terms",
       error: "Invalid phone number",
       verifyPlaceholder: "Enter SMS code",
@@ -40,7 +43,7 @@ export default function Login({ lang, handleLogin }) {
       phonePlaceholder: "Номер телефону",
       getCodeButton: "Отримати код",
       description:
-        "Ваш обліковий запис пов’язаний із вашим номером телефону. Кожен раз ви отримуватимете унікальний код, який потрібно ввести для входу на сайт. Коли ви вперше введете свій номер, вас буде перенаправлено на сторінку реєстрації. Кожен наступний раз ви входитимете до свого облікового запису.",
+        "Обліковий запис пов’язаний з номером. Отримай код SMS для входу або реєстрації.",
       agree: "Я погоджуюся з умовами",
       error: "Неправильний номер телефону",
       verifyPlaceholder: "Введіть код SMS",
@@ -51,7 +54,7 @@ export default function Login({ lang, handleLogin }) {
       phonePlaceholder: "Номер телефона",
       getCodeButton: "Получить код",
       description:
-        "Ваш аккаунт связан с вашим номером телефона. Каждый раз вы будете получать уникальный код, который нужно ввести для входа на сайт. Когда вы впервые введете свой номер, вас направят на страницу регистрации. Каждый последующий раз вы будете входить в свой аккаунт.",
+        "Аккаунт связан с номером. Получи код SMS для входа или регистрации.",
       agree: "Я согласен с правилами",
       error: "Неверный номер телефона",
       verifyPlaceholder: "Введите код SMS",
@@ -63,6 +66,8 @@ export default function Login({ lang, handleLogin }) {
 
   const countryCodes = [
     { code: "+48", name: "Poland", flag: "🇵🇱" },
+    { code: "+380", name: "Ukraine", flag: "🇺🇦" },
+    { code: "+49", name: "Germany", flag: "🇩🇪" },
     { code: "+43", name: "Austria", flag: "🇦🇹" },
     { code: "+32", name: "Belgium", flag: "🇧🇪" },
     { code: "+1", name: "Canada", flag: "🇨🇦" },
@@ -71,16 +76,15 @@ export default function Login({ lang, handleLogin }) {
     { code: "+372", name: "Estonia", flag: "🇪🇪" },
     { code: "+358", name: "Finland", flag: "🇫🇮" },
     { code: "+33", name: "France", flag: "🇫🇷" },
-    { code: "+49", name: "Germany", flag: "🇩🇪" },
     { code: "+30", name: "Greece", flag: "🇬🇷" },
     { code: "+36", name: "Hungary", flag: "🇭🇺" },
     { code: "+353", name: "Ireland", flag: "🇮🇪" },
     { code: "+39", name: "Italy", flag: "🇮🇹" },
     { code: "+31", name: "Netherlands", flag: "🇳🇱" },
     { code: "+47", name: "Norway", flag: "🇳🇴" },
+    { code: "+7", name: "Russia", flag: "🇷🇺" },
     { code: "+351", name: "Portugal", flag: "🇵🇹" },
     { code: "+40", name: "Romania", flag: "🇷🇴" },
-    { code: "+7", name: "Russia", flag: "🇷🇺" },
     { code: "+421", name: "Slovakia", flag: "🇸🇰" },
     { code: "+34", name: "Spain", flag: "🇪🇸" },
     { code: "+46", name: "Sweden", flag: "🇸🇪" },
@@ -88,14 +92,25 @@ export default function Login({ lang, handleLogin }) {
     { code: "+44", name: "United Kingdom", flag: "🇬🇧" },
   ];
 
-  // Використовуємо VITE_API_BASE_URL із резервним значенням
   const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php";
+
+  const normalizePhone = (code, number) => {
+    const cleanedNumber = number.replace(/[^0-9]/g, "");
+    if (cleanedNumber.length >= 9) {
+      return code + cleanedNumber;
+    }
+    return "";
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const phoneRegex = /^\+?[1-9]\d{9,14}$/;
-    const fullPhone = countryCode + phone.replace(/[^0-9]/g, "");
-    if (!phoneRegex.test(fullPhone)) {
+    if (!agree) {
+      setError("Musisz zaakceptować regulamin");
+      return;
+    }
+    const fullPhone = normalizePhone(countryCode, phone);
+    const phoneRegex = /^\+[1-9]\d{9,14}$/;
+    if (!fullPhone || !phoneRegex.test(fullPhone)) {
       setError(t.error);
       setShowVerification(false);
       return;
@@ -108,10 +123,16 @@ export default function Login({ lang, handleLogin }) {
       });
       if (!response.ok) {
         const { message } = await response.json();
-        throw new Error(message);
+        if (message === "Код уже надіслано, зачекайте") {
+          setShowVerification(true); // Показуємо поле вводу
+          setError(message); // Показуємо повідомлення
+        } else {
+          throw new Error(message);
+        }
+      } else {
+        setShowVerification(true);
+        setError("");
       }
-      setShowVerification(true);
-      setError("");
     } catch (err) {
       setError(err.message);
       setShowVerification(false);
@@ -120,7 +141,7 @@ export default function Login({ lang, handleLogin }) {
 
   const handleVerifyCode = async (e) => {
     e.preventDefault();
-    const fullPhone = countryCode + phone.replace(/[^0-9]/g, "");
+    const fullPhone = normalizePhone(countryCode, phone);
     if (!smsCode) {
       setVerifyError("Введіть код");
       return;
@@ -137,12 +158,17 @@ export default function Login({ lang, handleLogin }) {
         throw new Error(message);
       }
       const data = await response.json();
+      if (typeof handleLogin !== "function") {
+        throw new Error("handleLogin is not defined");
+      }
       handleLogin(data.token, fullPhone);
+      localStorage.setItem("phone", fullPhone);
       setPhone("");
       setSmsCode("");
       setShowVerification(false);
       setError("");
       setVerifyError("");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setVerifyError(err.message);
     }
@@ -152,9 +178,6 @@ export default function Login({ lang, handleLogin }) {
 
   return (
     <div className={css.loginContainer}>
-      <div className={css.illustration}>
-        <img src="/icon/login-passcode.svg" alt="Login illustration" />
-      </div>
       <div className={css.loginBox}>
         <h2 className={css.title}>{t.title}</h2>
         <form
@@ -219,15 +242,24 @@ export default function Login({ lang, handleLogin }) {
             </div>
           )}
 
+          <p className={css.description}>{t.description}</p>
+          <div className={css.toggleWrapper}>
+            <label className={css.toggleLabel}>
+              <div className={css.toggle}>
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                />
+                <span className={css.slider}></span>
+              </div>
+              <span>{t.agree}</span>
+            </label>
+          </div>
+
           <button type="submit" className={css.actionButton}>
             {showVerification ? t.verifyButton : t.getCodeButton}
           </button>
-
-          <p className={css.description}>{t.description}</p>
-          <label className={css.agree}>
-            <input type="checkbox" required />
-            <span>{t.agree}</span>
-          </label>
         </form>
       </div>
     </div>

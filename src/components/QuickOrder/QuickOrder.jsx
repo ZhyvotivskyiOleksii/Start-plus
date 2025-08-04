@@ -6,7 +6,7 @@ import css from "./QuickOrder.module.css";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaQuestionCircle, FaPercentage, FaTimes } from "react-icons/fa";
 import axios from "axios";
 
-const API = import.meta.env.VITE_API || "http://localhost:3001/api";
+const API = import.meta.env.VITE_API_BASE_URL || "https://startplus-clean.com/sms-auth-php/api";
 
 const translations = {
   pl: {

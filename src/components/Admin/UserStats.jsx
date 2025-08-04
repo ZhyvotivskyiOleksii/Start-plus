@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import css from "./AdminPanel.module.css";
 import { Pie, Line } from "react-chartjs-2";
 import {
@@ -11,11 +12,15 @@ import {
   Title,
   CategoryScale,
 } from "chart.js";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaGift } from "react-icons/fa";
 
 ChartJS.register(ArcElement, Tooltip, Legend, LineElement, PointElement, LinearScale, Title, CategoryScale);
 
 function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, isLoading, t }) {
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
+
   const statusChartData = stats
     ? {
         labels: [t.activeUsers, t.inactiveUsers, t.bannedUsers],
@@ -38,19 +43,8 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
   const statusChartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-      },
-      title: {
-        display: true,
-        text: t.userStatusDistribution,
-        font: { size: 16 },
-        color: "#1a1a1a",
-      },
+      legend: { position: "top", labels: { font: { size: 14 }, color: "#1a1a1a" } },
+      title: { display: true, text: t.userStatusDistribution, font: { size: 16 }, color: "#1a1a1a" },
     },
   };
 
@@ -77,44 +71,12 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
   const newUsersChartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-      },
-      title: {
-        display: true,
-        text: t.newUsersInPeriod,
-        font: { size: 16 },
-        color: "#1a1a1a",
-      },
+      legend: { position: "top", labels: { font: { size: 14 }, color: "#1a1a1a" } },
+      title: { display: true, text: t.newUsersInPeriod, font: { size: 16 }, color: "#1a1a1a" },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: t.numberOfNewUsers,
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-        ticks: {
-          color: "#1a1a1a",
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: t.period,
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-        ticks: {
-          color: "#1a1a1a",
-        },
-      },
+      y: { beginAtZero: true, title: { display: true, text: t.numberOfNewUsers, font: { size: 14 }, color: "#1a1a1a" }, ticks: { color: "#1a1a1a" } },
+      x: { title: { display: true, text: t.period, font: { size: 14 }, color: "#1a1a1a" }, ticks: { color: "#1a1a1a" } },
     },
   };
 
@@ -142,46 +104,24 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
   const revenueChartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: "top",
-        labels: {
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-      },
-      title: {
-        display: true,
-        text: t.estimatedRevenueInPeriod,
-        font: { size: 16 },
-        color: "#1a1a1a",
-      },
+      legend: { position: "top", labels: { font: { size: 14 }, color: "#1a1a1a" } },
+      title: { display: true, text: t.estimatedRevenueInPeriod, font: { size: 16 }, color: "#1a1a1a" },
     },
     scales: {
-      y: {
-        beginAtZero: true,
-        title: {
-          display: true,
-          text: t.revenue,
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-        ticks: {
-          color: "#1a1a1a",
-          callback: (value) => `${value} PLN`,
-        },
-      },
-      x: {
-        title: {
-          display: true,
-          text: t.period,
-          font: { size: 14 },
-          color: "#1a1a1a",
-        },
-        ticks: {
-          color: "#1a1a1a",
-        },
-      },
+      y: { beginAtZero: true, title: { display: true, text: t.revenue, font: { size: 14 }, color: "#1a1a1a" }, ticks: { color: "#1a1a1a", callback: (value) => `${value} PLN` } },
+      x: { title: { display: true, text: t.period, font: { size: 14 }, color: "#1a1a1a" }, ticks: { color: "#1a1a1a" } },
     },
+  };
+
+  // Запит до API для загальної суми бонусів
+  const fetchTotalBonus = async () => {
+    try {
+      const { data } = await fetch(`${API}/users/bonus-total?period=${statsPeriod}`, { headers: { "Content-Type": "application/json" } });
+      return data.total_bonus || 0;
+    } catch (err) {
+      console.error("Error fetching total bonus:", err);
+      return 0;
+    }
   };
 
   return (
@@ -207,18 +147,11 @@ function UserStats({ stats, setStats, fetchStats, statsPeriod, setStatsPeriod, i
       ) : (
         <div className={css.statsContainer}>
           <div className={css.statsInfo}>
-            <p>
-              <strong>{t.totalUsers}</strong> {stats.total_users}
-            </p>
-            <p>
-              <strong>{t.avgOrdersPerUser}</strong> {stats.avg_orders_per_user}
-            </p>
-            <p>
-              <strong>{t.totalOrders}</strong> {stats.total_orders || 0}
-            </p>
-            <p>
-              <strong>{t.totalRevenue}</strong> {stats.revenue || 0} PLN
-            </p>
+            <p><strong>{t.totalUsers}</strong> {stats.total_users}</p>
+            <p><strong>{t.avgOrdersPerUser}</strong> {stats.avg_orders_per_user}</p>
+            <p><strong>{t.totalOrders}</strong> {stats.total_orders || 0}</p>
+            <p><strong>{t.totalRevenue}</strong> {stats.revenue || 0} PLN</p>
+            <p><strong>{t.totalBonus || "Загальний баланс бонусів"}</strong> {fetchTotalBonus()} PLN</p> {/* Реальні дані */}
           </div>
 
           <div className={css.chartContainer}>

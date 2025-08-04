@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('Europe/Warsaw'); 
+date_default_timezone_set('Europe/Warsaw');
 
 function logit(string $m): void {
     $dir = __DIR__ . '/logs';
@@ -9,16 +9,38 @@ function logit(string $m): void {
     error_log($line);                      
 }
 
-function normalizePhoneNumber(string $phone): string {
-    $phone = preg_replace('/^\+\d{1,3}/', '', $phone);
+function normalizePhoneNumber(string $phone, ?string $countryCode = null): array {
     $phone = preg_replace('/[^0-9]/', '', $phone);
-    return $phone;
+    if (str_starts_with($phone, '00')) {
+        $phone = substr($phone, 2);
+    }
+    if (strlen($phone) > 10 && preg_match('/^(\d{1,4})(\d+)$/', $phone, $matches)) {
+        $extractedCode = '+' . $matches[1];
+        $number = $matches[2];
+        logit("Витягнуто код: $extractedCode, номер: $number");
+        return ['number' => $number, 'countryCode' => $extractedCode];
+    }
+    if (strlen($phone) < 9 || strlen($phone) > 15) {
+        logit("Помилка: Неправильна довжина номера: $phone");
+        throw new Exception('Неправильна довжина номера телефону (9-15 цифр)');
+    }
+    $number = substr($phone, -min(15, strlen($phone)));
+    $countryCode = $countryCode ?? '+48';
+    return ['number' => $number, 'countryCode' => $countryCode];
 }
 
 /* CORS */
-$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
-header("Access-Control-Allow-Origin: $origin");
+$allowedOrigins = [
+    'http://localhost:5173', // Локальна розробка
+    'https://startplus-clean.com' // Продакшен
+];
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 header('Vary: Origin');
+if (in_array($origin, $allowedOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+} else {
+    header("Access-Control-Allow-Origin: *"); // Тимчасово для тестування
+}
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
 header('Content-Type: application/json; charset=utf-8');
@@ -60,7 +82,7 @@ function sms_send(string $phone, string $code): void {
         'access_token' => $apiKey,
         'to' => $phone,
         'from' => $from,
-        'message' => "Kod weryfikacyjny to: $code",
+        'message' => "Kod weryfikacyjny Start-Plus to: $code",
         'format' => 'json'
     ]);
     $ch = curl_init('https://api.smsapi.pl/sms.do');
@@ -123,36 +145,51 @@ if ($path === '/api/send-sms' && $method === 'POST') {
         echo json_encode(['message' => 'Номер телефона обов’язковий']);
         exit;
     }
-    $code = (string)random_int(100000, 999999);
-    $normalizedPhone = normalizePhoneNumber($phone);
-    logit("Перевірка користувача в базі даних...");
     try {
-        $s = $pdo->prepare('SELECT id FROM users WHERE REPLACE(phone, "+", "") LIKE ?'); 
-        $s->execute(["%$normalizedPhone%"]);
+        $normalizedPhone = normalizePhoneNumber($phone);
+        $fullPhone = $normalizedPhone['countryCode'] . $normalizedPhone['number'];
+        // Очистка старих кодів (старше 5 хвилин)
+        $pdo->prepare('DELETE FROM sms_codes WHERE phone = ? AND created_at < NOW() - INTERVAL 5 MINUTE')->execute([$fullPhone]);
+        logit("Очищено старі коди для $fullPhone");
+        // Перевірка на дублювання (тепер тільки свіжі)
+        $checkDuplicate = $pdo->prepare('SELECT COUNT(*) FROM sms_codes WHERE phone = ?');
+        $checkDuplicate->execute([$fullPhone]);
+        if ($checkDuplicate->fetchColumn() > 0) {
+            logit("Дубльований номер $fullPhone — свіжий код уже надіслано");
+            http_response_code(400);
+            echo json_encode(['message' => 'Код уже надіслано, зачекайте']);
+            exit;
+        }
+        $code = (string)random_int(100000, 999999);
+        $s = $pdo->prepare('SELECT id FROM users WHERE phone = ?');
+        $s->execute([$fullPhone]);
         $exists = $s->rowCount() > 0;
         logit("Користувач $phone ".($exists ? 'знайдений' : 'не знайдений'));
-        logit("Збереження коду в базі даних...");
         $stmt = $pdo->prepare('INSERT INTO sms_codes (phone, code, created_at) VALUES (?, ?, ?)');
-        $stmt->execute([$phone, $code, date('Y-m-d H:i:s')]);
+        $stmt->execute([$fullPhone, $code, date('Y-m-d H:i:s')]);
         $affectedRows = $stmt->rowCount();
-        logit("Код успішно збережено, додано рядків: $affectedRows");
-        $checkStmt = $pdo->prepare('SELECT * FROM sms_codes WHERE phone = ? AND code = ?');
-        $checkStmt->execute([$phone, $code]);
-        $smsRecord = $checkStmt->fetch();
-        if ($smsRecord) {
-            logit("Перевірка: Код знайдено в базі: " . json_encode($smsRecord));
+        if ($affectedRows > 0) {
+            logit("Код $code успішно збережено для $fullPhone");
         } else {
-            logit("Помилка: Код НЕ знайдено в базі після додавання!");
+            logit("Помилка: Код $code НЕ збережено для $fullPhone");
+            throw new Exception('Не вдалося зберегти код у базу');
         }
-        logit("Відправка SMS...");
-        sms_send($phone, $code);
-        logit("SMS надіслано на $phone, код: $code, userExists: ".($exists ? 'true' : 'false'));
+        $checkStmt = $pdo->prepare('SELECT code FROM sms_codes WHERE phone = ? AND code = ?');
+        $checkStmt->execute([$fullPhone, $code]);
+        if ($checkStmt->fetch()) {
+            logit("Перевірка: Код $code знайдено в базі для $fullPhone");
+        } else {
+            logit("Помилка: Код $code НЕ знайдено в базі після вставки!");
+            throw new Exception('Код не знайдено в базі після вставки');
+        }
+        sms_send($fullPhone, $code);
+        logit("SMS надіслано на $fullPhone, код: $code");
         echo json_encode(['message' => 'SMS надіслано', 'userExists' => $exists]);
     } catch (Throwable $e) {
-        logit("Помилка в /api/send-sms: ".$e->getMessage());
-        http_response_code(500);
+        logit("Помилка в /api/send-sms: " . $e->getMessage());
+        http_response_code(400);
         echo json_encode(['message' => 'Помилка відправлення SMS: ' . $e->getMessage()]);
-    } 
+    }
     exit;
 }
 
@@ -166,43 +203,42 @@ if ($path === '/api/verify-sms' && $method === 'POST') {
         exit;
     }
     try {
-        logit("Перевірка коду в базі даних...");
-        $s = $pdo->prepare('SELECT id FROM sms_codes WHERE phone=? AND code=?'); 
-        $s->execute([$phone, $code]);
+        $normalizedPhone = normalizePhoneNumber($phone);
+        $fullPhone = $normalizedPhone['countryCode'] . $normalizedPhone['number'];
+        $s = $pdo->prepare('SELECT id FROM sms_codes WHERE phone=? AND code=?');
+        $s->execute([$fullPhone, $code]);
         if (!$s->rowCount()) {
-            logit("Невірний код"); 
+            logit("Невірний код для $fullPhone");
             http_response_code(400);
             echo json_encode(['message' => 'Невірний код']);
             exit;
         }
-        logit("Видалення коду з бази даних...");
-        $pdo->prepare('DELETE FROM sms_codes WHERE phone=?')->execute([$phone]);
-        logit("Код видалено");
-        logit("Перевірка користувача...");
-        $normalizedPhone = normalizePhoneNumber($phone);
-        $u = $pdo->prepare('SELECT id FROM users WHERE REPLACE(phone, "+", "") LIKE ?'); 
-        $u->execute(["%$normalizedPhone%"]);
+        $pdo->prepare('DELETE FROM sms_codes WHERE phone=?')->execute([$fullPhone]);
+        logit("Код видалено для $fullPhone");
+        $u = $pdo->prepare('SELECT id FROM users WHERE phone = ?');
+        $u->execute([$fullPhone]);
         if (!$u->rowCount()) {
-            logit("Створення нового користувача...");
             $stmt = $pdo->prepare('INSERT INTO users (phone, created_at) VALUES (?, ?)');
-            $stmt->execute([$phone, date('Y-m-d H:i:s')]);
-            logit("Новий користувач створений: $phone");
+            $stmt->execute([$fullPhone, date('Y-m-d H:i:s')]);
+            logit("Створено нового користувача: $fullPhone");
         } else {
-            logit("Користувач уже існує: $phone");
+            logit("Користувач уже існує: $fullPhone");
         }
-        $pdo->prepare('UPDATE users SET last_login = ? WHERE phone = ?')->execute([date('Y-m-d H:i:s'), $phone]);
-        logit("Оновлено last_login для користувача: $phone");
+        $pdo->prepare('UPDATE users SET last_login = ? WHERE phone = ?')->execute([date('Y-m-d H:i:s'), $fullPhone]);
+        logit("Оновлено last_login для $fullPhone");
         echo json_encode(['message' => 'Верифікація успішна', 'token' => 'token-'.time()]);
     } catch (Throwable $e) {
-        logit("Помилка в /api/verify-sms: ".$e->getMessage());
+        logit("Помилка в /api/verify-sms: " . $e->getMessage());
         http_response_code(500);
         echo json_encode(['message' => 'Помилка верифікації: ' . $e->getMessage()]);
-    } 
+    }
     exit;
 }
-
 /* ----------- /api/discounts -------------------- */
-if (preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $path, $matches)) {
+if (
+    preg_match('/^\/api\/discounts(?:\/(\d+))?$/', $path, $matches)
+    || preg_match('/^\/discounts(?:\/(\d+))?$/', $path, $matches)
+) {
     if ($method === 'GET') {
         $type = $_GET['type'] ?? 'regular';
         logit("Отримуємо знижки для type: $type");
@@ -314,12 +350,12 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
     ];
 
     $orderData = $input;
-    $requiredFields = ['order_id', 'total_price', 'client_email', 'client_phone'];
+    $requiredFields = ['order_id', 'total_price', 'client_email', 'client_phone', 'client_info'];
     foreach ($requiredFields as $field) {
-        if (!isset($orderData[$field])) {
-            logit("Помилка: Відсутнє обов’язкове поле: $field");
+        if (!isset($orderData[$field]) || empty($orderData[$field])) {
+            logit("Помилка: Відсутнє або порожнє обов’язкове поле: $field, дані: " . json_encode($orderData));
             http_response_code(400);
-            echo json_encode(["error" => "Missing required field: $field"]);
+            echo json_encode(["error" => "Missing or empty required field: $field"]);
             exit;
         }
     }
@@ -334,19 +370,37 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
         exit;
     }
 
+    // Нормалізація номера для PayU
+    $phoneParts = normalizePhoneNumber($orderData['client_phone']);
+    $payuPhone = $phoneParts['countryCode'] . $phoneParts['number']; // Повний номер із кодом
+    $payuPhone = preg_replace('/^\+/', '', $payuPhone); // Видаляємо +, якщо PayU не приймає
+
+    // Розділяємо ім'я та прізвище
+    $nameRaw = $orderData['client_info']['name'] ?? '';
+    $nameArr = explode(' ', trim($nameRaw));
+    $firstName = $nameArr[0] ?? 'Jan';
+    $lastName = $nameArr[1] ?? 'Kowalski';
+
+    if (empty($firstName) || empty($lastName)) {
+        logit("Помилка: Ім'я або прізвище відсутні: $nameRaw");
+        http_response_code(400);
+        echo json_encode(['error' => 'First name and last name are required']);
+        exit;
+    }
+
     $payuOrder = [
         'notifyUrl' => $_ENV['PAYU_NOTIFY_URL'] ?? 'http://localhost:3001/api/payu-notify',
         'customerIp' => $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1',
         'merchantPosId' => $payuConfig['merchantPosId'],
         'description' => $orderData['description'] ?? "Zamówienie #$orderId",
         'currencyCode' => 'PLN',
-        'totalAmount' => (int)($orderData['total_price'] * 100), 
+        'totalAmount' => (int)($orderData['total_price'] * 100),
         'extOrderId' => (string)$orderId,
         'buyer' => [
             'email' => $orderData['client_email'],
-            'phone' => $orderData['client_phone'],
-            'firstName' => $orderData['client_info']['name'] ? explode(' ', $orderData['client_info']['name'])[0] : 'Jan',
-            'lastName' => $orderData['client_info']['name'] ? (explode(' ', $orderData['client_info']['name'])[1] ?? 'Kowalski') : 'Kowalski',
+            'phone' => $payuPhone,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
         ],
         'products' => [
             [
@@ -361,6 +415,7 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
         ],
     ];
 
+    // 1. Отримуємо токен
     $tokenUrl = 'https://secure.payu.com/pl/standard/user/oauth/authorize';
     $tokenData = http_build_query([
         'grant_type' => 'client_credentials',
@@ -386,8 +441,8 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
         exit;
     }
 
-    $tokenData = json_decode($tokenResponse, true);
-    $accessToken = $tokenData['access_token'] ?? null;
+    $tokenDataArr = json_decode($tokenResponse, true);
+    $accessToken = $tokenDataArr['access_token'] ?? null;
     if (!$accessToken) {
         logit("Помилка: Не вдалося отримати access_token від PayU: $tokenResponse");
         http_response_code(500);
@@ -395,12 +450,12 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
         exit;
     }
 
+    // 2. Створюємо ордер
     $ch = curl_init($payuConfig['apiUrl']);
     curl_setopt_array($ch, [
         CURLOPT_POST => 1,
         CURLOPT_POSTFIELDS => json_encode($payuOrder),
         CURLOPT_RETURNTRANSFER => 1,
-        CURLOPT_FOLLOWLOCATION => false,
         CURLOPT_HTTPHEADER => [
             'Content-Type: application/json',
             'Authorization: Bearer ' . $accessToken,
@@ -410,22 +465,22 @@ if ($path === '/api/create-payu-payment' && $method === 'POST') {
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
+    logit("PayU response: $payuResponse, code: $httpCode");
+
     $payuResult = json_decode($payuResponse, true);
-    if ($httpCode !== 302 || !isset($payuResult['status']['statusCode']) || $payuResult['status']['statusCode'] !== 'SUCCESS') {
+
+    if (
+        !isset($payuResult['status']['statusCode']) ||
+        $payuResult['status']['statusCode'] !== 'SUCCESS' ||
+        !isset($payuResult['redirectUri'])
+    ) {
         logit("Помилка створення платежу в PayU: HTTP $httpCode, відповідь: " . json_encode($payuResult));
         http_response_code(500);
-        echo json_encode(['error' => 'Не вдалося створити платіж у PayU']);
+        echo json_encode(['error' => 'Не вдалося створити платіж у PayU', 'details' => $payuResult]);
         exit;
     }
 
-    $redirectUri = $payuResult['redirectUri'] ?? null;
-    if (!$redirectUri) {
-        logit("Помилка: Не отримано redirectUri від PayU: " . json_encode($payuResult));
-        http_response_code(500);
-        echo json_encode(['error' => 'Не отримано URL для оплати від PayU']);
-        exit;
-    }
-
+    $redirectUri = $payuResult['redirectUri'];
     logit("Платіж створено, redirectUri: $redirectUri");
     echo json_encode(['redirectUri' => $redirectUri]);
     exit;
@@ -469,6 +524,20 @@ if ($path === '/api/payu-notify' && $method === 'POST') {
             $stmt->execute([$paymentStatus, $orderStatus, $orderId]);
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
+                // Нарахування бонусів при успішному платіжному статусі
+                if ($paymentStatus === 'completed') {
+                    $orderStmt = $pdo->prepare('SELECT user_id, total_price FROM orders WHERE id = ?');
+                    $orderStmt->execute([$orderId]);
+                    $order = $orderStmt->fetch();
+                    if ($order && $order['total_price'] >= 50) {
+                        $bonusAmount = $order['total_price'] * 0.05; // 5% бонусів
+                        $bonusExpiry = date('Y-m-d H:i:s', strtotime('+180 days')); // 6 місяців
+                        $userId = $order['user_id'];
+                        $stmt = $pdo->prepare('UPDATE users SET bonus_balance = bonus_balance + ?, bonus_expiry = ? WHERE id = ?');
+                        $stmt->execute([$bonusAmount, $bonusExpiry, $userId]);
+                        logit("Нараховано бонусів: $bonusAmount злотих, новий термін дії: $bonusExpiry для userId: $userId після оплати замовлення $orderId");
+                    }
+                }
                 logit("Оновлено статус платежу та замовлення для ID $orderId: payment_status=$paymentStatus, status=$orderStatus");
                 http_response_code(200);
                 echo json_encode(['message' => 'OK']);
@@ -491,7 +560,10 @@ if ($path === '/api/payu-notify' && $method === 'POST') {
 }
 
 /* ----------- /api/promo-codes ------------------ */
-if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $path, $matches)) {
+if (
+    preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $path, $matches)
+    || preg_match('/^\/promo-codes(?:\/(\d+))?$/', $path, $matches)
+) {
     if ($method === 'GET') {
         $stmt = $pdo->query('SELECT * FROM promo_codes ORDER BY id DESC');
         $promoCodes = $stmt->fetchAll();
@@ -554,14 +626,25 @@ if (preg_match('/^\/api\/promo-codes(?:\/(\d+))?$/', $path, $matches)) {
 }
 
 /* ----------- /api/users ------------------------ */
-if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
+if (
+    preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)
+    || preg_match('/^\/users(?:\/(\d+))?$/', $path, $matches)
+) {
     if ($method === 'GET' && !isset($matches[1])) {
         $status = $_GET['status'] ?? null;
         $search = $_GET['search'] ?? null;
+        $phone = $_GET['phone'] ?? null;
 
-        $query = 'SELECT * FROM users';
+        $query = 'SELECT id, phone, name, email, bonus_balance, bonus_expiry, created_at, last_login, status FROM users';
         $conditions = [];
         $params = [];
+
+        if ($phone) {
+            $normalizedPhone = normalizePhoneNumber($phone);
+            $fullPhone = $normalizedPhone['countryCode'] . $normalizedPhone['number'];
+            $conditions[] = 'REPLACE(phone, "+", "") = ?';
+            $params[] = preg_replace('/^\+/', '', $fullPhone);
+        }
 
         if ($status) {
             $conditions[] = 'status = ?';
@@ -599,7 +682,17 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
                 $user['total_spent'] = (float)($spentStmt->fetch()['total_spent'] ?? 0);
             }
 
-            echo json_encode($users);
+            if ($phone) {
+                if (count($users) === 1) {
+                    echo json_encode($users[0]);
+                } else {
+                    logit("Користувача з phone $phone не знайдено");
+                    http_response_code(404);
+                    echo json_encode(['message' => 'Користувача не знайдено']);
+                }
+            } else {
+                echo json_encode($users);
+            }
         } catch (PDOException $e) {
             logit("Помилка при отриманні користувачів: " . $e->getMessage());
             http_response_code(500);
@@ -611,8 +704,14 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
     if ($method === 'GET' && isset($matches[1])) {
         $id = $matches[1];
         logit("Отримуємо деталі користувача з id: $id");
+        if ($id === 'null') {
+            logit("Помилка: userId не може бути null");
+            http_response_code(400);
+            echo json_encode(['message' => 'userId не може бути null']);
+            exit;
+        }
         try {
-            $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+            $stmt = $pdo->prepare('SELECT id, phone, name, email, bonus_balance, bonus_expiry, created_at, last_login, status FROM users WHERE id = ?');
             $stmt->execute([$id]);
             $user = $stmt->fetch();
 
@@ -637,11 +736,26 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
                         if (!isset($clientInfo['additional_info']) && $order['details']) {
                             $order['client_info']['additional_info'] = $order['details'];
                         }
+                        if (isset($clientInfo['phone'])) {
+                            $norm = normalizePhoneNumber($clientInfo['phone']);
+                            $clientInfo['phone'] = $norm['countryCode'] . $norm['number'];
+                            $order['client_info'] = $clientInfo;
+                        }
                     } else {
-                        $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                        $order['client_info'] = [
+                            'name' => $user['name'] ?? 'N/A',
+                            'phone' => $user['phone'] ?? 'N/A',
+                            'email' => $user['email'] ?? 'N/A',
+                            'additional_info' => 'N/A'
+                        ];
                     }
                 } else {
-                    $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                    $order['client_info'] = [
+                        'name' => $user['name'] ?? 'N/A',
+                        'phone' => $user['phone'] ?? 'N/A',
+                        'email' => $user['email'] ?? 'N/A',
+                        'additional_info' => 'N/A'
+                    ];
                 }
 
                 if ($order['address']) {
@@ -720,68 +834,6 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
         exit;
     }
 
-    if ($method === 'PUT' && isset($matches[1])) {
-        $id = $matches[1];
-        $name = $input['name'] ?? null;
-        $email = $input['email'] ?? null;
-        $status = $input['status'] ?? null;
-
-        if (!$name && !$email && !$status) {
-            logit("Помилка: Потрібно вказати хоча б одне поле для оновлення");
-            http_response_code(400);
-            echo json_encode(['message' => 'Потрібно вказати хоча б одне поле для оновлення']);
-            exit;
-        }
-
-        $updates = [];
-        $params = [];
-
-        if ($name) {
-            $updates[] = 'name = ?';
-            $params[] = $name;
-        }
-
-        if ($email) {
-            $updates[] = 'email = ?';
-            $params[] = $email;
-        }
-
-        if ($status && in_array($status, ['active', 'inactive', 'banned'])) {
-            $updates[] = 'status = ?';
-            $params[] = $status;
-        }
-
-        if (empty($updates)) {
-            logit("Помилка: Невірні дані для оновлення");
-            http_response_code(400);
-            echo json_encode(['message' => 'Невірні дані для оновлення']);
-            exit;
-        }
-
-        $params[] = $id;
-        $query = 'UPDATE users SET ' . implode(', ', $updates) . ' WHERE id = ?';
-
-        logit("Оновлюємо користувача з id: $id, query=$query");
-        try {
-            $stmt = $pdo->prepare($query);
-            $stmt->execute($params);
-            $affectedRows = $stmt->rowCount();
-            if ($affectedRows > 0) {
-                logit("Користувача з id $id оновлено");
-                echo json_encode(['message' => 'Користувач успішно оновлений']);
-            } else {
-                logit("Користувача з id $id не знайдено");
-                http_response_code(404);
-                echo json_encode(['message' => 'Користувача не знайдено']);
-            }
-        } catch (PDOException $e) {
-            logit("Помилка при оновленні користувача: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['message' => 'Помилка при оновленні користувача: ' . $e->getMessage()]);
-        }
-        exit;
-    }
-
     if ($method === 'DELETE' && isset($matches[1])) {
         $id = $matches[1];
         logit("Видаляємо користувача з id: $id");
@@ -791,23 +843,26 @@ if (preg_match('/^\/api\/users(?:\/(\d+))?$/', $path, $matches)) {
             $affectedRows = $stmt->rowCount();
             if ($affectedRows > 0) {
                 logit("Користувача з id $id видалено");
-                echo json_encode(['message' => 'Користувач успішно видалений']);
+                echo json_encode(['message' => 'Користувача успішно видалено']);
             } else {
                 logit("Користувача з id $id не знайдено");
                 http_response_code(404);
                 echo json_encode(['message' => 'Користувача не знайдено']);
             }
         } catch (PDOException $e) {
-            logit("Помилка при видаленні користувача: " . $e->getMessage());
+            logit("Помилка видалення користувача: " . $e->getMessage());
             http_response_code(500);
-            echo json_encode(['message' => 'Помилка при видаленні користувача: ' . $e->getMessage()]);
+            echo json_encode(['message' => 'Помилка видалення користувача: ' . $e->getMessage()]);
         }
         exit;
     }
 }
 
 /* ----------- /api/users/stats ------------------ */
-if ($path === '/api/users/stats' && $method === 'GET') {
+if (
+    $path === '/api/users/stats' && $method === 'GET'
+    || $path === '/users/stats' && $method === 'GET'
+) {
     $period = $_GET['period'] ?? '30d';
     $dateFrom = null;
     switch ($period) {
@@ -867,14 +922,17 @@ if ($path === '/api/users/stats' && $method === 'GET') {
     exit;
 }
 
-/* ----------- /api/orders ----------------------- */
-if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
+if (
+    preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)
+    || preg_match('/^\/orders(?:\/(\d+))?$/', $path, $matches)
+) {
     if ($method === 'GET' && !isset($matches[1])) {
         $userId = $_GET['user_id'] ?? null;
         $serviceType = $_GET['service_type'] ?? null;
         $status = $_GET['status'] ?? null;
         $dateFrom = $_GET['date_from'] ?? null;
         $dateTo = $_GET['date_to'] ?? null;
+        $limit = (int)($_GET['limit'] ?? 10);
 
         $query = 'SELECT * FROM orders';
         $conditions = [];
@@ -886,8 +944,6 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
         }
 
         if ($serviceType) {
-            $conditions[] = 'order_type = ?';
-            $mappedServiceType = $serviceType;
             $serviceTypeMapping = [
                 'office-cleaning' => 'office',
                 'private-house' => 'private_house',
@@ -897,9 +953,8 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
                 'standard' => 'standard',
                 'general' => 'general',
             ];
-            if (isset($serviceTypeMapping[$serviceType])) {
-                $mappedServiceType = $serviceTypeMapping[$serviceType];
-            }
+            $mappedServiceType = $serviceTypeMapping[$serviceType] ?? $serviceType;
+            $conditions[] = 'order_type = ?';
             $params[] = $mappedServiceType;
         }
 
@@ -922,7 +977,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
             $query .= ' WHERE ' . implode(' AND ', $conditions);
         }
 
-        $query .= ' ORDER BY created_at DESC';
+        $query .= ' ORDER BY created_at DESC LIMIT ' . $limit;
 
         logit("Отримуємо список замовлень: query=$query");
         try {
@@ -934,20 +989,35 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
             foreach ($orders as &$order) {
                 $orderDetails = [];
 
+                // Декодування client_info
                 if ($order['client_info']) {
                     $clientInfo = json_decode($order['client_info'], true);
                     if (is_array($clientInfo)) {
-                        $order['client_info'] = $clientInfo;
                         if (!isset($clientInfo['additional_info']) && $order['details']) {
-                            $order['client_info']['additional_info'] = $order['details'];
+                            $clientInfo['additional_info'] = $order['details'];
                         }
+                        // Нормалізація телефону у client_info
+                        if (isset($clientInfo['phone'])) {
+                            $norm = normalizePhoneNumber($clientInfo['phone']);
+                            $clientInfo['phone'] = $norm['countryCode'] . $norm['number'];
+                        }
+                        $order['client_info'] = $clientInfo;
                     } else {
-                        $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                        $order['client_info'] = [
+                            'name' => 'N/A',
+                            'phone' => 'N/A',
+                            'additional_info' => 'N/A'
+                        ];
                     }
                 } else {
-                    $order['client_info'] = ['name' => 'N/A', 'phone' => 'N/A', 'additional_info' => 'N/A'];
+                    $order['client_info'] = [
+                        'name' => 'N/A',
+                        'phone' => 'N/A',
+                        'additional_info' => 'N/A'
+                    ];
                 }
 
+                // Декодування address
                 if ($order['address']) {
                     $address = json_decode($order['address'], true);
                     if (is_array($address)) {
@@ -985,9 +1055,9 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
                     case 'general':
                         $orderDetails['rooms'] = $order['rooms'] ?? 'N/A';
                         $orderDetails['bathrooms'] = $order['bathrooms'] ?? 'N/A';
-                        $orderDetails['kitchen'] = $order['kitchen'] ? 'Tak' : 'Nie';
-                        $orderDetails['kitchen_annex'] = $order['kitchen_annex'] ? 'Tak' : 'Nie';
-                        $orderDetails['vacuum_needed'] = $order['vacuum_needed'] ? 'Tak' : 'Nie';
+                        $orderDetails['kitchen'] = !empty($order['kitchen']) ? 'Tak' : 'Nie';
+                        $orderDetails['kitchen_annex'] = !empty($order['kitchen_annex']) ? 'Tak' : 'Nie';
+                        $orderDetails['vacuum_needed'] = !empty($order['vacuum_needed']) ? 'Tak' : 'Nie';
                         $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
                         if ($order['selected_services']) {
                             $services = json_decode($order['selected_services'], true);
@@ -1022,45 +1092,13 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
         }
         exit;
     }
+}
 
-    /* ----------- /api/orders/stats ------------------ */
-    if ($path === '/api/orders/stats' && $method === 'GET') {
-        $period = $_GET['period'] ?? '7d';
-        $days = 7;
-        if ($period === '30d') $days = 30;
-        elseif ($period === '90d') $days = 90;
-
-        try {
-            $totalStmt = $pdo->query('SELECT COUNT(*) as total FROM orders');
-            $totalOrders = $totalStmt->fetch()['total'];
-
-            $typeStmt = $pdo->query('SELECT order_type, COUNT(*) as count FROM orders GROUP BY order_type');
-            $typeCounts = $typeStmt->fetchAll(PDO::FETCH_KEY_PAIR);
-
-            $newStmt = $pdo->prepare('SELECT COUNT(*) as new_orders FROM orders WHERE created_at >= ?');
-            $newStmt->execute([date('Y-m-d H:i:s', strtotime("-$days days"))]);
-            $newOrders = $newStmt->fetch()['new_orders'];
-
-            $totalPriceStmt = $pdo->query('SELECT AVG(total_price) as avg_price FROM orders');
-            $avgPrice = $totalPriceStmt->fetch()['avg_price'];
-
-            $stats = [
-                'total_orders' => (int)$totalOrders,
-                'type_counts' => $typeCounts,
-                'new_orders' => (int)$newOrders,
-                'avg_price' => round($avgPrice, 2),
-            ];
-
-            logit("Отримано статистику замовлень: " . json_encode($stats));
-            echo json_encode($stats);
-        } catch (PDOException $e) {
-            logit("Помилка при отриманні статистики замовлень: " . $e->getMessage());
-            http_response_code(500);
-            echo json_encode(['message' => 'Помилка при отриманні статистики замовлень']);
-        }
-        exit;
-    }
-
+/* ----------- /api/orders/stats ------------------ */
+if (
+    preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)
+    || preg_match('/^\/orders(?:\/(\d+))?$/', $path, $matches)
+) {
     if ($method === 'POST' && !isset($matches[1])) {
         $orderData = $input;
         logit("Вхідні дані для створення замовлення: " . json_encode($orderData));
@@ -1091,43 +1129,77 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
         $companyName = $clientInfo['company_name'] ?? null;
         $nip = $clientInfo['nip'] ?? null;
         $vatInfo = $clientInfo['vat_info'] ?? null;
-        logit("Витягнуті значення: clientName=$clientName, clientPhone=$clientPhone, clientEmail=$clientEmail, clientType=$clientType, companyName=$companyName, nip=$nip, vatInfo=" . json_encode($vatInfo));
+        $bonusAmount = $clientInfo['bonus_amount'] ?? 0; // Нова опція для використання бонусів
+        logit("Витягнуті значення: clientName=$clientName, clientPhone=$clientPhone, clientEmail=$clientEmail, clientType=$clientType, companyName=$companyName, nip=$nip, vatInfo=" . json_encode($vatInfo) . ", bonusAmount=$bonusAmount");
 
+        $normalizedPhone = normalizePhoneNumber($clientPhone);
+        $fullPhone = $normalizedPhone['countryCode'] . $normalizedPhone['number'];
         $updatedClientInfo = [
             'name' => $clientName,
-            'phone' => $clientPhone,
+            'phone' => $fullPhone,
             'email' => $clientEmail,
             'additional_info' => $clientAdditionalInfo,
             'vat_info' => $vatInfo
         ];
 
         $userId = null;
-        if ($clientPhone || $clientEmail) {
-            $normalizedPhone = normalizePhoneNumber($clientPhone);
-            logit("Перевірка користувача: normalized_phone=$normalizedPhone, email=$clientEmail");
-            $query = 'SELECT id FROM users WHERE REPLACE(phone, "+", "") LIKE ? OR email = ?';
-            $stmt = $pdo->prepare($query);
-            $stmt->execute(["%$normalizedPhone%", $clientEmail]);
-            $user = $stmt->fetch();
+if ($clientPhone) {
+    // Шукаємо по телефону (унікально)
+    $query = 'SELECT id, name FROM users WHERE REPLACE(phone, "+", "") = ?';
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([preg_replace('/^\+/', '', $fullPhone)]);
+    $user = $stmt->fetch();
+} elseif ($clientEmail) {
+    // Шукаємо по email (якщо телефон відсутній)
+    $query = 'SELECT id, name FROM users WHERE email = ?';
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$clientEmail]);
+    $user = $stmt->fetch();
+} else {
+    $user = false;
+}
 
-            if ($user) {
-                $userId = $user['id'];
-                logit("Користувач із normalized_phone=$normalizedPhone або email=$clientEmail уже існує, user_id=$userId");
-                if ($clientName) {
-                    $stmt = $pdo->prepare('UPDATE users SET name = ? WHERE id = ?');
-                    $stmt->execute([$clientName, $userId]);
-                    logit("Оновлено ім'я користувача з id $userId: name=$clientName");
-                }
-            } else {
-                logit("Створюємо нового користувача...");
-                $query = 'INSERT INTO users (name, phone, email, created_at) VALUES (?, ?, ?, ?)';
-                $stmt = $pdo->prepare($query);
-                $stmt->execute([$clientName, $clientPhone, $clientEmail, date('Y-m-d H:i:s')]);
-                $userId = $pdo->lastInsertId();
-                logit("Створено нового користувача: user_id=$userId, phone=$clientPhone, email=$clientEmail");
+if ($user) {
+    $userId = $user['id'];
+    logit("Користувач знайдений, user_id=$userId");
+    if ($clientName && isset($user['name']) && $clientName !== $user['name']) {
+        $stmt = $pdo->prepare('UPDATE users SET name = ? WHERE id = ?');
+        $stmt->execute([$clientName, $userId]);
+        logit("Оновлено ім'я користувача з id $userId: name=$clientName");
+    }
+} else {
+    logit("Створюємо нового користувача...");
+    $query = 'INSERT INTO users (name, phone, email, created_at) VALUES (?, ?, ?, ?)';
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$clientName, $fullPhone, $clientEmail, date('Y-m-d H:i:s')]);
+    $userId = $pdo->lastInsertId();
+    logit("Створено нового користувача: user_id=$userId, phone=$fullPhone, email=$clientEmail");
+}
+
+
+        // Перевірка і використання бонусів
+        $totalPrice = $orderData['total_price'];
+        if ($bonusAmount > 0) {
+            $stmt = $pdo->prepare('SELECT bonus_balance FROM users WHERE id = ?');
+            $stmt->execute([$userId]);
+            $currentBonus = $stmt->fetch()['bonus_balance'] ?? 0;
+            $maxBonusUsage = $totalPrice * 0.5; // Максимум 50% від суми
+            if ($bonusAmount > $currentBonus) {
+                logit("Помилка: Запитана сума бонусів ($bonusAmount) перевищує доступний баланс ($currentBonus)");
+                http_response_code(400);
+                echo json_encode(['error' => 'Недостатньо бонусів']);
+                exit;
             }
-        } else {
-            logit("Телефон або email відсутні у client_info, користувач не створюється");
+            if ($bonusAmount > $maxBonusUsage) {
+                logit("Помилка: Максимальна сума бонусів ($maxBonusUsage) перевищена ($bonusAmount)");
+                http_response_code(400);
+                echo json_encode(['error' => 'Максимальна сума бонусів перевищена (50% від суми замовлення)']);
+                exit;
+            }
+            $newBonusBalance = $currentBonus - $bonusAmount;
+            $pdo->prepare('UPDATE users SET bonus_balance = ? WHERE id = ?')->execute([$newBonusBalance, $userId]);
+            logit("Використано бонусів: $bonusAmount, новий баланс: $newBonusBalance для userId: $userId");
+            $totalPrice -= $bonusAmount; // Зменшуємо суму замовлення на використані бонуси
         }
 
         if ($orderData["order_type"] === "quick_order") {
@@ -1149,7 +1221,7 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
               ", details=" . ($orderData["details"] ?? 'null'));
 
         $columns = ["order_type", "total_price", "city", "address", "client_info", "payment_status", "status", "created_at"];
-        $values = [$orderType, $orderData["total_price"], $orderData["city"], json_encode($orderData["address"]), json_encode($updatedClientInfo), $orderData["payment_status"], "pending", date('Y-m-d H:i:s')];
+        $values = [$orderType, $totalPrice, $orderData["city"], json_encode($orderData["address"]), json_encode($updatedClientInfo), $orderData["payment_status"], "pending", date('Y-m-d H:i:s')];
         $placeholders = array_fill(0, count($values), "?");
 
         $columns[] = "user_id";
@@ -1336,6 +1408,16 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
             $stmt->execute($values);
             $orderId = $pdo->lastInsertId();
             logit("Замовлення створено з ID: $orderId");
+
+            // Нарахування бонусів (5% від суми, якщо більше 50 злотих)
+            if ($orderData['total_price'] >= 50) {
+                $bonusAmount = $orderData['total_price'] * 0.05; // 5% бонусів
+                $bonusExpiry = date('Y-m-d H:i:s', strtotime('+180 days')); // 6 місяців
+                $stmt = $pdo->prepare('UPDATE users SET bonus_balance = bonus_balance + ?, bonus_expiry = ? WHERE id = ?');
+                $stmt->execute([$bonusAmount, $bonusExpiry, $userId]);
+                logit("Нараховано бонусів: $bonusAmount злотих, новий термін дії: $bonusExpiry для userId: $userId");
+            }
+
             echo json_encode(["orderId" => $orderId]);
         } catch (PDOException $e) {
             logit("Помилка створення замовлення: " . $e->getMessage());
@@ -1373,6 +1455,173 @@ if (preg_match('/^\/api\/orders(?:\/(\d+))?$/', $path, $matches)) {
             logit("Помилка при оновленні замовлення: " . $e->getMessage());
             http_response_code(500);
             echo json_encode(['message' => 'Помилка при оновленні замовлення: ' . $e->getMessage()]);
+        }
+        exit;
+    }
+
+    if ($method === 'GET' && !isset($matches[1])) {
+        $userId = $_GET['user_id'] ?? null;
+        $serviceType = $_GET['service_type'] ?? null;
+        $status = $_GET['status'] ?? null;
+        $dateFrom = $_GET['date_from'] ?? null;
+        $dateTo = $_GET['date_to'] ?? null;
+        $limit = (int)($_GET['limit'] ?? 10);
+
+        $query = 'SELECT * FROM orders';
+        $conditions = [];
+        $params = [];
+
+        if ($userId) {
+            $conditions[] = 'user_id = ?';
+            $params[] = $userId;
+        }
+
+        if ($serviceType) {
+            $serviceTypeMapping = [
+                'office-cleaning' => 'office',
+                'private-house' => 'private_house',
+                'window-cleaning' => 'window_cleaning',
+                'post-renovation' => 'renovation',
+                'regular' => 'apartment',
+                'standard' => 'standard',
+                'general' => 'general',
+            ];
+            $mappedServiceType = $serviceTypeMapping[$serviceType] ?? $serviceType;
+            $conditions[] = 'order_type = ?';
+            $params[] = $mappedServiceType;
+        }
+
+        if ($status) {
+            $conditions[] = 'status = ?';
+            $params[] = $status;
+        }
+
+        if ($dateFrom) {
+            $conditions[] = 'order_date >= ?';
+            $params[] = $dateFrom;
+        }
+
+        if ($dateTo) {
+            $conditions[] = 'order_date <= ?';
+            $params[] = $dateTo;
+        }
+
+        if (!empty($conditions)) {
+            $query .= ' WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $query .= ' ORDER BY created_at DESC LIMIT ' . $limit;
+
+        logit("Отримуємо список замовлень: query=$query");
+        try {
+            $stmt = $pdo->prepare($query);
+            $stmt->execute($params);
+            $orders = $stmt->fetchAll();
+            logit("Знайдено замовлень: " . count($orders));
+
+            foreach ($orders as &$order) {
+                $orderDetails = [];
+
+                // Декодування client_info
+                if ($order['client_info']) {
+                    $clientInfo = json_decode($order['client_info'], true);
+                    if (is_array($clientInfo)) {
+                        if (!isset($clientInfo['additional_info']) && $order['details']) {
+                            $clientInfo['additional_info'] = $order['details'];
+                        }
+                        // Нормалізація телефону у client_info
+                        if (isset($clientInfo['phone'])) {
+                            $norm = normalizePhoneNumber($clientInfo['phone']);
+                            $clientInfo['phone'] = $norm['countryCode'] . $norm['number'];
+                        }
+                        $order['client_info'] = $clientInfo;
+                    } else {
+                        $order['client_info'] = [
+                            'name' => 'N/A',
+                            'phone' => 'N/A',
+                            'additional_info' => 'N/A'
+                        ];
+                    }
+                } else {
+                    $order['client_info'] = [
+                        'name' => 'N/A',
+                        'phone' => 'N/A',
+                        'additional_info' => 'N/A'
+                    ];
+                }
+
+                // Декодування address
+                if ($order['address']) {
+                    $address = json_decode($order['address'], true);
+                    if (is_array($address)) {
+                        $order['address'] = [
+                            'street' => $address['street'] ?? 'N/A',
+                            'house_number' => $address['house_number'] ?? 'N/A',
+                            'apartment_number' => $address['apartment_number'] ?? '',
+                        ];
+                    } else {
+                        $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                    }
+                } else {
+                    $order['address'] = ['street' => 'N/A', 'house_number' => 'N/A', 'apartment_number' => ''];
+                }
+
+                $order['city'] = $order['city'] ?? 'N/A';
+
+                switch ($order['order_type']) {
+                    case 'window_cleaning':
+                        $orderDetails['windows'] = $order['windows'] ?? 'N/A';
+                        $orderDetails['balconies'] = $order['balconies'] ?? 'N/A';
+                        break;
+                    case 'renovation':
+                        $orderDetails['area'] = $order['area'] ?? 'N/A';
+                        $orderDetails['windows'] = $order['windows'] ?? 'N/A';
+                        break;
+                    case 'office':
+                        $orderDetails['office_area'] = $order['office_area'] ?? 'N/A';
+                        $orderDetails['workspaces'] = $order['workspaces'] ?? 'N/A';
+                        $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
+                        break;
+                    case 'private_house':
+                    case 'apartment':
+                    case 'standard':
+                    case 'general':
+                        $orderDetails['rooms'] = $order['rooms'] ?? 'N/A';
+                        $orderDetails['bathrooms'] = $order['bathrooms'] ?? 'N/A';
+                        $orderDetails['kitchen'] = !empty($order['kitchen']) ? 'Tak' : 'Nie';
+                        $orderDetails['kitchen_annex'] = !empty($order['kitchen_annex']) ? 'Tak' : 'Nie';
+                        $orderDetails['vacuum_needed'] = !empty($order['vacuum_needed']) ? 'Tak' : 'Nie';
+                        $orderDetails['cleaning_frequency'] = $order['cleaning_frequency'] ?? 'N/A';
+                        if ($order['selected_services']) {
+                            $services = json_decode($order['selected_services'], true);
+                            if (is_array($services)) {
+                                $orderDetails['selected_services'] = array_map(function ($service) {
+                                    return [
+                                        'name' => $service['name'] ?? 'N/A',
+                                        'price' => $service['price'] ?? 'N/A',
+                                        'quantity' => $service['quantity'] ?? 'N/A'
+                                    ];
+                                }, $services);
+                            } else {
+                                $orderDetails['selected_services'] = 'Brak';
+                            }
+                        } else {
+                            $orderDetails['selected_services'] = 'Brak';
+                        }
+                        break;
+                    default:
+                        $orderDetails['info'] = 'Невідомий тип замовлення';
+                }
+
+                $order['service_type'] = $order['order_type'];
+                $order['order_details'] = $orderDetails;
+            }
+
+            echo json_encode($orders);
+        } catch (PDOException $e) {
+            logit("Помилка при отриманні замовлень: " . $e->getMessage());
+            http_response_code(500);
+            echo json_encode(['message' => 'Помилка при отриманні замовлень: ' . $e->getMessage()]);
         }
         exit;
     }
@@ -1429,6 +1678,7 @@ if ($path === '/api/save-consent' && $method === 'POST') {
     exit;
 }
 
+/* Catch-all для невідомих енд
 /* Catch-all для невідомих ендпоінтів */
 http_response_code(404);
 logit("Ендпоінт не знайдено: $uri, метод: $method");
@@ -1437,4 +1687,4 @@ echo json_encode([
     'uri' => $uri,
     'method' => $method
 ]);
-exit;
+exit; 

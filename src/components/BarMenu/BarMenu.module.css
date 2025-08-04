@@ -58,7 +58,7 @@
   font-weight: 400;
   font-size: clamp(10px, 1vw, 12px);
   padding: clamp(5px, 0.7vw, 7px) clamp(7px, 0.9vw, 9px);
-  background: var(--service-bg);
+  background: #f7f4fb2b;
   border-radius: 8px;
   box-shadow: var(--service-shadow);
   transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;

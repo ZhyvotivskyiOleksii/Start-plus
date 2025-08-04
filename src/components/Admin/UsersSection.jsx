@@ -31,10 +31,9 @@ function UsersSection({ api, lang = "pl" }) {
   const [userToDelete, setUserToDelete] = useState(null);
 
   const debounceTimeout = useRef(null);
-  const lastFetchTime = useRef(0); // Для ограничения частоты запросов
-  const isFetchingOrders = useRef(false); // Флаг, чтобы не делать несколько запросов одновременно
+  const lastFetchTime = useRef(0);
+  const isFetchingOrders = useRef(false);
 
-  // Тексты для перевода (оставил без изменений, они длинные)
   const texts = {
     pl: {
       list: "Lista użytkowników",
@@ -42,6 +41,9 @@ function UsersSection({ api, lang = "pl" }) {
       stats: "Statystyka",
       orders: "Zamówienia",
       error: "Wystąpił błąd. Spróbuj ponownie.",
+      bonusBalance: "Saldo bonusów",
+      bonusExpiry: "Ważność bonusów",
+      totalBonus: "Całkowity saldo bonusów",
     },
     uk: {
       list: "Список користувачів",
@@ -49,6 +51,9 @@ function UsersSection({ api, lang = "pl" }) {
       stats: "Статистика",
       orders: "Замовлення",
       error: "Сталася помилка. Спробуйте ще раз.",
+      bonusBalance: "Баланс бонусів",
+      bonusExpiry: "Термін дії бонусів",
+      totalBonus: "Загальний баланс бонусів",
     },
     ru: {
       list: "Список пользователей",
@@ -56,6 +61,9 @@ function UsersSection({ api, lang = "pl" }) {
       stats: "Статистика",
       orders: "Заказы",
       error: "Произошла ошибка. Попробуйте снова.",
+      bonusBalance: "Баланс бонусов",
+      bonusExpiry: "Срок действия бонусов",
+      totalBonus: "Общий баланс бонусов",
     },
     en: {
       list: "User List",
@@ -63,6 +71,9 @@ function UsersSection({ api, lang = "pl" }) {
       stats: "Statistics",
       orders: "Orders",
       error: "An error occurred. Please try again.",
+      bonusBalance: "Bonus Balance",
+      bonusExpiry: "Bonus Expiry",
+      totalBonus: "Total Bonus Balance",
     },
   };
 
@@ -211,7 +222,7 @@ function UsersSection({ api, lang = "pl" }) {
   const fetchStats = useCallback(async () => {
     setIsLoading((prev) => ({ ...prev, stats: true }));
     try {
-      const { data } = await api.get("/users/stats", { params: { period: statsPeriod } });
+      const { data } = await api.get("/users/stats", { params: { period: statsPeriod, include_bonus: true } }); // Додано параметр для бонусів
       setStats(data);
       localStorage.setItem("stats", JSON.stringify(data));
       setError("");
@@ -222,14 +233,13 @@ function UsersSection({ api, lang = "pl" }) {
     }
   }, [api, statsPeriod, t]);
 
-  // Изменение 1: Добавляем защиту от одновременных запросов
   const fetchOrders = useCallback(async (params = {}) => {
-    if (isFetchingOrders.current) return; // Если запрос уже выполняется, пропускаем
+    if (isFetchingOrders.current) return;
 
     const now = Date.now();
-    if (now - lastFetchTime.current < 1000) return; // Ограничение: не чаще 1 раза в секунду
+    if (now - lastFetchTime.current < 1000) return;
 
-    isFetchingOrders.current = true; // Устанавливаем флаг, что запрос начался
+    isFetchingOrders.current = true;
     setIsLoading((prev) => ({ ...prev, orders: true }));
     try {
       const { data } = await api.get("/orders", { params });
@@ -241,7 +251,7 @@ function UsersSection({ api, lang = "pl" }) {
       setError(t.error);
     } finally {
       setIsLoading((prev) => ({ ...prev, orders: false }));
-      isFetchingOrders.current = false; // Сбрасываем флаг после завершения
+      isFetchingOrders.current = false;
     }
   }, [api, t]);
 
@@ -313,7 +323,6 @@ function UsersSection({ api, lang = "pl" }) {
     }
   };
 
-  // Изменение 2: Начальная загрузка данных (убираем лишние зависимости)
   useEffect(() => {
     if (activeTab === "list" && users.length === 0) {
       const paramsUsers = { status: statusFilter, search: searchQuery };
@@ -333,7 +342,6 @@ function UsersSection({ api, lang = "pl" }) {
     }
   }, [activeTab, users.length, stats, orders.length, statusFilter, searchQuery, serviceTypeFilter, orderStatusFilter, dateFrom, dateTo, fetchUsers, fetchStats, fetchOrders]);
 
-  // Изменение 3: Периодическое обновление (убираем зависимости фильтров)
   useEffect(() => {
     const interval = setInterval(() => {
       if (activeTab === "list") {
@@ -352,12 +360,11 @@ function UsersSection({ api, lang = "pl" }) {
         };
         fetchOrders(paramsOrders);
       }
-    }, 300000); // Каждые 5 минут
+    }, 300000);
 
     return () => clearInterval(interval);
-  }, [activeTab, fetchUsers, fetchStats, fetchOrders]); // Убрали фильтры из зависимостей
+  }, [activeTab, fetchUsers, fetchStats, fetchOrders]);
 
-  // Изменение 4: Обновление при смене фильтров (убираем fetchOrders из зависимостей)
   useEffect(() => {
     if (activeTab !== "orders") return;
 
@@ -373,17 +380,15 @@ function UsersSection({ api, lang = "pl" }) {
         date_to: dateTo,
       };
       fetchOrders(paramsOrders);
-    }, 500); // Задержка 500 мс
+    }, 500);
 
     return () => clearTimeout(debounceTimeout.current);
-  }, [activeTab, serviceTypeFilter, orderStatusFilter, dateFrom, dateTo]); // Убрали fetchOrders
+  }, [activeTab, serviceTypeFilter, orderStatusFilter, dateFrom, dateTo]);
 
-  // Сохранение активной вкладки
   useEffect(() => {
     localStorage.setItem("usersActiveTab", activeTab);
   }, [activeTab]);
 
-  // Обработка изменения фильтров для пользователей
   const handleFetchUsers = () => {
     const params = { status: statusFilter, search: searchQuery };
     localStorage.setItem("statusFilter", statusFilter);
@@ -391,7 +396,6 @@ function UsersSection({ api, lang = "pl" }) {
     fetchUsers(params);
   };
 
-  // Обработка изменения фильтров для заказов (ручное обновление через кнопку)
   const handleFetchOrders = () => {
     const params = {
       service_type: serviceTypeFilter,
@@ -406,7 +410,6 @@ function UsersSection({ api, lang = "pl" }) {
     fetchOrders(params);
   };
 
-  // Обработка изменения периода для статистики
   const handleFetchStats = () => {
     localStorage.setItem("statsPeriod", statsPeriod);
     fetchStats();

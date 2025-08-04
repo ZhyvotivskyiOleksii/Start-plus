@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes, FaGlobe, FaTelegram, FaViber, FaFacebookMessenger } from "react-icons/fa";
+import {
+  FaBars,
+  FaTimes,
+  FaGlobe,
+  FaTelegram,
+  FaViber,
+  FaFacebookMessenger,
+} from "react-icons/fa";
 import css from "./AppBar.module.css";
 import Logo from "../Logo/Logo";
 import BarMenu from "../BarMenu/BarMenu";
@@ -8,6 +15,7 @@ import plFlag from "../../assets/flags/pl.png";
 import uaFlag from "../../assets/flags/ua.png";
 import ruFlag from "../../assets/flags/ru.png";
 import gbFlag from "../../assets/flags/gb.png";
+import i18n from "../../i18n/i18n"; 
 
 const languages = { pl: "PL", uk: "UA", ru: "RU", en: "EN" };
 const flags = { pl: plFlag, uk: uaFlag, ru: ruFlag, en: gbFlag };
@@ -16,7 +24,6 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  const [userPhone, setUserPhone] = useState("");
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -50,15 +57,6 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  useEffect(() => {
-    const storedPhone = localStorage.getItem("phone");
-    if (isAuthenticated && storedPhone) {
-      setUserPhone(storedPhone);
-    } else {
-      setUserPhone("");
-    }
-  }, [isAuthenticated]);
-
   const getFlagPath = (langKey) => flags[langKey];
 
   const toggleMobileMenu = () => {
@@ -66,11 +64,13 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
   };
 
   const handleLanguageChange = (key) => {
+    i18n.changeLanguage(key); 
     setLang(key);
     setDropdownOpen(false);
   };
 
   const handleMobileLanguageChange = (key) => {
+    i18n.changeLanguage(key); 
     setLang(key);
     toggleMobileMenu();
   };
@@ -79,25 +79,9 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      if (location.pathname === "/dashboard") {
-        document.querySelector(`.${css.dashboard}`)?.classList.add(css["dashboard-exit"]);
-        setTimeout(() => {
-          navigate("/");
-        }, 300);
-      } else {
-        navigate("/dashboard");
-      }
+      navigate("/dashboard");
     }
   };
-
-  const welcomeText = {
-    en: "Welcome",
-    pl: "Witaj",
-    uk: "Вітаємо",
-    ru: "Добро пожаловать",
-  };
-
-  const welcome = welcomeText[lang] || welcomeText.pl;
 
   const loginButtonText = {
     en: "Login",
@@ -106,7 +90,15 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
     ru: "Войти",
   };
 
+  const dashboardButtonText = {
+    en: "Dashboard",
+    pl: "Konto",
+    uk: "Особистий кабінет",
+    ru: "Личный кабинет",
+  };
+
   const loginText = loginButtonText[lang] || loginButtonText.pl;
+  const dashboardText = dashboardButtonText[lang] || dashboardButtonText.pl;
 
   return (
     <>
@@ -140,27 +132,19 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
               </ul>
             )}
           </div>
-          {/* Добавляем кнопку логина или профиль на десктопе */}
           {!isMobile && (
             <div className={css["user-action"]} onClick={handleUserClick}>
-              {isAuthenticated ? (
-                <div className={css["user-info"]}>
-                  <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
-                  <div className={css["user-info-text"]}>
-                    <span className={css["welcome-text"]}>{welcome}</span>
-                    <span className={css["user-phone"]}>{userPhone}</span>
-                  </div>
-                </div>
-              ) : (
-                <button className={css["login-button"]}>
-                  <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
-                  {loginText}
-                </button>
-              )}
+              <button className={css["login-button"]}>
+                <img
+                  src={isAuthenticated ? "/icon/account.svg" : "/icon/login.svg"}
+                  alt={isAuthenticated ? "Dashboard" : "Login"}
+                  className={css["login-icon"]}
+                />
+                {isAuthenticated ? dashboardText : loginText}
+              </button>
             </div>
           )}
         </div>
-        {/* На мобильных показываем бургер-меню вместо user-info */}
         {isMobile && !mobileOpen && (
           <button className={css.burger} onClick={toggleMobileMenu}>
             <FaBars />
@@ -184,22 +168,15 @@ export default function AppBar({ lang, setLang, isAuthenticated, handleLogin, ha
               isOpen={mobileOpen}
             />
           </div>
-          {/* Добавляем кнопку логина или профиль в мобильном меню */}
           <div className={css["user-action-mobile"]} onClick={handleUserClick}>
-            {isAuthenticated ? (
-              <div className={css["user-info"]}>
-                <img src="/icon/account.svg" alt="User" className={css["login-icon"]} />
-                <div className={css["user-info-text"]}>
-                  <span className={css["welcome-text"]}>{welcome}</span>
-                  <span className={css["user-phone"]}>{userPhone}</span>
-                </div>
-              </div>
-            ) : (
-              <button className={css["login-button"]}>
-                <img src="/icon/login.svg" alt="Login" className={css["login-icon"]} />
-                {loginText}
-              </button>
-            )}
+            <button className={css["login-button"]}>
+              <img
+                src={isAuthenticated ? "/icon/account.svg" : "/icon/login.svg"}
+                alt={isAuthenticated ? "Dashboard" : "Login"}
+                className={css["login-icon"]}
+              />
+              {isAuthenticated ? dashboardText : loginText}
+            </button>
           </div>
           <div className={css.socials}>
             <a href="#" target="_blank" rel="noreferrer">

@@ -36,31 +36,19 @@
   gap: 6px;
   cursor: pointer;
   padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-start),
-    var(--button-bg-end)
-  );
-  color: var(--button-text-color);
+  background: linear-gradient(145deg, #6e4bdc, #8a4bff);
+  color: #fff;
   border-radius: 10px;
   font-family: "Futura PT";
   font-weight: 400;
   font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
-  box-shadow: var(--button-shadow);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
 }
 
 .langBox:hover {
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-hover-start),
-    var(--button-bg-hover-end)
-  );
-  box-shadow: var(--button-shadow-hover);
+  background: linear-gradient(145deg, #5a3ab8, #6e4bdc);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
 }
 
@@ -71,20 +59,20 @@
 
 .icon {
   font-size: 18px;
-  color: var(--button-text-color);
+  color: #fff;
 }
 
 .dropdown {
   position: absolute;
   top: 100%;
   right: 0;
-  background: var(--service-bg);
-  color: var(--text-color);
+  background: #fff;
+  color: #1a1a1a;
   list-style: none;
   padding: 8px 0;
   margin: 0;
   border-radius: 10px;
-  box-shadow: var(--service-shadow);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   min-width: 60px;
 }
 
@@ -100,28 +88,20 @@
 }
 
 .dropdown li:hover {
-  background: var(--background-color);
+  background: #f9f9f9;
 }
 
 .burger {
   display: none;
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-start),
-    var(--button-bg-end)
-  );
+  background: linear-gradient(145deg, #6e4bdc, #8a4bff);
   border: none;
   font-size: 24px;
-  color: var(--button-text-color);
+  color: #fff;
   cursor: pointer;
   padding: clamp(8px, 1vw, 10px);
   border-radius: 10px;
-  box-shadow: var(--button-shadow);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
   position: absolute;
   top: 20px;
   right: 20px;
@@ -130,12 +110,8 @@
 }
 
 .burger:hover {
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-hover-start),
-    var(--button-bg-hover-end)
-  );
-  box-shadow: var(--button-shadow-hover);
+  background: linear-gradient(145deg, #5a3ab8, #6e4bdc);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
 }
 
@@ -156,105 +132,27 @@
   width: 100%;
 }
 
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: clamp(8px, 1vw, 12px);
-  padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-start),
-    var(--button-bg-end)
-  );
-  border-radius: 10px;
-  cursor: pointer;
-  box-shadow: var(--button-shadow);
-  transition: transform 0.4s, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
-}
-
-.user-info:hover {
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-hover-start),
-    var(--button-bg-hover-end)
-  );
-  box-shadow: var(--button-shadow-hover);
-  transform: translateY(-2px) scale(1.02);
-}
-
-.user-info:hover .login-icon {
-  transform: scale(1.1);
-}
-
-.user-info:active {
-  transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.user-info-text {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.welcome-text {
-  font-family: "Futura PT";
-  font-weight: 400;
-  font-size: clamp(12px, 2vw, 14px);
-  color: var(--text-color);
-  display: block;
-}
-
-.user-phone {
-  font-family: "Futura PT";
-  font-weight: 400;
-  font-size: clamp(10px, 1.5vw, 12px);
-  color: var(--text-color);
-  display: block;
-  margin-top: 2px;
-}
-
 .login-button {
   display: flex;
   align-items: center;
   gap: clamp(8px, 1vw, 12px);
   padding: clamp(8px, 1vw, 10px) clamp(12px, 1.5vw, 15px);
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-start),
-    var(--button-bg-end)
-  );
+  background: linear-gradient(145deg, #6e4bdc, #8a4bff);
   border-radius: 10px;
   cursor: pointer;
-  box-shadow: var(--button-shadow);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.4s, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
   border: none;
-  color: var(--button-text-color);
+  color: #fff;
   font-family: "Futura PT";
   font-weight: 400;
   font-size: clamp(0.85rem, 1.5vmin, 0.95rem);
 }
 
 .login-button:hover {
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-hover-start),
-    var(--button-bg-hover-end)
-  );
-  box-shadow: var(--button-shadow-hover);
+  background: linear-gradient(145deg, #5a3ab8, #6e4bdc);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px) scale(1.02);
-}
-
-.login-button:hover .login-icon {
-  transform: scale(1.1);
 }
 
 .login-button:active {
@@ -275,21 +173,17 @@
   left: 0;
   width: 100%;
   height: 100vh;
-  background: #ffffff;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: bottom;
-  color: var(--text-color);
+  background: #fff;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   z-index: 1100;
-  box-shadow: var(--service-shadow);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   transform: translateY(-100%);
   opacity: 0;
   transition: transform 0.6s ease, opacity 0.6s ease;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 
 .mobileMenu.show {
@@ -312,28 +206,28 @@
   font-size: 34px;
   width: 100%;
   margin: 30px auto 20px auto;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e0e0e0;
   padding-bottom: 15px;
 }
 
 .socials a {
-  color: var(--accent-color);
+  color: #6e4bdc;
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .socials a:hover {
-  color: var(--discount-color);
+  color: #5a3ab8;
   transform: translateY(-2px);
 }
 
 .mobileLang {
   margin-top: auto;
   padding: 15px;
-  background: var(--service-bg);
+  background: #f9f9f9;
   border-radius: 10px;
   width: 100%;
   margin-bottom: 20px;
-  box-shadow: var(--service-shadow);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .langHeader {
@@ -344,7 +238,7 @@
   font-family: "Futura PT";
   font-weight: 400;
   font-size: 16px;
-  color: var(--text-color);
+  color: #1a1a1a;
 }
 
 .langRow {
@@ -357,43 +251,28 @@
   display: flex;
   align-items: center;
   padding: 6px 12px;
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-start),
-    var(--button-bg-end)
-  );
-  color: var(--button-text-color);
+  background: #e0e0e0;
+  color: #1a1a1a;
   border-radius: 8px;
   cursor: pointer;
   font-family: "Futura PT";
   font-weight: 400;
   font-size: 14px;
-  box-shadow: var(--button-shadow);
-  transition: transform 0.3s ease, box-shadow 0.5s ease, background 0.5s ease;
-  border-top: 1px solid var(--button-border-light);
-  border-left: 1px solid var(--button-border-light);
-  border-bottom: 1px solid var(--button-border-dark);
-  border-right: 1px solid var(--button-border-dark);
+  transition: background 0.3s ease, transform 0.3s ease;
 }
 
 .langRow span:hover {
-  background: linear-gradient(
-    145deg,
-    var(--button-bg-hover-start),
-    var(--button-bg-hover-end)
-  );
-  box-shadow: var(--button-shadow-hover);
+  background: #d0d0d0;
   transform: translateY(-2px);
 }
 
 .langRow span:active {
   transform: translateY(1px);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .active {
-  background: linear-gradient(145deg, var(--accent-color), var(--accent-color));
-  color: var(--button-text-color);
+  background: #6e4bdc;
+  color: #fff;
 }
 
 @media (max-width: 768px) {
@@ -409,7 +288,6 @@
   .burger {
     display: block;
   }
-  .user-action-mobile .user-info,
   .user-action-mobile .login-button {
     width: 100%;
     justify-content: center;
@@ -418,10 +296,9 @@
     font-family: "Futura PT";
     font-weight: 400;
     font-size: clamp(12px, 1.8vw, 14px);
-    background: linear-gradient(145deg, var(--button-bg-start), var(--button-bg-end));
-    box-shadow: var(--button-shadow);
-    border: 1px solid var(--light-border);
-    backdrop-filter: blur(8px);
+    background: linear-gradient(145deg, #6e4bdc, #8a4bff);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e0e0e0;
   }
   .user-action-mobile .login-icon {
     width: clamp(20px, 3.5vw, 25px);
